@@ -26,27 +26,62 @@ namespace QFRMS.Data.Repositories
 
         public async Task<int> SaveChangesAsync()
         {
-            return await _context.SaveChangesAsync();
+            try
+            {
+                return await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<IQueryable<UserAccount>> GetUsersAsync()
         {
-            return await Task.FromResult(_context.Set<UserAccount>());
+            try
+            {
+                return await Task.FromResult(_context.Set<UserAccount>());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<IQueryable<IdentityRole>> GetRolesAsync()
         {
-            return await Task.FromResult(_context.Set<IdentityRole>());
+            try
+            {
+                return await Task.FromResult(_context.Set<IdentityRole>());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<IQueryable<IdentityUserRole<string>>> GetUserRolesAsync()
         {
-            return await Task.FromResult(_context.Set<IdentityUserRole<string>>());
+            try
+            {
+                return await Task.FromResult(_context.Set<IdentityUserRole<string>>());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<UserAccount?> GetUserByIdAsync(string Id)
         {
-            return await _context.Users.FindAsync(Id);
+            try
+            {
+                return await _context.Users.FindAsync(Id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         

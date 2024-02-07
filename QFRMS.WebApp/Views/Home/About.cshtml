@@ -1,9 +1,76 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using QFRMS.Data.Models
+@model InstituteInfo
+
 @{
     ViewData["Title"] = "About";
 }
-<div class="text-center">
-    <h1 class="display-4">About</h1>
+<div class="page-header small mx-auto">
+    <div class="header">
+        <img src="~/icons/settings.svg" class="header-icon" />
+        <h2 class="header-title">ABOUT</h2>
+    </div>
+    <div class="header-hr"></div>
+</div>
+<div class="page-body small mx-auto">
+    <div class="row body-header title">
+        <div class="col d-flex justify-content-start align-items-center">
+            <h4 class="body-title">Institute Detail</h4>
+        </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            @if(User.IsInRole("Admin"))
+            {
+                <button class="btn btn-primary no-glow">
+                    <a class="nav-link d-flex" asp-area="" asp-controller="Home" asp-action="EditAbout">
+                        <img src="~/icons/edit.svg" class="icons" />
+                        Edit
+                    </a>
+                </button>
+            }
+        </div>
+    </div>
+    <h4 class="institute-name">@Model.Name</h4>
+    <table class="table about">
+        <tbody>
+            <tr>
+                <td class="col-5 institute-detail view">
+                    <h6>Address :</h6> @Model.Address
+                </td>
+                <td class="col-7 institute-detail view">
+                    <h6>Telephone # :</h6> @Model.TelephoneNo
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5 institute-detail view">
+                    <h6>Region :</h6> @Model.Region
+                </td>
+                <td class="col-7 institute-detail view">
+                    <h6>Email Address :</h6> @Model.Email
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5 institute-detail view">
+                    <h6>Province :</h6> @Model.Province
+                </td>
+                <td class="col-7 institute-detail view">
+                    <h6>Focal Person :</h6> @Model.FocalPerson
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5 institute-detail view">
+                    <h6>Congressional District :</h6> @Model.District
+                </td>
+                <td class="col-7 institute-detail view">
+                    <h6>Type of Provider :</h6> @Model.ProviderType
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5 institute-detail view">
+                    <h6>Municipality/City :</h6> @Model.City
+                </td>
+                <td class="col-7 institute-detail view">
+                    <h6>Classification of Provider :</h6> @Model.ProviderClassification
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>

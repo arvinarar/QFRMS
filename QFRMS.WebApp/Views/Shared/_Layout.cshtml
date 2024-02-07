@@ -71,6 +71,12 @@
                                 </div>
                             </li>
                         }
+                        else
+                        {
+                            <li class="nav-item @(activeUrl == "About" ? "nav-selected" : "")">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                            </li>
+                        }
                         @if(signInUser != "Guest")
                         {
                             <li class="nav-item dropdown">

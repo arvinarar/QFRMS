@@ -15,11 +15,15 @@ var connectionString = builder.Configuration.GetConnectionString("default");
 //Add Logger
 builder.Services.AddSingleton<IFileLogger, FileLogger>();
 
+builder.Services.AddScoped<Work, Work>();
+
 //Add Scoped Service Dependencies
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<IAboutService, AboutService>();
 
 //Add Scoped Repository Dependencies
 builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
+builder.Services.AddScoped<IAboutRepository, AboutRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
