@@ -1,0 +1,110 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    var request = HttpContextAccessor.HttpContext?.Request;
+    string[] urlSegments = { "Default" };
+    string activeUrl = "";
+    if(request != null)
+    {
+        urlSegments = (request.Path.Value != null) ? request.Path.Value.Trim('/').Split('/') : urlSegments;
+        activeUrl = urlSegments[0] != "Default" && urlSegments.Length > 1 ? urlSegments[1] : "Default";
+    }
+
+    var signInUser = "Guest";
+    if (User.IsInRole("Admin")) signInUser = "Admin";
+    else if (User.IsInRole("Registrar")) signInUser = "Registrar";
+    else if (User.IsInRole("Trainor")) signInUser = "Trainor";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - QFRMS</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/QFRMS.WebApp.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="navbar-header-margin-top">
+        <span class="d-flex justify-content-end mt-5 me-2"><partial name="_LoginPartial" /></span>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow py-0">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <img src="~/images/QF_Logo.png" class="QF_logo ms-2 my-2" />
+            </a>
+            <div class="container-fluid navbar-text ps-0 py-0">
+                <a class="navbar-brand pb-1" asp-area="" asp-controller="Home" asp-action="Index">
+                    Quilantang Farms
+                </a>
+                <div class="d-sm-inline-flex h-100">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item @(urlSegments[0] == "" ? "nav-selected" : "")">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        @if (signInUser == "Admin" || signInUser == "Registrar")
+                        {
+                            <li class="nav-item @(urlSegments[0] == "Course" ? "nav-selected" : "")">
+                                <a class="nav-link" asp-area="" asp-controller="Course" asp-action="Index">Courses</a>
+                            </li>
+                        }
+                        @if(signInUser != "Guest")
+                        {
+                            <li class="nav-item @(urlSegments[0] == "Batch" ? "nav-selected" : "")">
+                                <a class="nav-link" asp-area="" asp-controller="Batch" asp-action="Index">Batch</a>
+                            </li>
+                            <li class="nav-item @(urlSegments[0] == "Student" ? "nav-selected" : "")">
+                                <a class="nav-link" asp-area="" asp-controller="Student" asp-action="Index">Students</a>
+                            </li>
+                        }
+                        @if (signInUser == "Admin")
+                        {
+                            <li class="nav-item dropdown">
+                                <button class="btn nav-link dropdown-toggle @(urlSegments[0] == "Memo" || activeUrl == "About" || urlSegments[0] == "Account" && activeUrl != "Details" && activeUrl != "EditDetails" ? "nav-dropdown-selected" : "")" id="SystemDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">System</button>
+                                <div class="dropdown-menu" aria-labelledby="SystemDropdown">
+                                    <div class="dropdown-divider mt-0"></div>
+                                    <a class="dropdown-item nav-link" asp-area="" asp-controller="Account" asp-action="Index">Users</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item nav-link" asp-area="" asp-controller="Memo" asp-action="Index">Memo</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                                </div>
+                            </li>
+                        }
+                        @if(signInUser != "Guest")
+                        {
+                            <li class="nav-item dropdown">
+                                <button class="btn nav-link dropdown-toggle @(activeUrl == "Details" || activeUrl == "EditDetails" ? "nav-dropdown-selected" : "")" id="SystemDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Account</button>
+                                <div class="dropdown-menu" aria-labelledby="SystemDropdown">
+                                    <div class="dropdown-divider mt-0"></div>
+                                    <a class="dropdown-item nav-link" asp-area="" asp-controller="Account" asp-action="Details">Manage</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item-danger nav-link" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <span class="d-flex justify-content-end me-2" id="timer">-</span>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container text-center">
+            &copy; 2024 - Quilantang Farms Insitute Record Management System
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/setDateTime.js" asp-append-version="true"></script>
+    <script src="~/js/MessageBox.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

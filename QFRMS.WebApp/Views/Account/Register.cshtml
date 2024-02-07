@@ -1,0 +1,145 @@
+﻿@using QFRMS.Data.DTOs
+@using static QFRMS.Data.Enums.Enums
+@model Register
+@{
+    ViewData["Title"] = "Create Account";
+}
+<div class="page-header small mx-auto">
+    <div class="header">
+        <img src="~/icons/users.svg" class="header-icon" />
+        <h2 class="header-title">USERS</h2>
+    </div>
+    <div class="header-hr"></div>
+</div>
+<h2 class="page-banner">CREATE USER</h2>
+<div class="page-body small mx-auto">
+    <div class="row body-header title">
+        <div class="col d-flex justify-content-start align-items-center">
+            <h4 class="body-title">User Detail</h4>
+        </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            <button class="btn btn-back no-glow">
+                <a class="nav-link d-flex" asp-area="" asp-controller="Account" asp-action="Index">
+                    <img src="~/icons/back.svg" class="icons" />
+                    Back
+                </a>
+            </button>
+        </div>
+    </div>
+    <p class="required-message required">Please fill-up the Mandatory Fields</p>
+    <form asp-action="Register" method="post" id="form">
+        <div asp-validation-summary="ModelOnly" class="row text-danger" role="alert"></div>
+        <p class="form-header">Name Details :</p>
+        <div class="row row-cols-3">
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="FirstName" class="control-label required" id="floatingInput"></label>
+                    <input asp-for="FirstName" class="form-control" for="floatingInput" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="MiddleName" class="control-label required"></label>
+                    <input asp-for="MiddleName" class="form-control" />
+                    <span asp-validation-for="MiddleName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="LastName" class="control-labe required"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="ExtensionName" class="control-label"></label>
+                    <input asp-for="ExtensionName" class="form-control" />
+                    <span asp-validation-for="ExtensionName" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <p class="form-header">Account Details :</p>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="Username" class="control-label required"></label>
+                    <input asp-for="Username" class="form-control" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="Password" class="control-label required"></label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="userRoles" class="control-label required"></label>
+                    <select asp-for="userRoles" class="form-select" id="SelectedRole">
+                        <option selected disabled value="">Choose...</option>
+                        @{
+                            foreach (var roles in Enum.GetNames<UserRoles>())
+                            {
+                                <option value="@roles">@roles</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="ExtensionName" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row form-footer">
+            <div class="col footer-left">
+                <input id="submitBtn" type="button" value="Register" class="btn btn-primary" />
+            </div>
+            <div class="col footer-right">
+                <input type="reset" value="Reset" class="btn btn-warning" />
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="CreateAdmin" tabindex="-1" aria-labelledby="CreateAdminLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CreateAdminLabel">Confirm to create new Admin?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row rows-cols-1">
+                    <div class="col-12 mb-1">
+                        Doing so will give this new User unrestricted access to the system.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="confirmSubmit">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#submitBtn').click(function () {
+                if ($('#SelectedRole').val() == "Admin")
+                    $('#CreateAdmin').modal('show');
+                else
+                    $('#form').submit();
+            });
+
+            $('#confirmSubmit').click(function () {
+                $('#form').submit();
+            });
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

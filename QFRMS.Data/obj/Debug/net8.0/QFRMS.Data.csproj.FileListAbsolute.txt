@@ -1,0 +1,14 @@
+D:\Documents\GitHub\QFRMS\QFRMS.Data\bin\Debug\net8.0\QFRMS.Data.deps.json
+D:\Documents\GitHub\QFRMS\QFRMS.Data\bin\Debug\net8.0\QFRMS.Data.runtimeconfig.json
+D:\Documents\GitHub\QFRMS\QFRMS.Data\bin\Debug\net8.0\QFRMS.Data.dll
+D:\Documents\GitHub\QFRMS\QFRMS.Data\bin\Debug\net8.0\QFRMS.Data.pdb
+D:\Documents\GitHub\QFRMS\QFRMS.Data\obj\Debug\net8.0\QFRMS.Data.csproj.AssemblyReference.cache
+D:\Documents\GitHub\QFRMS\QFRMS.Data\obj\Debug\net8.0\QFRMS.Data.GeneratedMSBuildEditorConfig.editorconfig
+D:\Documents\GitHub\QFRMS\QFRMS.Data\obj\Debug\net8.0\QFRMS.Data.AssemblyInfoInputs.cache
+D:\Documents\GitHub\QFRMS\QFRMS.Data\obj\Debug\net8.0\QFRMS.Data.AssemblyInfo.cs
+D:\Documents\GitHub\QFRMS\QFRMS.Data\obj\Debug\net8.0\QFRMS.Data.csproj.CoreCompileInputs.cache
+D:\Documents\GitHub\QFRMS\QFRMS.Data\obj\Debug\net8.0\QFRMS.Data.dll
+D:\Documents\GitHub\QFRMS\QFRMS.Data\obj\Debug\net8.0\refint\QFRMS.Data.dll
+D:\Documents\GitHub\QFRMS\QFRMS.Data\obj\Debug\net8.0\QFRMS.Data.pdb
+D:\Documents\GitHub\QFRMS\QFRMS.Data\obj\Debug\net8.0\QFRMS.Data.genruntimeconfig.cache
+D:\Documents\GitHub\QFRMS\QFRMS.Data\obj\Debug\net8.0\ref\QFRMS.Data.dll

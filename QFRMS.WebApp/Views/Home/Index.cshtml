@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Home";
+    var signInUser = "Guest";
+    if (User.IsInRole("Admin")) signInUser = "Admin";
+    else if (User.IsInRole("Registrar")) signInUser = "Registrar";
+    else if (User.IsInRole("Trainor")) signInUser = "Trainor";
+}
+
+<div class="text-center">
+@if (signInUser != "Guest")
+{
+    <h1 class="display-4">Dashboard</h1>
+}
+</div>

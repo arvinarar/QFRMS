@@ -1,0 +1,169 @@
+﻿@using QFRMS.Data.DTOs
+@using static QFRMS.Data.Enums.Enums
+@model UpdateUser
+@{
+    ViewData["Title"] = "Edit Account";
+}
+<div class="page-header small mx-auto">
+    <div class="header">
+        <img src="~/icons/users.svg" class="header-icon" />
+        <h2 class="header-title">USERS</h2>
+    </div>
+    <div class="header-hr"></div>
+</div>
+<h2 class="page-banner">EDIT USER</h2>
+<div class="page-body small mx-auto">
+    <div class="row body-header title">
+        <div class="col d-flex justify-content-start align-items-center">
+            <h4 class="body-title">User Details</h4>
+        </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            <button class="btn btn-back no-glow">
+                <a class="nav-link d-flex" asp-area="" asp-controller="Account" asp-action="Index">
+                    <img src="~/icons/back.svg" class="icons" />
+                    Back
+                </a>
+            </button>
+        </div>
+    </div>
+    <p class="required-message required">Please fill-up the Mandatory Fields</p>
+    <form asp-action="EditAccount" method="post" id="form">
+        <input asp-for="Id" type="hidden"/>
+        <div asp-validation-summary="ModelOnly" class="row text-danger" role="alert"></div>
+        <p class="form-header">Name Details :</p>
+        <div class="row row-cols-3">
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="FirstName" class="control-label required" id="floatingInput"></label>
+                    <input asp-for="FirstName" class="form-control" for="floatingInput" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="MiddleName" class="control-label required"></label>
+                    <input asp-for="MiddleName" class="form-control" />
+                    <span asp-validation-for="MiddleName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="LastName" class="control-labe required"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="ExtensionName" class="control-label"></label>
+                    <input asp-for="ExtensionName" class="form-control" />
+                    <span asp-validation-for="ExtensionName" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <p class="form-header">Account Details :</p>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="Username" class="control-label required"></label>
+                    <input asp-for="Username" class="form-control" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="NewPassword" class="control-label"></label>
+                    <input asp-for="NewPassword" class="form-control" id="PasswordField" />
+                    <span asp-validation-for="NewPassword" class="text-danger"></span>
+                </div>
+                <div class="form-check">
+                    <label asp-for="ResetPassword" class="form-check-label required" for="flexCheckDefault"></label>
+                    <input asp-for="ResetPassword" class="form-check-input" type="checkbox" value="true" id="ResetPassword" />
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="Role" class="control-label required"></label>
+                    <select asp-for="Role" class="form-select" id="SelectedRole">
+                        <option selected disabled value="">Choose...</option>
+                        @{
+                            foreach (var roles in Enum.GetNames<UserRoles>())
+                            {
+                                                        <option value="@roles">@roles</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="ExtensionName" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row form-footer">
+            <div class="col d-flex justify-content-center">
+                <input id="submitBtn" type="button" value="Update" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="changeUserToAdmin" tabindex="-1" aria-labelledby="changeUserToAdminLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changeUserToAdminLabel">Confirm to make this User Admin?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row rows-cols-1">
+                    <div class="col-12 mb-1">
+                        Doing so will give this user unrestricted access to the system.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="confirmSubmit">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () { 
+            var AlreadyAdmin = false;
+            var RoleFieldChange = false;
+
+            if ($('#SelectedRole').val() == "Admin") {
+                AlreadyAdmin = true;
+            }
+
+            function toggleNewPasswordField(flag) {
+                $("#PasswordField").prop("disabled", flag);
+            }
+            toggleNewPasswordField(true)
+
+            $('#ResetPassword').click(function () {
+                toggleNewPasswordField(!this.checked);
+                $("#PasswordField").val("");
+                $("#PasswordField-error").text("");
+            });
+
+            $('#SelectedRole').on('change', function () {
+                if (!AlreadyAdmin) RoleFieldChange = true;
+            });
+
+            $('#submitBtn').click(function () {
+                if (RoleFieldChange == true && AlreadyAdmin == false && $('#SelectedRole').val() == "Admin")
+                    $('#changeUserToAdmin').modal('show');
+                else
+                    $('#form').submit();
+            });
+
+            $('#confirmSubmit').click(function () {
+                $('#form').submit();
+            });
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

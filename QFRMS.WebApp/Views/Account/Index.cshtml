@@ -1,0 +1,71 @@
+﻿@using QFRMS.Services.Utils
+@using QFRMS.Data.ViewModels
+@using QFRMS.Data.DTOs
+
+@model PaginatedList<UsersViewModel>
+@{
+    ViewData["Title"] = "Users";
+}
+<div class="page-header small mx-auto">
+    <div class="header">
+        <img src="~/icons/users.svg" class="header-icon" />
+        <h2 class="header-title">USERS</h2>
+    </div>
+    <div class="header-hr"></div>
+</div>
+<div class="page-body small mx-auto">
+    <div class="row body-header">
+        <div class="col-8 search-container">
+            <div class="row">
+                <div class="type-group col">
+                    <label class="search-label">Search in Column: </label>
+                    <select id="SearchType" class="form-select search-type no-glow">
+                        <option value="Name" selected>Full Name</option>
+                        <option value="UserName">Username</option>
+                        <option value="Role">Role</option>
+                    </select>
+                </div>
+                <div class="field-group col">
+                    <label class="search-label">Search: </label>
+                    <input type="text" class="form-group search-input no-glow" id="SearchField">
+                </div>
+                <div class="search-group col">
+                    <button class="btn btn-primary no-glow" value="Search" id="Search">
+                        <img src="~/icons/search.svg" class="icons" />
+                        Search
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-4 d-flex justify-content-end align-items-end">
+            <button class="btn btn-primary no-glow">
+                <a class="nav-link d-flex" asp-area="" asp-controller="Account" asp-action="Register">
+                    <img src="~/icons/add.svg" class="icons" />
+                    Create User
+                    </a>
+            </button>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="table-header col-5" scope="col">Full Name</th>
+                <th class="table-header col-auto" scope="col">Username</th>
+                <th class="table-header col-2" scope="col">Role</th>
+                <th class="table-header col-auto" scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody id="UserList">
+            <partial name="_UserList" model="Model" />
+        </tbody>
+    </table>
+    <div class="row body-footer">
+        <div class="col">
+            <input class="item-index no-glow" type="text" id="ItemIndex" readonly />
+        </div>
+        <div class="col pagination-btn">
+            <a class="btn left-btn disabled" id="PreviousBtn">&#10094;&#10094;</a>
+            <a class="btn right-btn disabled" id="NextBtn">&#10095;&#10095;</a>
+        </div>
+    </div>
+</div>
