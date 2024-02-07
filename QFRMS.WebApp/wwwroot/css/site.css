@@ -559,3 +559,36 @@ td {
     text-align: left;
     font-size: 1rem;
 }
+
+/* About CSS */
+
+.institute-name {
+    text-align: center;
+    margin: 1rem 0.5rem 0.5rem 0.5rem;
+    font-weight: 600;
+    font-size: 1.4rem;
+}
+
+.institute-detail.view {
+    padding: 0.9rem 0.5rem !important;
+}
+
+.institute-detail {
+    text-align: left;
+    display: inline-flex;
+    align-items: center;
+    font-size: 1rem;
+}
+
+    .institute-detail > h6 {
+        margin-bottom: 0;
+        margin-right: 0.25rem;
+        font-weight: 600;
+    }
+
+    .institute-detail > .form-control {
+        font-size: 1rem;
+        padding: 0.375rem;
+        flex-grow: 1;
+        width: unset;
+    }

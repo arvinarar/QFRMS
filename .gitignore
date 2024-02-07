@@ -195,10 +195,13 @@ $RECYCLE.BIN/
 *wpftmp.*
 
 node_modules
-*/src/*/Scripts/**/*.js
-*/src/*/Scripts/**/*.js.map
-Basecode.WebApp/appsettings.json
-Basecode.WebApp/appsettings.json
-Basecode.WebApp/appsettings.json
-Basecode.WebApp/appsettings.Development.json
-/Basecode.WebApp/wwwroot/applicants/resume/resume.pdf
+*.vsidx
+*.v2
+*.dll
+QFRMS.Data/bin/
+QFRMS.Data/obj/
+QFRMS.Services/bin/
+QFRMS.Services/obj/
+QFRMS.WebApp/bin/
+QFRMS.WebApp/obj/
+QFRMS.WebApp/Logs/

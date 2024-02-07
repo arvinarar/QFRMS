@@ -1,0 +1,86 @@
+﻿@using QFRMS.Data.Models
+@model InstituteInfo
+
+@{
+    ViewData["Title"] = "About";
+}
+<div class="page-header small mx-auto">
+    <div class="header">
+        <img src="~/icons/settings.svg" class="header-icon" />
+        <h2 class="header-title">ABOUT</h2>
+    </div>
+    <div class="header-hr"></div>
+</div>
+<div class="page-body small mx-auto">
+    <div class="row body-header title">
+        <div class="col d-flex justify-content-start align-items-center">
+            <h4 class="body-title">Institute Detail</h4>
+        </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            @if (User.IsInRole("Admin"))
+            {
+                <button class="btn btn-back no-glow">
+                    <a class="nav-link d-flex" asp-area="" asp-controller="Home" asp-action="About">
+                        <img src="~/icons/back.svg" class="icons" />
+                        Edit
+                    </a>
+                </button>
+            }
+        </div>
+    </div>
+    <h4 class="institute-name">@Model.Name</h4>
+    <form asp-action="UpdateInstituteInfo" method="post" id="form">
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="Name" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="row text-danger" role="alert"></div>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td class="col-5 institute-detail">
+                        <h6>Address :</h6> <input asp-for="Address" class="form-control w-25" />
+                    </td>
+                    <td class="col-7 institute-detail">
+                        <h6>Telephone # :</h6> <input asp-for="TelephoneNo" class="form-control w-25" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-5 institute-detail">
+                        <h6>Region :</h6> <input asp-for="Region" class="form-control w-25" />
+                    </td>
+                    <td class="col-7 institute-detail">
+                        <h6>Email Address :</h6> <input asp-for="Email" class="form-control w-25" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-5 institute-detail">
+                        <h6>Province :</h6> <input asp-for="Province" class="form-control w-25" />
+                    </td>
+                    <td class="col-7 institute-detail">
+                        <h6>Focal Person :</h6> <input asp-for="FocalPerson" class="form-control w-25" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-5 institute-detail">
+                        <h6>Congressional District :</h6> <input asp-for="District" class="form-control w-25" />
+                    </td>
+                    <td class="col-7 institute-detail">
+                        <h6>Type of Provider :</h6> <input asp-for="ProviderType" class="form-control w-25" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-5 institute-detail">
+                        <h6>Municipality/City :</h6> <input asp-for="City" class="form-control w-25" />
+                    </td>
+                    <td class="col-7 institute-detail">
+                        <h6>Classification of Provider :</h6> <input asp-for="ProviderClassification" class="form-control w-25" />
+                    </td>
+                </tr>
+            </tbody>    
+        </table>
+        <div class="row form-footer mt-3 mb-2">
+            <div class="col d-flex justify-content-center">
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
