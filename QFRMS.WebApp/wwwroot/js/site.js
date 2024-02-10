@@ -4,6 +4,9 @@
 // Write your JavaScript code.
 $(document).ready(function () {
 
+    //Enable Tooltip everywhere
+    $('[data-toggle="tooltip"]').tooltip()
+
     //AJAX Search and Pagination Script
     function RefreshPaginationElements() {
         if ($('#PrevFlag').val() == "False") {
@@ -47,7 +50,7 @@ $(document).ready(function () {
                 data: { "searchType": searchType, "searchInput": searchInput },
                 async: true,
                 success: function (data) {
-                    $("#UserList").html(data);
+                    $("#TableList").html(data);
                     RefreshPaginationElements();
                 }
             });
@@ -64,7 +67,7 @@ $(document).ready(function () {
             data: { "searchType": searchType, "searchInput": searchInput },
             async: true,
             success: function (data) {
-                $("#UserList").html(data);
+                $("#TableList").html(data);
                 RefreshPaginationElements();
             }
         });
@@ -81,7 +84,7 @@ $(document).ready(function () {
             data: { "searchType": searchType, "searchInput": searchInput },
             async: true,
             success: function (data) {
-                $("#UserList").html(data);
+                $("#TableList").html(data);
                 RefreshPaginationElements();
             }
         });

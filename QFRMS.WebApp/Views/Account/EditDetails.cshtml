@@ -15,6 +15,14 @@
         <div class="col d-flex justify-content-start align-items-center">
             <h4 class="body-title">Edit User Details</h4>
         </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            <button class="btn btn-back no-glow">
+                <a class="nav-link d-flex" asp-area="" asp-controller="Account" asp-action="Details">
+                    <img src="~/icons/back.svg" class="icons" />
+                    Back
+                </a>
+            </button>
+        </div>
     </div>
     <div class="page-body-main">
         <p class="required-message mb-4">Contact Admin to make changes to your name and role.</p>
@@ -69,8 +77,7 @@
             </div>
             <div class="row form-footer">
                 <div class="col d-flex justify-content-center">
-                    <input type="submit" value="Save Changes" class="btn btn-primary me-3" />
-                    <a class="btn btn-back" asp-area="" asp-controller="Account" asp-action="Details">Cancel</a>
+                    <input type="submit" value="Save Changes" class="btn btn-primary" />
                 </div>
             </div>
         </form>

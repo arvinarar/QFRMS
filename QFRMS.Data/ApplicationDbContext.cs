@@ -16,6 +16,8 @@ namespace QFRMS.Data
 
         public DbSet<InstituteInfo> InstituteInfo { get; set; }
 
+        public DbSet<Course> Courses { get; set; }
+
 
         //Seed Database
         protected override void OnModelCreating(ModelBuilder builder)

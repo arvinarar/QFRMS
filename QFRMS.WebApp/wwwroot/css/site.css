@@ -10,6 +10,12 @@
     font-style: italic;
 }
 
+@media (max-width: 1200px) {
+    html {
+        font-size: 0.8rem !important;
+    }
+}
+
 a {
     text-decoration: none !important;
 }
@@ -107,6 +113,11 @@ body {
         border-color: #D2E151;
     }
 
+.btn.disabled {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
 .no-glow:focus,
 .no-glow:active {
     box-shadow: none !important;
@@ -123,6 +134,10 @@ body {
     border-color: #156736;
 }
 
+.control-label {
+    font-weight: bold;
+}
+
 .form-check-input:checked {
     background-color: #156736;
     border-color: #156736;
@@ -131,6 +146,17 @@ body {
 .validation-summary-errors {
     margin: 1rem 0 0 1rem;
     font-size: 1rem;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance: textfield; /* Firefox */
 }
 
 /* Navbar CSS */
@@ -157,7 +183,7 @@ body {
 }
 
 .navbar-text {
-    height: 60px;
+    height: 3.75rem;
 }
 
 .nav-link {
@@ -215,7 +241,7 @@ body {
 }
 
 .dropdown-toggle {
-    height: 54.38px;
+    height: 3.45rem;
     padding: 0px;
     color: inherit;
     font-size: 1.25rem;
@@ -296,12 +322,12 @@ body {
 /* Page Header CSS */
 
 .page-header {
-    max-width: 768px;
-}
-
-.page-header.small {
     margin-bottom: 1rem;
+    
 }
+    .page-header.small {
+        max-width: 768px;
+    }
 
 .header {
     display: inline-flex;
@@ -374,7 +400,7 @@ th, td {
 td {
     height: 100%;
     vertical-align: middle;
-    white-space: normal;
+    white-space: nowrap;
     word-wrap: break-word;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -475,6 +501,7 @@ td {
 /* Search Container */
 .search-container {
     display: inline-flex;
+    justify-content: center;
 }
 
 .type-group,
@@ -592,3 +619,9 @@ td {
         flex-grow: 1;
         width: unset;
     }
+
+/*Course CSS */
+.COPRNo {
+    color: #DF2B55;
+    font-size: 0.9rem;
+}

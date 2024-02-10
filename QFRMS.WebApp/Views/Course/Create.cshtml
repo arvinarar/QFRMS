@@ -1,0 +1,108 @@
+﻿@using QFRMS.Data.Models
+@model Course
+@{
+    ViewData["Title"] = "Create Course";
+}
+<div class="page-header mx-auto">
+    <div class="header">
+        <img src="~/icons/building.svg" class="header-icon" />
+        <h2 class="header-title">COURSES</h2>
+    </div>
+    <div class="header-hr"></div>
+</div>
+<h2 class="page-banner">CREATE COURSE</h2>
+<div class="page-body mx-auto">
+    <div class="row body-header title">
+        <div class="col d-flex justify-content-start align-items-center">
+            <h4 class="body-title">Course Detail</h4>
+        </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            <button class="btn btn-back no-glow">
+                <a class="nav-link d-flex" asp-area="" asp-controller="Course" asp-action="Index">
+                    <img src="~/icons/back.svg" class="icons" />
+                    Back
+                </a>
+            </button>
+        </div>
+    </div>
+    <p class="required-message required">Please fill-up the Mandatory Fields</p>
+    <form asp-action="Create" method="post" id="form">
+        <input asp-for="Id" type="hidden" value="placeholderId"/>
+        <div asp-validation-summary="ModelOnly" class="row text-danger" role="alert"></div>
+        <div class="row">
+            <div class="col-8">
+                <div class="form-group">
+                    <label asp-for="ProgramTitle" class="control-label required"></label>
+                    <input asp-for="ProgramTitle" class="form-control" for="floatingInput" />
+                    <span asp-validation-for="ProgramTitle" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label asp-for="COPRNo" class="control-label required"></label>
+                    <input asp-for="COPRNo" class="form-control" />
+                    <span asp-validation-for="COPRNo" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-5">
+                <div class="form-group">
+                    <label asp-for="Sector" class="control-label required"></label>
+                    <input asp-for="Sector" class="form-control" />
+                    <span asp-validation-for="Sector" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-5">
+                <div class="form-group">
+                    <label asp-for="DeliveryMode" class="control-label required"></label>
+                    <input asp-for="DeliveryMode" class="form-control" />
+                    <span asp-validation-for="DeliveryMode" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <label asp-for="Status" class="control-label required"></label>
+                    <input asp-for="Status" class="form-control" />
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-5">
+                <div class="form-group">
+                    <label asp-for="ScholarshipType" class="control-label required"></label>
+                    <input asp-for="ScholarshipType" class="form-control" />
+                    <span asp-validation-for="ScholarshipType" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-5">
+                <div class="form-group">
+                    <label asp-for="ClientClassification" class="control-label required"></label>
+                    <input asp-for="ClientClassification" class="form-control" />
+                    <span asp-validation-for="ClientClassification" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <label asp-for="Duration" class="control-label required"></label>
+                    <small class="form-text text-muted fst-italic">in-hours</small>
+                    <input asp-for="Duration" class="form-control" />
+                    <span asp-validation-for="Duration" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row form-footer">
+            <div class="col footer-left">
+                <input type="submit" value="Register" class="btn btn-primary" />
+            </div>
+            <div class="col footer-right">
+                <input type="reset" value="Reset" class="btn btn-warning" />
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

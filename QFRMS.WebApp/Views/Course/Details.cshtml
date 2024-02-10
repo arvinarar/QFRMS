@@ -1,0 +1,88 @@
+﻿@using QFRMS.Data.ViewModels
+@model CourseDetailViewModel
+@{
+    ViewData["Title"] = "Course Details";
+}
+<div class="page-header mx-auto">
+    <div class="header">
+        <img src="~/icons/building.svg" class="header-icon" />
+        <h2 class="header-title">COURSES</h2>
+    </div>
+    <div class="header-hr"></div>
+</div>
+<div class="page-body mx-auto">
+    <div class="row body-header title">
+        <div class="col-auto d-flex justify-content-start align-items-center me-3">
+            <h4 class="body-title">Course Detail</h4>
+        </div>
+        <div class="col-auto d-flex justify-content-start align-items-center">
+            @if(User.IsInRole("Admin"))
+            {
+                <button class="btn btn-primary no-glow">
+                    <a class="nav-link d-flex" asp-area="" asp-controller="Course" asp-action="Edit" asp-route-id="@Model.Id">
+                        <img src="~/icons/edit.svg" class="icons" />
+                        Edit
+                    </a>
+                </button>
+                @if(Model.CanBeDeleted)
+                {
+                    <a class="nav-link btn btn-danger no-glow ms-2" asp-controller="Account" asp-action="DeleteModal" asp-route-id="@Model.Id"
+                       data-bs-toggle="modal" data-bs-target="deleteCourse">
+                        Delete
+                    </a>
+                    @* <partial name="_DeleteModal" model="Model" /> *@
+                }
+                else
+                {
+                    <span class="d-inline-block ms-2" data-toggle="tooltip" data-placement="top" title="You can delete Courses with existing Batches!">
+                        <button type="button" class="nav-link btn btn-danger disabled no-glow">
+                            Delete
+                        </button>
+                    </span>
+                }
+            }
+        </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            <button class="btn btn-back no-glow">
+                <a class="nav-link d-flex" asp-area="" asp-controller="Course" asp-action="Index">
+                    <img src="~/icons/back.svg" class="icons" />
+                    Back
+                </a>
+            </button>
+        </div>
+    </div>
+    <table class="table">
+        <tbody>
+            <tr>
+                <td class="col-9 user-detail">
+                    <h6>Program Title :</h6> @Model.ProgramTitle
+                </td>
+                <td class="col-3 user-detail">
+                    <h6>COPR # : </h6> @Model.COPRNo
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5 user-detail">
+                    <h6>Sector : </h6> @Model.Sector
+                </td>
+                <td class="col-4 user-detail">
+                    <h6>Delivery Mode :</h6> @Model.DeliveryMode
+                </td>
+                <td class="col-3 user-detail">
+                    <h6>Status :</h6> @Model.Status
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5 user-detail">
+                    <h6>Type of Scholarship : </h6> @Model.ScholarshipType
+                </td>
+                <td class="col-4 user-detail">
+                    <h6>Delivery Mode :</h6> @Model.ClientClassification
+                </td>
+                <td class="col-3 user-detail">
+                    <h6>Status :</h6> @($"{Model.Duration} Hours")
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

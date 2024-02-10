@@ -15,19 +15,21 @@
 </div>
 <div class="page-body small mx-auto">
     <div class="row body-header">
-        <div class="col-8 search-container">
+        <div class="col-8 search-container justify-content-start">
             <div class="row">
                 <div class="type-group col">
-                    <label class="search-label">Search in Column: </label>
-                    <select id="SearchType" class="form-select search-type no-glow">
-                        <option value="Name" selected>Full Name</option>
-                        <option value="UserName">Username</option>
-                        <option value="Role">Role</option>
-                    </select>
+                    <label class="search-label">Search in Column: 
+                        <select id="SearchType" class="form-select search-type no-glow">
+                            <option value="Name" selected>Full Name</option>
+                            <option value="UserName">Username</option>
+                            <option value="Role">Role</option>
+                        </select>
+                    </label>
                 </div>
                 <div class="field-group col">
-                    <label class="search-label">Search: </label>
-                    <input type="text" class="form-group search-input no-glow" id="SearchField">
+                    <label class="search-label">Search: 
+                        <input type="text" class="form-group search-input no-glow" id="SearchField">
+                    </label>
                 </div>
                 <div class="search-group col">
                     <button class="btn btn-primary no-glow" value="Search" id="Search">
@@ -55,7 +57,7 @@
                 <th class="table-header col-auto" scope="col">Action</th>
             </tr>
         </thead>
-        <tbody id="UserList">
+        <tbody id="TableList">
             <partial name="_UserList" model="Model" />
         </tbody>
     </table>

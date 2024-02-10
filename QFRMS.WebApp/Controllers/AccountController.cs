@@ -233,7 +233,7 @@ namespace QFRMS.WebApp.Controllers
                     var result = await _signInManager.PasswordSignInAsync(model.Username!, model.Password!, false, false);
                     if (result.Succeeded)
                     {
-                        _fileLogger.Log($"{LogType.UserType}, Sign-In, {model.Username}", true);
+                        _fileLogger.Log($"{LogType.UserType}, Sign-In, {User.Identity?.Name}", true);
                         return RedirectToAction("Index", "Home");
                     }
                     ModelState.AddModelError("", "Invalid Username or Pasword");
