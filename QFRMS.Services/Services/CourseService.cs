@@ -65,7 +65,7 @@ namespace QFRMS.Services.Services
                     CanBeDeleted = false
                 };
                 //Check if can be deleted
-                detail.CanBeDeleted = false;
+                detail.CanBeDeleted = true;
                 return detail;
             } 
             catch (Exception ex)

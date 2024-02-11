@@ -5,7 +5,6 @@ using QFRMS.Data.ViewModels;
 using QFRMS.Services.Interfaces;
 using QFRMS.Services.Utils;
 using static QFRMS.Data.Constants;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace QFRMS.WebApp.Controllers
 {
@@ -125,6 +124,42 @@ namespace QFRMS.WebApp.Controllers
             catch (Exception ex)
             {
                 _logger.LogError("{datetime}: Failed to get Course Edit View, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                return RedirectToAction("Index", "Course");
+            }
+        }
+
+        public async Task<IActionResult> DeleteModal(string? Id)
+        {
+            try
+            {
+                if(string.IsNullOrEmpty(Id))
+                {
+                    return RedirectToAction("Details", "Course");
+                }
+                var data = await _courseService.GetCourseDetailAsync(Id);
+                return PartialView("_DeleteModal", data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{datetime}: Failed to load Delete Modal. Error: {message}", DateTime.Now.ToString(), ex.Message);
+                return RedirectToAction("Details", "Course");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteCourse(CourseDetailViewModel model)
+        {
+            try
+            {
+                var work = await _courseService.DeleteCourseAsync(model.Id);
+                if (!work.Result) throw new Exception("Work Failed");
+
+                _fileLogger.Log($"{LogType.DatabaseType}, {work.Message} \'{model?.ProgramTitle}\', {User.Identity?.Name}", true);
+                return RedirectToAction("Index", "Course");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{datetime}: Failed to delete. Error: {message}", DateTime.Now.ToString(), ex.Message);
                 return RedirectToAction("Index", "Course");
             }
         }

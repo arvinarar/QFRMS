@@ -4,7 +4,7 @@ namespace QFRMS.Data.Models
 {
     public class InstituteInfo
     {
-        public  required string Id { get; set; }
+        public required string Id { get; set; }
         public required string Name { get; set; }
         public required string Address { get; set; }
         public required string Region { get; set; }

@@ -26,11 +26,11 @@
                 </button>
                 @if(Model.CanBeDeleted)
                 {
-                    <a class="nav-link btn btn-danger no-glow ms-2" asp-controller="Account" asp-action="DeleteModal" asp-route-id="@Model.Id"
-                       data-bs-toggle="modal" data-bs-target="deleteCourse">
+                    <a class="nav-link btn btn-danger no-glow ms-2" asp-controller="Course" asp-action="DeleteModal" asp-route-id="@Model.Id"
+                       data-bs-toggle="modal" data-bs-target="#deleteCourse">
                         Delete
                     </a>
-                    @* <partial name="_DeleteModal" model="Model" /> *@
+                    <partial name="_DeleteModal" model="Model" />
                 }
                 else
                 {

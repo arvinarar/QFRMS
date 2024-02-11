@@ -80,7 +80,7 @@
                         @if(signInUser != "Guest")
                         {
                             <li class="nav-item dropdown">
-                                <button class="btn nav-link dropdown-toggle @(activeUrl == "Details" || activeUrl == "EditDetails" ? "nav-dropdown-selected" : "")" id="SystemDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Account</button>
+                                <button class="btn nav-link dropdown-toggle @(urlSegments[0] == "Account" && activeUrl == "Details" || activeUrl == "EditDetails" ? "nav-dropdown-selected" : "")" id="SystemDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Account</button>
                                 <div class="dropdown-menu" aria-labelledby="SystemDropdown">
                                     <div class="dropdown-divider mt-0"></div>
                                     <a class="dropdown-item nav-link" asp-area="" asp-controller="Account" asp-action="Details">Manage</a>
