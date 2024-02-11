@@ -159,6 +159,26 @@ input[type=number] {
     -moz-appearance: textfield; /* Firefox */
 }
 
+/* Memo Modal iframe css */
+.modal-dialog.memoModal {
+    width: 51.3rem;
+    max-width: 51.3rem;
+    height: 58.5rem;
+}
+
+
+.modal-body.memoModal {
+    padding: 0 0 0.3rem 0;
+    width: 51.3rem;
+    height: 58.5rem;
+}
+
+.memo-modal-montainer {
+    width: 51.1rem;
+    height: 58.15rem;
+    overflow: hidden !important;
+    border: none;
+}
 /* Navbar CSS */
 .QF_logo {
     height: 9.375rem;
@@ -624,4 +644,17 @@ td {
 .COPRNo {
     color: #DF2B55;
     font-size: 0.9rem;
+}
+
+/* Memo CSS */
+.memo-name {
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 1.4rem;
+    text-decoration:underline !important;
+    color: #C9DB2C;
+}
+
+.user-detail.memo {
+    border: none;
 }

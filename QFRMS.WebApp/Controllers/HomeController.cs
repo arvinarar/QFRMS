@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using QFRMS.Data.Models;
 using QFRMS.Services.Interfaces;
 using QFRMS.Services.Utils;
@@ -14,18 +15,36 @@ namespace QFRMS.WebApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IAboutService _aboutService;
+        private readonly IMemoService _memoService;
         private readonly IFileLogger _fileLogger;
 
-        public HomeController(ILogger<HomeController> logger, IAboutService aboutService, IFileLogger fileLogger)
+        public HomeController(ILogger<HomeController> logger, IAboutService aboutService, IMemoService memoService, IFileLogger fileLogger)
         {
             _logger = logger;
             _aboutService = aboutService;
+            _memoService = memoService;
             _fileLogger = fileLogger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            try
+            {
+                if (User.Identity == null) throw new Exception("No User Logged in at the moment.");
+                var Name = User.Identity.Name ?? throw new Exception("User has no name, wut.");
+                var HasSeenMemo = await _memoService.HasSeenMemo(Name);
+                if (HasSeenMemo)
+                    ViewData["HasSeenMemo"] = true;
+                else
+                    ViewData["HasSeenMemo"] = false;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{datetime}: Failed to get neccesary data for Memo notification: {message}", DateTime.Now.ToString(), ex.Message);
+                ViewData["HasSeenMemo"] = true;
+                return View();
+            }
         }
 
         public IActionResult Privacy()

@@ -21,11 +21,13 @@ builder.Services.AddScoped<Work, Work>();
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
 builder.Services.AddScoped<IAboutService, AboutService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IMemoService, MemoService>();
 
 //Add Scoped Repository Dependencies
 builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
 builder.Services.AddScoped<IAboutRepository, AboutRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+builder.Services.AddScoped<IMemoRepository, MemoRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
