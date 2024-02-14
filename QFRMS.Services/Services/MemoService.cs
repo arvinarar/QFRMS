@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using QFRMS.Data.DTOs;
 using QFRMS.Data.Interfaces;
@@ -12,13 +13,15 @@ namespace QFRMS.Services.Services
     {
         private readonly IMemoRepository _repository;
         private readonly IUserAccountRepository _userAccountRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger<MemoService> _logger;
         private readonly Work _work = new Work();
 
-        public MemoService(IMemoRepository repository, IUserAccountRepository userAccountRepository, ILogger<MemoService> logger)
+        public MemoService(IMemoRepository repository, IUserAccountRepository userAccountRepository, IWebHostEnvironment webHostEnvironment, ILogger<MemoService> logger)
         {
             _repository = repository;
             _userAccountRepository = userAccountRepository;
+            _webHostEnvironment = webHostEnvironment;
             _logger = logger;
         }
 
@@ -39,18 +42,21 @@ namespace QFRMS.Services.Services
         {
             try
             {
+                string UploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "PDFs");
+                string pdfName = "Memo.pdf";
+                string FilePath = Path.Combine(UploadFolder, pdfName);
+
+                using (var stream = new FileStream(FilePath, FileMode.Create))
+                {
+                    await model.File.CopyToAsync(stream);
+                }
+
                 PDF memo = new()
                 {
                     Id = Guid.NewGuid().ToString(),
                     Name = model.File.FileName,
-                    File = []
+                    FilePath = pdfName
                 };
-
-                using(var stream = new MemoryStream())
-                {
-                    model.File.CopyTo(stream);
-                    memo.File = stream.ToArray();
-                }
 
                 var work = await _repository.UploadMemo(memo);
                 if(!work) throw new Exception("Work failed");
@@ -75,7 +81,9 @@ namespace QFRMS.Services.Services
             try
             {
                 var pdf = await _repository.GetMemo();
-                return new FileContentResult(pdf.File, "application/pdf");
+                string path = Path.Combine(_webHostEnvironment.WebRootPath, "PDFs");
+                string pdfPath = Path.Combine(path, pdf.FilePath);
+                return new FileContentResult(File.ReadAllBytes(pdfPath), "application/pdf");
             }
             catch(Exception)
             {

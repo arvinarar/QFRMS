@@ -10,6 +10,6 @@ namespace QFRMS.Data.Models
     {
         public required string Id { get; set; }
         public required string Name { get; set; }
-        public required byte[] File {  get; set; }
+        public required string FilePath {  get; set; }
     }
 }
