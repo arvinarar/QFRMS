@@ -11,10 +11,12 @@ using Microsoft.AspNetCore.Identity;
 using QFRMS.Data.ViewModels;
 using QFRMS.Data.DTOs;
 using static QFRMS.Data.Enums.Enums;
+using static QFRMS.Data.Enums.EnumHelper;
 using static QFRMS.Data.Constants;
 using QFRMS.Services.Utils;
 using System.Data;
 using QFRMS.Data;
+using QFRMS.Data.Enums;
 
 namespace QFRMS.Services.Services
 {
@@ -212,7 +214,7 @@ namespace QFRMS.Services.Services
                     LastName = model.LastName,
                     ExtensionName = model.ExtensionName,
                 };
-                var role = _roleManager.FindByNameAsync(model.userRoles.ToString()).Result
+                var role = _roleManager.FindByNameAsync(GetEnumDescription(model.userRoles)).Result
                     ?? throw new Exception("Role not Found");
                 var createUser = await _userManager.CreateAsync(user, model.Password!);
                 _ = await _userManager.AddToRoleAsync(user, role.Name!);

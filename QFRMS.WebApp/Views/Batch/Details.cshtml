@@ -1,41 +1,41 @@
 ﻿@using QFRMS.Data.ViewModels
-@model CourseDetailViewModel
+@model BatchDetailViewModel
 @{
-    ViewData["Title"] = "Course Details";
+    ViewData["Title"] = "Batch Details";
 }
-<input type="hidden" id="CourseId" value="@Model.Id" />
+<input type="hidden" id="BatchId" value="@Model.Id" />
 <div class="page-header mx-auto">
     <div class="header">
         <img src="~/icons/building.svg" class="header-icon" />
-        <h2 class="header-title">COURSES</h2>
+        <h2 class="header-title">BATCH</h2>
     </div>
     <div class="header-hr"></div>
 </div>
 <div class="page-body mx-auto">
     <div class="row body-header title">
         <div class="col-auto d-flex justify-content-start align-items-center me-3">
-            <h4 class="body-title">Course Detail</h4>
+            <h4 class="body-title">Batch Detail</h4>
         </div>
         <div class="col-auto d-flex justify-content-start align-items-center">
             @if(User.IsInRole("Admin"))
             {
                 <button class="btn btn-primary no-glow">
-                    <a class="nav-link d-flex" asp-area="" asp-controller="Course" asp-action="Edit" asp-route-id="@Model.Id">
+                    <a class="nav-link d-flex" asp-area="" asp-controller="Batch" asp-action="Edit" asp-route-Id="@Model.Id" asp-route-FromCoursePage="@(Model.CourseId != null)">
                         <img src="~/icons/edit.svg" class="icons" />
                         Edit
                     </a>
                 </button>
                 @if(Model.CanBeDeleted)
                 {
-                    <a class="nav-link btn btn-danger no-glow ms-2" asp-controller="Course" asp-action="DeleteModal" asp-route-id="@Model.Id"
-                       data-bs-toggle="modal" data-bs-target="#deleteCourse">
+                    <a class="nav-link btn btn-danger no-glow ms-2" asp-controller="Batch" asp-action="DeleteModal" asp-route-Id="@Model.Id"
+                       data-bs-toggle="modal" data-bs-target="#deleteBatch">
                         Delete
                     </a>
                     <partial name="_DeleteModal" model="Model" />
                 }
                 else
                 {
-                    <span class="d-inline-block ms-2" data-toggle="tooltip" data-placement="top" title="You can't delete Courses that still has Batches!">
+                    <span class="d-inline-block ms-2" data-toggle="tooltip" data-placement="top" title="You can't delete Batch that has students enrolled!">
                         <button type="button" class="nav-link btn btn-danger disabled no-glow">
                             Delete
                         </button>
@@ -45,50 +45,83 @@
         </div>
         <div class="col d-flex justify-content-end align-items-center">
             <button class="btn btn-back no-glow">
-                <a class="nav-link d-flex" asp-area="" asp-controller="Course" asp-action="Index">
-                    <img src="~/icons/back.svg" class="icons" />
-                    Back
-                </a>
+                @if(Model.CourseId != null)
+                {
+                    <a class="nav-link d-flex" asp-area="" asp-controller="Course" asp-action="Details" asp-route-Id="@Model.CourseId">
+                        <img src="~/icons/back.svg" class="icons" />
+                        Back
+                    </a>
+                }
+                else
+                {
+                    <a class="nav-link d-flex" asp-area="" asp-controller="Batch" asp-action="Index">
+                        <img src="~/icons/back.svg" class="icons" />
+                        Back
+                    </a>
+                }
             </button>
         </div>
     </div>
     <table class="table">
         <tbody>
             <tr>
-                <td class="col-9 course-detail">
+                <td class="col-8half course-detail">
                     <h6>Program Title :</h6> @Model.ProgramTitle
                 </td>
-                <td class="col-3 course-detail">
-                    <h6>COPR # : </h6> <span class="COPRNo">@Model.COPRNo</span>
+                <td class="col-3half course-detail">
+                    <h6>RQM Code : </h6> <span class="RQMNo">@Model.RQMCode</span>
                 </td>
             </tr>
             <tr>
-                <td class="col-5 course-detail">
-                    <h6>Sector : </h6> @Model.Sector
+                <td class="col-5 course-detail ">
+                    <h6>Trainor : </h6> @Model.TrainorName
                 </td>
-                <td class="col-4 course-detail">
-                    <h6>Delivery Mode :</h6> @Model.DeliveryMode
+                <td class="col-3half course-detail">
+                    <h6>Session :</h6> @Model.Session
                 </td>
-                <td class="col-3 course-detail">
-                    <h6>Status :</h6> @Model.Status
+                <td class="col-3half course-detail">
+                    <h6>Learning Mode :</h6> @Model.LearningMode
                 </td>
             </tr>
             <tr>
-                <td class="col-5 course-detail">
-                    <h6>Type of Scholarship : </h6> @Model.ScholarshipType
+                <td class="col-8half course-detail">
+                    <h6>Learning Delivery : </h6> @Model.LearningDelivery
                 </td>
-                <td class="col-4 course-detail">
-                    <h6>Classifications of Clients :</h6> @Model.ClientClassification
-                </td>
-                <td class="col-3 course-detail">
-                    <h6>Status :</h6> @($"{Model.Duration} Hours")
+                <td class="col-3half course-detail">
+                    <h6>Schedule :</h6> @Model.Schedule
                 </td>
             </tr>
         </tbody>
     </table>
+    @if ((User.IsInRole("Registrar") && Model.CertificatesId != null) || User.IsInRole("Admin"))
+    {
+        <div class="attached-documents-container">
+            <div class="course-detail">
+                <h6>Attached Document/s :</h6>
+            </div>
+            <div class="d-flex mt-2">
+                @if (Model.NTPId != null && User.IsInRole("Admin"))
+                {
+                    <a class="attached-document-btn" target="_blank"
+                       asp-area="" asp-controller="Batch" asp-action="GetDocument" asp-route-Id="@Model.NTPId">
+                        <img src="~/icons/pdf.svg" class="pdf-icon" />
+                        NTP
+                    </a>
+                }
+                @if(Model.CertificatesId != null)
+                {
+                    <a class="attached-document-btn" target="_blank"
+                       asp-area="" asp-controller="Batch" asp-action="GetDocument" asp-route-Id="@Model.CertificatesId">
+                        <img src="~/icons/pdf.svg" class="pdf-icon" />
+                        Certificates
+                    </a>
+                }
+            </div>
+        </div>
+    }
 </div>
 
-<div class="page-body mx-auto mt-3">
+@* <div class="page-body mx-auto mt-3">
     <div class="row body-header">
         <div class="col-3 d-flex justify-content-start align-items-end">
             <h4 class="header-title">List of Batches</h4>
@@ -157,10 +190,10 @@
             <a class="btn right-btn disabled" id="BatchNextBtn">&#10095;&#10095;</a>
         </div>
     </div>
-</div>
+</div> *@
 
 @section Scripts {
-    <script>
+    @* <script>
         $(document).ready(function () {
             // On Page Load
             var batchpathname = "/Batch/GetBatchList";
@@ -294,5 +327,5 @@
                 });
             });
         });
-    </script>
+    </script> *@
 }

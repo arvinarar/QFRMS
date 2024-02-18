@@ -19,7 +19,7 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            var hasSeenMemo = @((bool)ViewData["HasSeenMemo"] ? "true" : "false");
+            var hasSeenMemo = @((bool)ViewData["HasSeenMemo"] ? "true" : "false" ?? "true");
             if (hasSeenMemo == false) {
                 $.ajax({
                     type: "Get",

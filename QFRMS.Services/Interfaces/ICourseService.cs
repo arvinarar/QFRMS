@@ -18,5 +18,6 @@ namespace QFRMS.Services.Interfaces
         public Task<Work> AddCourseAsync(Course model);
         public Task<Work> EditCourseAsync(Course model);
         public Task<Work> DeleteCourseAsync(string Id);
+        public Task<string> GetCourseDurationAsync(string Id);
     }
 }

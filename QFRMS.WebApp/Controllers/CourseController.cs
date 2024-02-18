@@ -62,6 +62,21 @@ namespace QFRMS.WebApp.Controllers
             }
         }
 
+        // GET : GetCourseDuration
+        public async Task<string> GetCourseDuration(string courseId)
+        {
+            try
+            {
+                var data = await _courseService.GetCourseDurationAsync(courseId);
+                return data;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{datetime}: Failed to get Course Duration, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                return "--";
+            }
+        }
+
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {

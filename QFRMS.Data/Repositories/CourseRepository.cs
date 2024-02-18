@@ -59,7 +59,7 @@ namespace QFRMS.Data.Repositories
         {
             try
             {
-                await _context.AddAsync(model);
+                await _context.Courses.AddAsync(model);
                 await _context.SaveChangesAsync();
                 return true;
             } 

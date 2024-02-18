@@ -1,0 +1,296 @@
+﻿@using QFRMS.Data.DTOs
+@using static QFRMS.Data.Enums.EnumHelper;
+@model UpdateBatch
+@{
+    ViewData["Title"] = "Update Batch";
+}
+<div class="page-header mx-auto">
+    <div class="header">
+        <img src="~/icons/building.svg" class="header-icon" />
+        <h2 class="header-title">BATCH</h2>
+    </div>
+    <div class="header-hr"></div>
+</div>
+<h2 class="page-banner">UPDATE BATCH</h2>
+<div class="page-body mx-auto">
+    <div class="row body-header title">
+        <div class="col d-flex justify-content-start align-items-center">
+            <h4 class="body-title">Batch Detail</h4>
+            <span class="required-message required">Please fill-up the Mandatory Fields</span>
+        </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            <button class="btn btn-back no-glow">
+                @if(Model.FromCoursePage)
+                {
+                    <a class="nav-link d-flex" asp-area="" asp-controller="Batch" asp-action="Details" asp-route-Id="@Model.Id" asp-route-FromCoursePage="@true">
+                        <img src="~/icons/back.svg" class="icons" />
+                        Back
+                    </a>
+                }
+                else
+                {
+                    <a class="nav-link d-flex" asp-area="" asp-controller="Batch" asp-action="Details" asp-route-Id="@Model.Id">
+                        <img src="~/icons/back.svg" class="icons" />
+                        Back
+                    </a>
+                }
+            </button>
+        </div>
+    </div>
+    <form asp-action="UpdateBatch" enctype="multipart/form-data" method="post" id="form" class="form">
+        <input asp-for="Id" type="hidden" value="@Model.Id" />
+        <input asp-for="FromCoursePage" type="hidden" value="@Model.FromCoursePage" />
+        <input asp-for="NTPId" type="hidden" value="@Model.NTPId" />
+        <input asp-for="CertificatesId" type="hidden" value="@Model.CertificatesId" />
+        <div asp-validation-summary="ModelOnly" class="row text-danger" role="alert"></div>
+        <div class="row mt-2">
+            <div class="col-8 pe-0">
+                <div class="form-group">
+                    <label asp-for="CourseId" class="control-label required"></label>
+                    <select asp-for="CourseId" class="form-select">
+                        @if(Model.CourseList != null)
+                        {   
+                            <option selected disabled value="">Choose...</option>
+                            foreach(var course in Model.CourseList)
+                            {
+                                <option value="@course.CourseId">@course.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <span asp-validation-for="CourseId" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label asp-for="TrainorId" class="control-label required"></label>
+                    <select asp-for="TrainorId" class="form-select">
+                        @if (Model.TrainorList != null)
+                        {
+                            <option selected disabled value="">Choose...</option>
+                            foreach (var trainor in Model.TrainorList)
+                            {
+                                <option value="@trainor.TrainorId">@trainor.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <span asp-validation-for="TrainorId" class="row text-center text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4 pe-0">
+                <div class="form-group">
+                    <label asp-for="LearningDelivery" class="control-label required"></label>
+                    <select asp-for="LearningDelivery" class="form-select">
+                        <option selected disabled value="">Choose...</option>
+                        @{
+                            foreach(var LD in Enum.GetValues<LearningDelivery>())
+                            {
+                                                    <option value="@LD">@GetEnumDescription(LD)</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <span asp-validation-for="LearningDelivery" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-4 pe-0">
+                <div class="form-group">
+                    <label asp-for="LearningMode" class="control-label required"></label>
+                    <select asp-for="LearningMode" class="form-select">
+                        <option selected disabled value="">Choose...</option>
+                        @{
+                            foreach (var LM in Enum.GetValues<LearningMode>())
+                            {
+                                                    <option value="@LM">@GetEnumDescription(LM)</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <span asp-validation-for="LearningMode" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label asp-for="RQMNumber" class="control-label required"></label>
+                    <input asp-for="RQMNumber" class="form-control" style='text-transform:uppercase' readonly />
+                </div>
+                <span asp-validation-for="RQMNumber" class="row text-center text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label asp-for="DateStart" class="control-label required"></label>
+                    <input asp-for="DateStart" class="form-control datetimepicker" />
+                    <label asp-for="DateEnd" class="control-label ms-3 me-2"></label>
+                    <input asp-for="DateEnd" class="form-control datetimepicker" />
+                    <label asp-for="TimeStart" class="control-label ms-3 me-2"></label>
+                    <input asp-for="TimeStart" type="time" class="form-control datetimepicker" />
+                    <label asp-for="TimeEnd" class="control-label ms-3 me-2"></label>
+                    <input asp-for="TimeEnd" type="time" class="form-control datetimepicker" />
+                    <h6 class="control-label ms-3 me-2 mb-0">Duration :</h6> <span id="Duration">--</span>&nbsp;Hours
+                </div>
+                <span asp-validation-for="DateStart" class="row text-center text-danger"></span>
+                <span asp-validation-for="DateEnd" class="row text-center text-danger"></span>
+                <span asp-validation-for="TimeStart" class="row text-center text-danger"></span>
+                <span asp-validation-for="TimeEnd" class="row text-center text-danger"></span>
+            </div>
+        </div>
+        <h4 class="body-title body-header mt-3">Deployment Detail</h4>
+        <div class="row mt-2">
+            <div class="col-6">
+                <div class="form-group">
+                    <label asp-for="EmployerName" class="control-label me-2"></label>
+                    <input asp-for="EmployerName" class="form-control" />
+                </div>
+                <span asp-validation-for="EmployerName" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label asp-for="EmployerAddress" class="control-label me-2"></label>
+                    <input asp-for="EmployerAddress" class="form-control" />
+                </div>
+                <span asp-validation-for="EmployerAddress" class="row text-center text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <div class="form-group">
+                    <label asp-for="Occupation" class="control-label me-2"></label>
+                    <input asp-for="Occupation" class="form-control" />
+                </div>
+                <span asp-validation-for="Occupation" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label asp-for="Classification" class="control-label me-2"></label>
+                    <input asp-for="Classification" class="form-control" />
+                </div>
+                <span asp-validation-for="Classification" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label asp-for="Salary" class="control-label me-2"></label>
+                    <input asp-for="Salary" class="form-control" />
+                </div>
+                <span asp-validation-for="Salary" class="row text-center text-danger"></span>
+            </div>
+        </div>
+        <h4 class="body-title body-header mt-3">Attached Documents</h4>
+        <div class="row mt-2">
+            <div class="col-4half">
+                <div class="form-group">
+                    <label asp-for="NTP" class="control-label me-2" id="NTPLabel"></label>
+                    <input asp-for="NTP" class="form-control" accept=".pdf" />
+                </div>
+                <span class="row text-center text-danger">
+                    <span id="NTPValidator"></span>
+                </span>
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-end checkbox">
+                        <input asp-for="OverwriteNTP" />
+                        <label asp-for="OverwriteNTP" class="control-label ms-2"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1half">
+                <h6 class="control-label mb-0">&nbsp;Current: </h6>
+                <a class="attached-document-btn mx-0" target="_blank"
+                   asp-area="" asp-controller="Batch" asp-action="GetDocument" asp-route-Id="@Model.NTPId">
+                    <img src="~/icons/pdf.svg" class="pdf-icon" />
+                    NTP
+                </a>
+            </div>
+            <div class="col-4half">
+                <div class="form-group">
+                    <label asp-for="Certificates" class="control-label me-2"></label>
+                    <input asp-for="Certificates" class="form-control" accept=".pdf" />
+                </div>
+                <span asp-validation-for="Certificates" class="row text-center text-danger"></span>
+                @if (Model.CertificatesId != null)
+                {
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-end checkbox">
+                            <input asp-for="OverwriteCertificate" />
+                            <label asp-for="OverwriteCertificate" class="control-label ms-2" id="OverwriteCertificateLabel"></label>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-1half">
+                @if (Model.CertificatesId != null)
+                {
+                    <h6 class="control-label mb-0">&nbsp;Current: </h6>
+                    <a class="attached-document-btn mx-0" target="_blank"
+                       asp-area="" asp-controller="Batch" asp-action="GetDocument" asp-route-Id="@Model.CertificatesId">
+                        <img src="~/icons/pdf.svg" class="pdf-icon" />
+                        Certificates
+                    </a>
+                }
+            </div>
+        </div>
+        <div class="row form-footer">
+            <div class="col d-flex justify-content-center">
+                <input id="submitBtn" type="button" value="Update" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            function GetDuration() {
+                var courseId = $('#CourseId').find(":selected").val();
+
+                $.ajax({
+                    url: "/Course/GetCourseDuration",
+                    type: "post",
+                    data: { "courseId": courseId },
+                    async: true,
+                    success: function (data) {
+                        $("#Duration").html(data);
+                    }
+                });
+            }
+
+            GetDuration();
+
+            $('#CourseId').on('change', function () {
+                GetDuration();
+            });
+
+            $('#OverwriteNTP').on('change', function () {
+                if (this.checked) {
+                    $('#NTPLabel').addClass('required');
+                    $('#NTPLabel').removeClass('me-2');
+                    $('#NTP').attr('data-val', 'true');
+                    $('#NTP').attr('data-val-required', 'Notice to Proceed is required');
+                }
+                else {
+                    $('#NTPLabel').addClass('me-2');
+                    $('#NTPLabel').removeClass('required');
+                    $('#NTP').removeAttr('data-val');
+                    $('#NTP').removeAttr('data-val-required');
+                    $('#NTPValidator').text('');
+                }
+            });
+
+            $('#submitBtn').click(function () {
+                if ($('#OverwriteNTP').is(':checked') && $('#NTP').get(0).files.length == 0)
+                    $('#NTPValidator').text('Notice to Proceed is required');
+                else
+                    $('#form').submit();
+            });
+
+            $('#Certificates').on('change', function () {
+                if ($("#Certificates").get(0).files.length == 0) {
+                    $("#OverwriteCertificateLabel").text("Delete Current Certificates?");
+                }
+                else {
+                    $("#OverwriteCertificateLabel").text("Replace Current Certificates?");
+                }
+            });
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

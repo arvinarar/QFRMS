@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using QFRMS.Data.Interfaces;
 using QFRMS.Data.Models;
 using QFRMS.Data.ViewModels;
@@ -15,12 +16,14 @@ namespace QFRMS.Services.Services
     public class CourseService : ICourseService
     {
         private readonly ICourseRepository _repository;
+        private readonly IBatchRepository _batchRepository;
         private readonly ILogger<CourseService> _logger;
         private readonly Work _work = new Work();
 
-        public CourseService(ICourseRepository repository, ILogger<CourseService> logger)
+        public CourseService(ICourseRepository repository, IBatchRepository batchRepository, ILogger<CourseService> logger)
         {
             _repository = repository;
+            _batchRepository = batchRepository;
             _logger = logger;
         }
 
@@ -65,7 +68,10 @@ namespace QFRMS.Services.Services
                     CanBeDeleted = false
                 };
                 //Check if can be deleted
-                detail.CanBeDeleted = true;
+                var hasBatches = await _batchRepository.GetBatchesFromCourse(Id);
+                var count = await hasBatches.CountAsync();
+                detail.CanBeDeleted = !(count > 0);
+
                 return detail;
             } 
             catch (Exception ex)
@@ -154,9 +160,8 @@ namespace QFRMS.Services.Services
                          }
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} SearchCourseListAsync Failed: {message}", DateTime.Now.ToString(), ex.Message);
                 throw;
             }
         }
@@ -178,7 +183,7 @@ namespace QFRMS.Services.Services
             {
                 _work.ErrorCode = ex.Message;
                 _work.Time = DateTime.Now;
-                _work.Message = "Couldn't Create course";
+                _work.Message = "Couldn't Create Course";
                 _work.Result = false;
                 return _work;
             }
@@ -211,6 +216,10 @@ namespace QFRMS.Services.Services
             try
             {
                 //Check if it still has batches
+                var hasBatches = await _batchRepository.GetBatchesFromCourse(Id);
+                var count = await hasBatches.CountAsync();
+                if (count > 0) throw new Exception("Course still has batches");
+
                 var work = await _repository.DeleteCourseAsync(Id);
                 if (!work) throw new Exception("Work failed");
 
@@ -226,6 +235,19 @@ namespace QFRMS.Services.Services
                 _work.Message = "Couldn't Delete course";
                 _work.Result = false;
                 return _work;
+            }
+        }
+
+        public async Task<string> GetCourseDurationAsync(string Id)
+        {
+            try
+            {
+                var course = await _repository.GetCourseAsync(Id);
+                return course != null ? course.Duration.ToString() : "--";
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
     }

@@ -45,5 +45,7 @@ namespace QFRMS.Data.Models
         [DisplayName("Type of Scholarship : ")]
         [Required(ErrorMessage = "Type of Scholarship is required")]
         public required string ScholarshipType { get; set; }
+
+        public ICollection<Batch>? Batches { get; } = new List<Batch>();
     }
 }

@@ -1,9 +1,81 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using QFRMS.Services.Utils
+@using QFRMS.Data.ViewModels
+
+@model PaginatedList<BatchListViewModel>
 @{
     ViewData["Title"] = "Batches";
 }
-<div class="text-center">
-    <h1 class="display-4">Batch</h1>
+<div class="page-header mx-auto">
+    <div class="header">
+        <img src="~/icons/building.svg" class="header-icon" />
+        <h2 class="header-title">BATCH</h2>
+    </div>
+    <div class="header-hr"></div>
+</div>
+<div class="page-body mx-auto">
+    <div class="row body-header">
+        <div class="col-3 d-flex justify-content-start align-items-end">
+            <h4 class="header-title">List of Batches</h4>
+        </div>
+        <div class="col-6 search-container">
+            <div class="row">
+                <div class="type-group col">
+                    <label class="search-label">
+                        Search in Column:
+                        <select id="SearchType" class="form-select search-type no-glow">
+                            <option value="RQM" selected>RQM Code</option>
+                            <option value="Title">Program Title</option>
+                            <option value="Trainor">Trainor</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="field-group col">
+                    <label class="search-label">
+                        Search:
+                        <input type="text" class="form-group search-input no-glow" id="SearchField">
+                    </label>
+                </div>
+                <div class="search-group col">
+                    <button class="btn btn-primary no-glow" value="Search" id="Search">
+                        <img src="~/icons/search.svg" class="icons" />
+                        Search
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 d-flex justify-content-end align-items-end">
+            @if (User.IsInRole("Admin"))
+            {
+                <button class="btn btn-primary no-glow">
+                    <a class="nav-link d-flex" asp-area="" asp-controller="Batch" asp-action="Create">
+                        <img src="~/icons/add.svg" class="icons" />
+                        Add Batch
+                    </a>
+                </button>
+            }
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="table-header col-2half" scope="col">RQM Code</th>
+                <th class="table-header col-4half" scope="col">Program Title</th>
+                <th class="table-header col-2" scope="col">Trainor</th>
+                <th class="table-header col-2" scope="col">COPR #</th>
+                <th class="table-header col-1" scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody id="TableList">
+            <partial name="_BatchList" model="Model" />
+        </tbody>
+    </table>
+    <div class="row body-footer">
+        <div class="col">
+            <input class="item-index no-glow" type="text" id="ItemIndex" readonly />
+        </div>
+        <div class="col pagination-btn">
+            <a class="btn left-btn disabled" id="PreviousBtn">&#10094;&#10094;</a>
+            <a class="btn right-btn disabled" id="NextBtn">&#10095;&#10095;</a>
+        </div>
+    </div>
 </div>

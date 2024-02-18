@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QFRMS.Data;
 
@@ -11,9 +12,11 @@ using QFRMS.Data;
 namespace QFRMS.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240216152745_ModifyBatchTable")]
+    partial class ModifyBatchTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -197,9 +200,6 @@ namespace QFRMS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CertificatesId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("CourseId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -211,10 +211,6 @@ namespace QFRMS.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LearningDelivery")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LearningMode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -237,8 +233,6 @@ namespace QFRMS.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CertificatesId");
 
                     b.HasIndex("CourseId");
 
@@ -632,10 +626,6 @@ namespace QFRMS.Data.Migrations
 
             modelBuilder.Entity("QFRMS.Data.Models.Batch", b =>
                 {
-                    b.HasOne("QFRMS.Data.Models.PDF", "Certificates")
-                        .WithMany()
-                        .HasForeignKey("CertificatesId");
-
                     b.HasOne("QFRMS.Data.Models.Course", "Course")
                         .WithMany("Batches")
                         .HasForeignKey("CourseId")
@@ -645,7 +635,7 @@ namespace QFRMS.Data.Migrations
                     b.HasOne("QFRMS.Data.Models.PDF", "NTP")
                         .WithMany()
                         .HasForeignKey("NTPId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("QFRMS.Data.Models.UserAccount", "Trainor")
@@ -653,8 +643,6 @@ namespace QFRMS.Data.Migrations
                         .HasForeignKey("TrainorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Certificates");
 
                     b.Navigation("Course");
 

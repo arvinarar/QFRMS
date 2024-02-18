@@ -83,6 +83,7 @@ namespace QFRMS.Services.Services
                 var pdf = await _repository.GetMemo();
                 string path = Path.Combine(_webHostEnvironment.WebRootPath, "PDFs");
                 string pdfPath = Path.Combine(path, pdf.FilePath);
+                if(!File.Exists(pdfPath)) throw new NullReferenceException("File Not Found");
                 return new FileContentResult(File.ReadAllBytes(pdfPath), "application/pdf");
             }
             catch(Exception)

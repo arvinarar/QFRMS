@@ -18,6 +18,10 @@ namespace QFRMS.Data
 
         public DbSet<Course> Courses { get; set; }
 
+        public DbSet<Batch> Batches { get; set; }
+
+        public DbSet<DeploymentDetails> DeploymentDetails { get; set; }
+
         public DbSet<Memo> Memo { get; set; }
 
         public DbSet<SeenUsers> SeenUsers { get; set; }

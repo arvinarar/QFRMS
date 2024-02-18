@@ -16,6 +16,127 @@
     }
 }
 
+/* Custom Bootstrap grid */
+.col-half {
+    flex: 0 0 auto;
+    width: 4.16%;
+}
+
+.col-1 {
+    flex: 0 0 auto;
+    width: 8.33%;
+}
+
+.col-1half {
+    flex: 0 0 auto;
+    width: 12.5%;
+}
+
+.col-2 {
+    flex: 0 0 auto;
+    width: 16.67%;
+}
+
+.col-2half {
+    flex: 0 0 auto;
+    width: 20.83%;
+}
+
+.col-3 {
+    flex: 0 0 auto;
+    width: 25%;
+}
+
+.col-3half {
+    flex: 0 0 auto;
+    width: 29.16%;
+}
+
+.col-4 {
+    flex: 0 0 auto;
+    width: 33.33%;
+}
+
+.col-4half {
+    flex: 0 0 auto;
+    width: 37.5%;
+}
+
+.col-5 {
+    flex: 0 0 auto;
+    width: 41.66%;
+}
+
+.col-5half {
+    flex: 0 0 auto;
+    width: 45.83%;
+}
+
+.col-6 {
+    flex: 0 0 auto;
+    width: 50%;
+}
+
+.col-6half {
+    flex: 0 0 auto;
+    width: 54.16%;
+}
+
+.col-7 {
+    flex: 0 0 auto;
+    width: 58.33%;
+}
+
+.col-7half {
+    flex: 0 0 auto;
+    width: 62.5%;
+}
+
+.col-8 {
+    flex: 0 0 auto;
+    width: 66.66%;
+}
+
+.col-8half {
+    flex: 0 0 auto;
+    width: 70.83%;
+}
+
+.col-9 {
+    flex: 0 0 auto;
+    width: 75%;
+}
+
+.col-9half {
+    flex: 0 0 auto;
+    width: 79.16%;
+}
+
+.col-10 {
+    flex: 0 0 auto;
+    width: 83.33%;
+}
+
+.col-10half {
+    flex: 0 0 auto;
+    width: 87.5%;
+}
+
+.col-11 {
+    flex: 0 0 auto;
+    width: 91.66%;
+}
+
+.col-11half {
+    flex: 0 0 auto;
+    width: 95.83%;
+}
+
+.col-12 {
+    flex: 0 0 auto;
+    width: 100%;
+}
+
 a {
     text-decoration: none !important;
 }
@@ -130,12 +251,65 @@ body {
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(21, 103, 54, 0.6);
 }
 
-.form-control {
-    border-color: #156736;
+/* Form CSS */
+
+.form .control-label {
+    width: max-content;
+    white-space: nowrap;
+}
+
+.form .required:after {
+    padding: 0 0.3rem 0 0;
+}
+
+.form .form-group {
+    width: 100%;
+    display: inline-flex;
+}
+
+.required-message {
+    margin: .5rem 0 0.5rem 1rem;
+    font-style: italic;
+}
+
+.required:after {
+    content: " *";
+    color: red;
 }
 
 .control-label {
     font-weight: bold;
+}
+
+.form-header {
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #156736;
+    border-bottom: .1rem solid #156736;
+}
+
+.form-group {
+    margin: 0.25rem 0 0.5rem 0;
+    align-items: center;
+}
+
+.form-control {
+    border-color: #156736;
+    padding: 0.375rem 0.5rem;
+}
+
+.form-select {
+    white-space: nowrap;
+    word-wrap: break-word;
+    text-overflow: ellipsis;
+    border-color: #156736;
+    padding: 0.375rem 2rem 0.375rem 0.5rem;
+}
+
+.control-label, .form-select, .form-control, .required-message {
+    font-size: 0.95rem;
 }
 
 .form-check-input:checked {
@@ -146,6 +320,15 @@ body {
 .validation-summary-errors {
     margin: 1rem 0 0 1rem;
     font-size: 1rem;
+}
+
+.datetimepicker {
+    text-align: center;
+    width: fit-content;
+}
+
+.ui-datepicker .ui-widget-content {
+    background: #C9DB2C;
 }
 
 input::-webkit-outer-spin-button,
@@ -407,10 +590,18 @@ input[type=number] {
     font-size: 1rem;
 }
 
+.form-left {
+    border-right: 1px solid #ced4da;
+}
+.form-left, .form-right {
+    margin-top: 0.5rem;
+}
+
 .table {
     margin-top: .5rem;
     margin-bottom: 0;
     table-layout: fixed;
+    font-size: 0.9rem;
 }
 
 th, td {
@@ -447,19 +638,6 @@ td {
     color: #156736;
 }
 
-.form-header {
-    margin-top: 1rem;
-    margin-bottom: 0.3rem;
-    font-size: 1rem;
-    font-weight: 700;
-    color: #156736;
-    border-bottom: .1rem solid #156736;
-}
-
-.form-group {
-    margin: 0.25rem 0 0.5rem 0;
-}
-
 .form-footer {
     margin-top: 1.5rem;
 }
@@ -474,12 +652,6 @@ td {
     padding-left: 0.25rem;
     display: flex;
     justify-content: start;
-}
-
-.required-message {
-    margin: .5rem 0;
-    font-style: italic;
-    font-size: 1rem;
 }
 
 .body-footer {
@@ -500,23 +672,40 @@ td {
     justify-content: end;
 }
 
-.required:after {
-    content: " *";
-    color: red;
-}
-
 .user-detail {
     text-align: left;
     font-size: 1rem;
     display: inline-flex;
 }
 
-.user-detail h6 {
-    margin-bottom: 0;
-    font-weight: bold;
-    margin-right: .3rem;
-    line-height: 1.4rem;
+    .user-detail h6 {
+        margin-bottom: 0;
+        font-weight: bold;
+        margin-right: .3rem;
+        line-height: 1.4rem;
+    }
+
+    .user-detail.duration {
+        justify-content: end;
+        width: 100%;
+        margin-top: 1rem;
+        margin-bottom: 0.3rem;
+        border-bottom: 0.1rem solid #156736;
+    }
+
+.course-detail {
+    text-align: left;
+    font-size: 0.95rem;
+    display: inline-flex;
 }
+
+    .course-detail h6 {
+        font-size: 0.95rem;
+        margin-bottom: 0;
+        font-weight: bold;
+        margin-right: .3rem;
+        line-height: 1.4rem;
+    }
 
 /* Search Container */
 .search-container {
@@ -641,9 +830,8 @@ td {
     }
 
 /*Course CSS */
-.COPRNo {
+.COPRNo, .RQMNo {
     color: #DF2B55;
-    font-size: 0.9rem;
 }
 
 /* Memo CSS */
@@ -657,4 +845,41 @@ td {
 
 .user-detail.memo {
     border: none;
+}
+
+/* Attached Documents CSS */
+
+.attached-documents-container {
+    padding: 0.5rem;
+}
+
+.attached-document-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 0.15rem solid #156736;
+    padding: 0.8rem 0 0.5rem 0;
+    border-radius: 0.3rem;
+    color: #156736;
+    height: 5rem;
+    width: 5rem;
+    margin-left: 0.5rem;
+    font-size: 0.65rem;
+    font-style: italic;
+    font-weight: bold;
+    text-align: center;
+}
+
+    .attached-document-btn:hover,
+    .attached-document-btn:active,
+    .attached-document-btn:focus {
+        color: #156736;
+        border-color: #156736;
+    }
+
+.pdf-icon {
+    color: #156736;
+    height: 2rem;
+    width: 2rem;
+    margin: 0 auto 0.25rem auto;
 }
