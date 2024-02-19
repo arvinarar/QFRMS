@@ -29,7 +29,7 @@ namespace QFRMS.WebApp.Controllers
         {
             try
             {
-                var data = await _batchService.GetBatchListAsync();
+                var data = await _batchService.GetBatchListAsync(User.IsInRole("Trainor") ? User.Identity!.Name : null);
                 return View(await PaginatedList<BatchListViewModel>.CreateAsync(data, pageNumber ?? 1, _pageSize));
             }
             catch (Exception ex)
@@ -47,12 +47,12 @@ namespace QFRMS.WebApp.Controllers
             {
                 if (string.IsNullOrEmpty(searchType) || string.IsNullOrEmpty(searchInput))
                 {
-                    var result = _batchService.GetBatchListAsync().Result;
+                    var result = _batchService.GetBatchListAsync(User.IsInRole("Trainor") ? User.Identity!.Name : null).Result;
                     return PartialView("_BatchList", PaginatedList<BatchListViewModel>.CreateAsync(result, pageNumber ?? 1, 10).Result);
                 }
                 else
                 {
-                    var result = _batchService.SearchBatchListAsync(searchType, searchInput).Result;
+                    var result = _batchService.SearchBatchListAsync(searchType, searchInput, User.IsInRole("Trainor") ? User.Identity!.Name : null).Result;
                     return PartialView("_BatchList", PaginatedList<BatchListViewModel>.CreateAsync(result, pageNumber ?? 1, 10).Result);
                 }
             }

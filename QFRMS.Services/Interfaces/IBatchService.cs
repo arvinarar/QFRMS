@@ -12,8 +12,8 @@ namespace QFRMS.Services.Interfaces
 {
     public interface IBatchService
     {
-        public Task<IQueryable<BatchListViewModel>> GetBatchListAsync();
-        public Task<IQueryable<BatchListViewModel>> SearchBatchListAsync(string searchType, string searchInput);
+        public Task<IQueryable<BatchListViewModel>> GetBatchListAsync(string? TrainorName);
+        public Task<IQueryable<BatchListViewModel>> SearchBatchListAsync(string searchType, string searchInput, string? TrainorName);
         public Task<IQueryable<BatchCourseListViewModel>> SearchBatchCourseListAsync(string courseId, string searchType, string searchInput);
         public Task<CreateBatch> GetCreateBatchDTOAsync(string? courseId);
         public Task<UpdateBatch> GetUpdateBatchDTOAsync(string Id, bool FromCoursePage = false);

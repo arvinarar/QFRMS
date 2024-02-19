@@ -87,3 +87,7 @@ body {
     white-space: nowrap;
     line-height: 60px;
 }
+
+.invalid-login * {
+    list-style-type: none;
+}

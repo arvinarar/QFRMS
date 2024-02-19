@@ -25,7 +25,10 @@
                         <select id="SearchType" class="form-select search-type no-glow">
                             <option value="RQM" selected>RQM Code</option>
                             <option value="Title">Program Title</option>
-                            <option value="Trainor">Trainor</option>
+                            @if(!User.IsInRole("Trainor"))
+                            {
+                                <option value="Trainor">Trainor</option>
+                            }
                         </select>
                     </label>
                 </div>
@@ -61,7 +64,7 @@
                 <th class="table-header col-2half" scope="col">RQM Code</th>
                 <th class="table-header col-4half" scope="col">Program Title</th>
                 <th class="table-header col-2" scope="col">Trainor</th>
-                <th class="table-header col-2" scope="col">COPR #</th>
+                <th class="table-header col-2" scope="col">Period</th>
                 <th class="table-header col-1" scope="col">Action</th>
             </tr>
         </thead>

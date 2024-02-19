@@ -34,7 +34,7 @@
                         <input asp-for="Password" class="form-control" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
-                    <div asp-validation-summary="ModelOnly"></div>
+                    <div asp-validation-summary="ModelOnly" class="row text-danger text-center invalid-login" role="alert"></div>
                     <div class="form-group d-flex justify-content-center mb-0">
                         <button type ="submit" class="btn btn-primary">Login</button>
                     </div>

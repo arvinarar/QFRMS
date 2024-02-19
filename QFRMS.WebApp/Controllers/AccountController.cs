@@ -186,7 +186,7 @@ namespace QFRMS.WebApp.Controllers
                 {
                     var work = await _userAccountService.DeleteUser(model.Id!);
                     if (!work.Result)
-                        _logger.LogError(work.Message, work.ErrorCode);
+                        _logger.LogError("Work Failed, {ErrorCode} {Message}", work.ErrorCode, work.Message);
 
                     _fileLogger.Log($"{LogType.DatabaseType}, {work.Message} \'{model?.UserName}\', {User.Identity?.Name}", true);
 

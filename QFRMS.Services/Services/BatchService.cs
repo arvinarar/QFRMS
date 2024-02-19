@@ -36,22 +36,42 @@ namespace QFRMS.Services.Services
             _logger = logger;
         }
 
-        public async Task<IQueryable<BatchListViewModel>> GetBatchListAsync()
+        public async Task<IQueryable<BatchListViewModel>> GetBatchListAsync(string? TrainorName)
         {
             try
             {
-                return await Task.FromResult(from batch in await _repository.RetrieveAllAsync()
-                                             join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
-                                             join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
-                                             orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
-                                             select new BatchListViewModel
-                                             {
-                                                 Id = batch.Id,
-                                                 RQMCode = batch.RQMNumber,
-                                                 ProgramTitle = course.ProgramTitle,
-                                                 TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
-                                                 Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
-                                             });
+                if(TrainorName.IsNullOrEmpty())
+                {
+                    return await Task.FromResult(from batch in await _repository.RetrieveAllAsync()
+                                                 join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
+                                                 join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
+                                                 orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                                                 select new BatchListViewModel
+                                                 {
+                                                     Id = batch.Id,
+                                                     RQMCode = batch.RQMNumber,
+                                                     ProgramTitle = course.ProgramTitle,
+                                                     TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                                     Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
+                                                 });
+                }
+                else
+                {
+                    return await Task.FromResult(from batch in await _repository.RetrieveAllAsync()
+                                                 join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
+                                                 join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
+                                                 where trainor.UserName == TrainorName
+                                                 orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                                                 select new BatchListViewModel
+                                                 {
+                                                     Id = batch.Id,
+                                                     RQMCode = batch.RQMNumber,
+                                                     ProgramTitle = course.ProgramTitle,
+                                                     TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                                     Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
+                                                 });
+                }
+                
             }
             catch (Exception ex)
             {
@@ -60,49 +80,20 @@ namespace QFRMS.Services.Services
             }
         }
 
-        public async Task<IQueryable<BatchListViewModel>> SearchBatchListAsync(string searchType, string searchInput)
+        public async Task<IQueryable<BatchListViewModel>> SearchBatchListAsync(string searchType, string searchInput, string? TrainorName)
         {
             try
             {
-                return searchType switch
+                if (TrainorName.IsNullOrEmpty())
                 {
-                    "RQM" => from batch in await _repository.RetrieveAllAsync()
-                             join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
-                             join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
-                             orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
-                             where batch.RQMNumber.Contains(searchInput)
-                             select new BatchListViewModel
-                             {
-                                 Id = batch.Id,
-                                 RQMCode = batch.RQMNumber,
-                                 ProgramTitle = course.ProgramTitle,
-                                 TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
-                                 Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
-                             },
-
-                    "Title" => from batch in await _repository.RetrieveAllAsync()
-                               join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
-                               join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
-                               orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
-                               where course.ProgramTitle.Contains(searchInput)
-                               select new BatchListViewModel
-                               {
-                                   Id = batch.Id,
-                                   RQMCode = batch.RQMNumber,
-                                   ProgramTitle = course.ProgramTitle,
-                                   TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
-                                   Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
-                               },
-
-                    "Trainor" => from batch in await _repository.RetrieveAllAsync()
+                    return searchType switch
+                    {
+                        "RQM" => from batch in await _repository.RetrieveAllAsync()
                                  join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
                                  join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
                                  orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
                                  where
-                                    trainor.FirstName!.Contains(searchInput) ||
-                                    trainor.MiddleName!.Contains(searchInput) ||
-                                    trainor.LastName!.Contains(searchInput) ||
-                                    trainor.ExtensionName!.Contains(searchInput)
+                                    batch.RQMNumber.Contains(searchInput)
                                  select new BatchListViewModel
                                  {
                                      Id = batch.Id,
@@ -112,19 +103,103 @@ namespace QFRMS.Services.Services
                                      Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
                                  },
 
-                    _ => from batch in await _repository.RetrieveAllAsync()
-                         join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
-                         join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
-                         orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
-                         select new BatchListViewModel
-                         {
-                             Id = batch.Id,
-                             RQMCode = batch.RQMNumber,
-                             ProgramTitle = course.ProgramTitle,
-                             TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
-                             Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
-                         }
-            };
+                        "Title" => from batch in await _repository.RetrieveAllAsync()
+                                   join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
+                                   join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
+                                   orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                                   where course.ProgramTitle.Contains(searchInput)
+                                   select new BatchListViewModel
+                                   {
+                                       Id = batch.Id,
+                                       RQMCode = batch.RQMNumber,
+                                       ProgramTitle = course.ProgramTitle,
+                                       TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                       Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
+                                   },
+
+                        "Trainor" => from batch in await _repository.RetrieveAllAsync()
+                                     join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
+                                     join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
+                                     orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                                     where
+                                        trainor.FirstName!.Contains(searchInput) ||
+                                        trainor.MiddleName!.Contains(searchInput) ||
+                                        trainor.LastName!.Contains(searchInput) ||
+                                        trainor.ExtensionName!.Contains(searchInput)
+                                     select new BatchListViewModel
+                                     {
+                                         Id = batch.Id,
+                                         RQMCode = batch.RQMNumber,
+                                         ProgramTitle = course.ProgramTitle,
+                                         TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                         Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
+                                     },
+
+                        _ => from batch in await _repository.RetrieveAllAsync()
+                             join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
+                             join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
+                             orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                             select new BatchListViewModel
+                             {
+                                 Id = batch.Id,
+                                 RQMCode = batch.RQMNumber,
+                                 ProgramTitle = course.ProgramTitle,
+                                 TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                 Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
+                             }
+                    };
+                }
+                else
+                {
+                    return searchType switch
+                    {
+                        "RQM" => from batch in await _repository.RetrieveAllAsync()
+                                 join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
+                                 join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
+                                 orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                                 where
+                                    trainor.UserName == TrainorName &&
+                                    batch.RQMNumber.Contains(searchInput)
+                                 select new BatchListViewModel
+                                 {
+                                     Id = batch.Id,
+                                     RQMCode = batch.RQMNumber,
+                                     ProgramTitle = course.ProgramTitle,
+                                     TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                     Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
+                                 },
+
+                        "Title" => from batch in await _repository.RetrieveAllAsync()
+                                   join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
+                                   join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
+                                   orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                                   where 
+                                    trainor.UserName == TrainorName &&
+                                    course.ProgramTitle.Contains(searchInput)
+                                   select new BatchListViewModel
+                                   {
+                                       Id = batch.Id,
+                                       RQMCode = batch.RQMNumber,
+                                       ProgramTitle = course.ProgramTitle,
+                                       TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                       Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
+                                   },
+
+                        _ => from batch in await _repository.RetrieveAllAsync()
+                             join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
+                             join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
+                             where trainor.UserName == TrainorName
+                             orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                             select new BatchListViewModel
+                             {
+                                 Id = batch.Id,
+                                 RQMCode = batch.RQMNumber,
+                                 ProgramTitle = course.ProgramTitle,
+                                 TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                 Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
+                             }
+                    };
+                }
             }
             catch (Exception ex)
             {
@@ -301,6 +376,14 @@ namespace QFRMS.Services.Services
                 var DateStart = batch.DateStart.ToString("MM/dd/yyyy");
                 var DateEnd = batch.DateEnd.HasValue? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA";
 
+                //Deployment Details, will not show if all fiels are empty
+                var EN = batch.DeploymentDetails!.EmployerName;
+                var EA = batch.DeploymentDetails!.EmployerAddress;
+                var Oc = batch.DeploymentDetails.Occupation;
+                var Cl = batch.DeploymentDetails.Classification;
+                var Sa = batch.DeploymentDetails.Salary;
+                bool HasDeploymentDetails = !string.IsNullOrEmpty(EN + EA + Oc + Cl + Sa);
+
                 BatchDetailViewModel detail = new()
                 {
                     Id = batch.Id,
@@ -314,6 +397,12 @@ namespace QFRMS.Services.Services
                     NTPId = batch.NTPId,
                     CertificatesId = batch.CertificatesId ?? null,
                     CanBeDeleted = false,
+                    EmployerName = EN,
+                    EmployerAddress = EA,
+                    Occupation = Oc,
+                    Classification = Cl,
+                    Salary = Sa,
+                    HasDeploymentDetail = HasDeploymentDetails
                 };
                 if(FromCoursePage) detail.CourseId = batch.CourseId;
                 //Check if can be deleted

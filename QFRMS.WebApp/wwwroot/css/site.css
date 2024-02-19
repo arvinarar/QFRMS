@@ -142,7 +142,7 @@ a {
 }
 
 html {
-    font-size: 0.938rem;
+    font-size: 0.9rem;
     position: relative;
     min-height: 100%;
 }
@@ -157,8 +157,8 @@ body {
 
 .icons {
     color: white;
-    height: 1.6rem;
-    width: 1.6rem;
+    height: 1.4rem;
+    width: 1.4rem;
     margin: auto 0.2rem auto -0.2rem;
 }
 
@@ -166,14 +166,14 @@ body {
 .btn.btn-danger,
 .btn.btn-warning {
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1rem;
     padding: 0.3rem 0.5rem;
     display: flex;
 }
 
 .btn.btn-back {
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1rem;
     padding: 0.2rem 0.35rem;
     display: flex;
 }
@@ -533,7 +533,8 @@ input[type=number] {
     }
 
 .header {
-    display: inline-flex;
+    display: flex;
+    margin-bottom: 0.15rem;
     align-items: center;
     margin-left: .4rem;
 }
@@ -629,7 +630,7 @@ td {
 }
 
     .body-header.title {
-        padding: 0.5rem 0;
+        padding: 0.3rem 0 0.45rem 0;
     }
 
 .body-title {
@@ -770,6 +771,7 @@ td {
 
 .left-btn,
 .right-btn {
+    font-size: 0.9rem;
     color: #fff;
     background-color: #156736;
     border-color: #156736;

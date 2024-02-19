@@ -17,6 +17,27 @@
             <h4 class="body-title">Batch Detail</h4>
         </div>
         <div class="col-auto d-flex justify-content-start align-items-center">
+            @if (!User.IsInRole("Trainor"))
+            {
+                @if(Model.HasDeploymentDetail)
+                {
+                    <a class="nav-link d-flex btn btn-primary no-glow me-2" data-bs-toggle="modal" data-bs-target="#deploymentDetails">
+                        <img src="~/icons/document.svg" class="icons" />
+                        Deployment Details
+                    </a>
+                    <partial name="_DeploymentDetails" model="Model" />
+                }
+                else
+                {
+                    <span class="d-inline-block me-2" data-toggle="tooltip" data-placement="top" title="Batch currently has no Deployment Details.">
+                        <button type="button" class="nav-link btn btn-danger disabled no-glow">
+                            <img src="~/icons/document.svg" class="icons" />
+                            Deployment Details
+                        </button>
+                    </span>
+                }
+                
+            }
             @if(User.IsInRole("Admin"))
             {
                 <button class="btn btn-primary no-glow">

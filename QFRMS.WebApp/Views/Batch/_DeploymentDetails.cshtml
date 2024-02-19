@@ -1,0 +1,44 @@
+﻿@using QFRMS.Services.Utils
+@using QFRMS.Data.ViewModels
+@model BatchDetailViewModel
+
+<!-- Modal -->
+<div class="modal fade" id="deploymentDetails" tabindex="-1" aria-labelledby="deploymentDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content page-body bg-white">
+            <div class="modal-header body-header">
+                <h4 class="modal-title body-title" id="deleteModalLabel">Deployment Details</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td class="col-12 course-detail">
+                            <h6>Employer Name :</h6> @Model.EmployerName
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-12 course-detail">
+                            <h6>Employer Address :</h6> @Model.EmployerAddress
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-12 course-detail">
+                            <h6>Occupation :</h6> @Model.Occupation
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-12 course-detail">
+                            <h6>Classification :</h6> @Model.Classification
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-12 course-detail">
+                            <h6>Salary:</h6> @Model.Salary
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

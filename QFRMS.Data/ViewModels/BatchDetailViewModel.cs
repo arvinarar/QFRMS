@@ -17,6 +17,12 @@ namespace QFRMS.Data.ViewModels
         public required string LearningMode { get; set; }
         public required string LearningDelivery { get; set; }
         public required string Schedule { get; set; }
+        public string? EmployerName { get; set; }
+        public string? EmployerAddress { get; set; }
+        public string? Occupation { get; set; }
+        public string? Classification { get; set; }
+        public string? Salary { get; set; }
+        public required bool HasDeploymentDetail { get; set; }
         public required string NTPId { get; set; }
         public string? CertificatesId { get; set; }
         public required bool CanBeDeleted { get; set; }
