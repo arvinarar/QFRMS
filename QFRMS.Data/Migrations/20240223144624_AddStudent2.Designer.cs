@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QFRMS.Data;
 
@@ -11,9 +12,11 @@ using QFRMS.Data;
 namespace QFRMS.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240223144624_AddStudent2")]
+    partial class AddStudent2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -322,24 +325,6 @@ namespace QFRMS.Data.Migrations
                     b.ToTable("DeploymentDetails");
                 });
 
-            modelBuilder.Entity("QFRMS.Data.Models.Grade", b =>
-                {
-                    b.Property<string>("ULI")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<decimal?>("PostTest")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
-
-                    b.Property<decimal?>("PreTest")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
-
-                    b.HasKey("ULI");
-
-                    b.ToTable("Grades");
-                });
-
             modelBuilder.Entity("QFRMS.Data.Models.InstituteInfo", b =>
                 {
                     b.Property<string>("Id")
@@ -489,8 +474,8 @@ namespace QFRMS.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(24)");
 
-                    b.Property<string>("ContactNo")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ContactNo")
+                        .HasColumnType("int");
 
                     b.Property<string>("District")
                         .HasColumnType("nvarchar(max)");
@@ -775,17 +760,6 @@ namespace QFRMS.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Batch");
-                });
-
-            modelBuilder.Entity("QFRMS.Data.Models.Grade", b =>
-                {
-                    b.HasOne("QFRMS.Data.Models.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("ULI")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("QFRMS.Data.Models.Memo", b =>

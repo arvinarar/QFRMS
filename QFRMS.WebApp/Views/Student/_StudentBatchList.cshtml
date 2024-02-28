@@ -1,0 +1,34 @@
+﻿@using QFRMS.Services.Utils
+@using QFRMS.Data.ViewModels
+@model PaginatedList<StudentListViewModel>
+@{
+    int StartIndex = ((Model.PageIndex - 1) * Model.PageSize) + 1;
+    int LastIndex = Model.PageIndex * Model.PageSize;
+    LastIndex = (LastIndex > Model.TotalItems) ? Model.TotalItems : LastIndex;
+}
+
+@* Pagination Variables to pass to JQuery *@
+<input type="hidden" id="StartIndex" value="@StartIndex" />
+<input type="hidden" id="LastIndex" value="@LastIndex" />
+<input type="hidden" id="PageIndex" value="@Model.PageIndex" />
+<input type="hidden" id="TotalItems" value="@Model.TotalItems" />
+<input type="hidden" id="PrevFlag" value="@Model.HasPreviousPage.ToString()" />
+<input type="hidden" id="NextFlag" value="@Model.HasNextPage.ToString()" />
+
+@{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td class="RQMNo">@item.ULI</td>
+            <td>@item.Name</td>
+            <td>@item.Age</td>
+            <td>@item.ContactNo</td>
+            <td>@item.Email</td>
+            <td>@item.HighestGrade</td>
+            <td>@item.Status</td>
+            <td class="action">
+                <a class="nav-link btn btn-primary no-glow" onclick="Details('@item.ULI')">Details</a>
+            </td>
+        </tr>
+    }
+}

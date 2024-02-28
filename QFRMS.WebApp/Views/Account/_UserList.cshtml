@@ -22,7 +22,7 @@
             <td>@item.FullName</td>
             <td>@item.UserName</td>
             <td>@item.Role</td>
-            <td class="action">
+            <td class="action user">
                 <a class="nav-link btn btn-primary no-glow me-1" asp-controller="Account" asp-action="EditAccount" asp-route-id="@item.Id">Edit</a>
 
                 @if (User.Identity != null && User.Identity.Name != item.UserName)

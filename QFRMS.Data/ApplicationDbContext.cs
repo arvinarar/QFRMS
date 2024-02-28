@@ -22,6 +22,9 @@ namespace QFRMS.Data
 
         public DbSet<DeploymentDetails> DeploymentDetails { get; set; }
 
+        public DbSet<Student> Students { get; set; }
+        public DbSet<Grade> Grades { get; set; }
+
         public DbSet<Memo> Memo { get; set; }
 
         public DbSet<SeenUsers> SeenUsers { get; set; }

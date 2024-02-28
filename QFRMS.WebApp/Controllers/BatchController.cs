@@ -30,13 +30,13 @@ namespace QFRMS.WebApp.Controllers
             try
             {
                 var data = await _batchService.GetBatchListAsync(User.IsInRole("Trainor") ? User.Identity!.Name : null);
-                return View(await PaginatedList<BatchListViewModel>.CreateAsync(data, pageNumber ?? 1, _pageSize));
+                return View(await PaginatedList<BatchListViewModel>.CreateAsync(data, pageNumber ?? 1, 10));
             }
             catch (Exception ex)
             {
                 _logger.LogError("{datetime}: Failed to retrieve courses. Error: {Message}", DateTime.Now.ToString(), ex.Message);
                 var dummyList = new List<BatchListViewModel>();
-                return View(await PaginatedList<BatchListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, _pageSize));
+                return View(await PaginatedList<BatchListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, 10));
             }
         }
 
@@ -181,7 +181,7 @@ namespace QFRMS.WebApp.Controllers
                     var work = await _batchService.UpdateBatchAsync(model);
                     if(!work.Result)
                     {
-                        _logger.LogError("{datetime} Method Create Failed: {errorcode}, {message}", DateTime.Now.ToString(), work.ErrorCode, work.Message);
+                        _logger.LogError("{datetime} Method Update Failed: {errorcode}, {message}", DateTime.Now.ToString(), work.ErrorCode, work.Message);
                         return RedirectToAction("Details", "Batch", new { model.Id, model.FromCoursePage });
                     }
                     _fileLogger.Log($"{LogType.DatabaseType}, {work.Message} \'{model?.RQMNumber?.ToUpperInvariant()}\', {User.Identity?.Name}", true);

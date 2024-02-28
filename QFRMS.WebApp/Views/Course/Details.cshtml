@@ -35,7 +35,7 @@
                 }
                 else
                 {
-                    <span class="d-inline-block ms-2" data-toggle="tooltip" data-placement="top" title="You can't delete Courses that still has Batches!">
+                    <span class="d-inline-block ms-2" data-toggle="tooltip" data-placement="top" title="Course still has Batch/es">
                         <button type="button" class="nav-link btn btn-danger disabled no-glow">
                             Delete
                         </button>
@@ -246,7 +246,7 @@
             $('#BatchSearchType').on('change', function () {
                 var searchType = null;
                 var searchInput = null;
-                $("#SearchField").val('');
+                $("#BatchSearchField").val('');
 
                 $.ajax({
                     url: batchpathname,

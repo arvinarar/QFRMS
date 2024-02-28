@@ -47,6 +47,8 @@ namespace QFRMS.Data.Models
         public PDF? Certificates { get; set; }
 
         public DeploymentDetails? DeploymentDetails { get; set; }
+
+        public ICollection<Student>? Students { get; } = new List<Student>();
     }
 
     public class DeploymentDetails

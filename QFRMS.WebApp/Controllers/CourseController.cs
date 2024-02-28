@@ -109,7 +109,38 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to create new Account, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _logger.LogError("{datetime}: Failed to create new Course, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                return RedirectToAction("Index", "Course");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> EditCourse(Course model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var work = await _courseService.EditCourseAsync(model);
+                    if (!work.Result)
+                    {
+                        if (work.ErrorCode == ErrorType.Argument)
+                        {
+                            ModelState.AddModelError(string.Empty, work.Message);
+                        }
+                        _logger.LogError("{datetime} Method EditCourse Failed: {errorcode}, {message}", DateTime.Now.ToString(), work.ErrorCode, work.Message);
+                        return View();
+                    }
+
+                    _fileLogger.Log($"{LogType.DatabaseType}, {work.Message} \'{model?.ProgramTitle}\', {User.Identity?.Name}", true);
+                    return RedirectToAction("Index", "Course");
+                }
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{datetime}: Failed to create new Course, Error: {message}", DateTime.Now.ToString(), ex.Message);
                 return RedirectToAction("Index", "Course");
             }
         }

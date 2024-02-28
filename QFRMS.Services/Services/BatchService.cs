@@ -23,15 +23,17 @@ namespace QFRMS.Services.Services
         private readonly IBatchRepository _repository;
         private readonly ICourseRepository _courseRepository;
         private readonly IUserAccountRepository _userRepository;
+        private readonly IStudentRepository _studentRepository;
         private readonly IPDFRepository _pdfRepository;
         private readonly ILogger<BatchService> _logger;
         private readonly Work _work = new Work();
 
-        public BatchService(IBatchRepository repository, ICourseRepository courseRepository, IUserAccountRepository userAccountRepository, IPDFRepository pdfRepository, ILogger<BatchService> logger)
+        public BatchService(IBatchRepository repository, ICourseRepository courseRepository, IUserAccountRepository userAccountRepository, IStudentRepository studentRepository, IPDFRepository pdfRepository, ILogger<BatchService> logger)
         {
             _repository = repository;
             _courseRepository = courseRepository;
             _userRepository = userAccountRepository;
+            _studentRepository = studentRepository;
             _pdfRepository = pdfRepository;
             _logger = logger;
         }
@@ -125,7 +127,7 @@ namespace QFRMS.Services.Services
                                         trainor.FirstName!.Contains(searchInput) ||
                                         trainor.MiddleName!.Contains(searchInput) ||
                                         trainor.LastName!.Contains(searchInput) ||
-                                        trainor.ExtensionName!.Contains(searchInput)
+                                        trainor.ExtensionName == searchInput
                                      select new BatchListViewModel
                                      {
                                          Id = batch.Id,
@@ -235,7 +237,7 @@ namespace QFRMS.Services.Services
                                     trainor.FirstName!.Contains(searchInput) ||
                                     trainor.MiddleName!.Contains(searchInput) ||
                                     trainor.LastName!.Contains(searchInput) ||
-                                    trainor.ExtensionName!.Contains(searchInput)
+                                    trainor.ExtensionName == searchInput
                                  select new BatchCourseListViewModel
                                  {
                                      Id = batch.Id,
@@ -406,7 +408,11 @@ namespace QFRMS.Services.Services
                 };
                 if(FromCoursePage) detail.CourseId = batch.CourseId;
                 //Check if can be deleted
-                detail.CanBeDeleted = true;
+                if (_studentRepository.RetrieveStudentsFromBatchAsync(Id).Result.Any())
+                    detail.CanBeDeleted = false;
+                else
+                    detail.CanBeDeleted = true;
+
                 return detail;
             }
             catch (Exception ex)
@@ -421,7 +427,7 @@ namespace QFRMS.Services.Services
             try
             {
                 //Check for unique RQM
-                if(model.RQMNumber == null) throw new NullReferenceException("Null RQMNumber");
+                if(model.RQMNumber == null) throw new ArgumentException("RQM Code is required");
                 string RQMCode = model.RQMNumber.ToUpperInvariant();
                 var checkifExist = await _repository.GetBatchAsync(RQMCode);
                 if (checkifExist != null) throw new ArgumentException($"Batch with RQM Code \'{RQMCode}\' already Exist");
