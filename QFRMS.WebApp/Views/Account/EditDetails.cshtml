@@ -16,19 +16,17 @@
             <h4 class="body-title">Edit User Details</h4>
         </div>
         <div class="col d-flex justify-content-end align-items-center">
-            <button class="btn btn-back no-glow">
-                <a class="nav-link d-flex" asp-area="" asp-controller="Account" asp-action="Details">
-                    <img src="~/icons/back.svg" class="icons" />
-                    Back
-                </a>
-            </button>
+            <a class="nav-link btn btn-back no-glow" asp-area="" asp-controller="Account" asp-action="Details">
+                <img src="~/icons/back.svg" class="icons" />
+                Back
+            </a>
         </div>
     </div>
     <div class="page-body-main">
         <p class="required-message mb-4">Contact Admin to make changes to your name and role.</p>
         <div class="row">
             <div class="col-6 user-detail">
-                <h6>FullName :</h6> @Model.FullName
+                <h6>Full Name :</h6> @Model.FullName
             </div>
             <div class="col-6 user-detail">
                 <h6>Role :</h6> @Model.Role

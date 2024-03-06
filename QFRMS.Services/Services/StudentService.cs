@@ -43,8 +43,8 @@ namespace QFRMS.Services.Services
                 {
                     return await Task.FromResult(from student in await _repository.RetrieveAllAsync()
                                                  orderby student.LastName, student.FirstName
-                                                 let contactNo = student.ContactNo ?? "N/A"
-                                                 let email = student.Email ?? "N/A"
+                                                 let contactNo = student.ContactNo.IsNullOrEmpty() ? "N/A" : student.ContactNo
+                                                 let email = student.Email.IsNullOrEmpty() ? "N/A" : student.Email
                                                  select new StudentListViewModel
                                                  {
                                                      ULI = student.ULI,
@@ -63,8 +63,8 @@ namespace QFRMS.Services.Services
                                                  join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
                                                  where trainor.UserName == TrainorName
                                                  orderby student.LastName, student.FirstName
-                                                 let contactNo = student.ContactNo ?? "N/A"
-                                                 let email = student.Email ?? "N/A"
+                                                 let contactNo = student.ContactNo.IsNullOrEmpty() ? "N/A" : student.ContactNo
+                                                 let email = student.Email.IsNullOrEmpty() ? "N/A" : student.Email
                                                  select new StudentListViewModel
                                                  {
                                                      ULI = student.ULI,
@@ -94,8 +94,8 @@ namespace QFRMS.Services.Services
                         "ULI" => from student in await _repository.RetrieveAllAsync()
                                  orderby student.LastName, student.FirstName
                                  where student.ULI.Contains(searchInput)
-                                 let contactNo = student.ContactNo ?? "N/A"
-                                 let email = student.Email ?? "N/A"
+                                 let contactNo = student.ContactNo.IsNullOrEmpty() ? "N/A" : student.ContactNo
+                                 let email = student.Email.IsNullOrEmpty() ? "N/A" : student.Email
                                  select new StudentListViewModel
                                  {
                                      ULI = student.ULI,
@@ -114,8 +114,8 @@ namespace QFRMS.Services.Services
                                     student.MiddleName.Contains(searchInput) ||
                                     student.LastName.Contains(searchInput) ||
                                     student.ExtensionName == searchInput
-                                  let contactNo = student.ContactNo ?? "N/A"
-                                  let email = student.Email ?? "N/A"
+                                  let contactNo = student.ContactNo.IsNullOrEmpty() ? "N/A" : student.ContactNo
+                                  let email = student.Email.IsNullOrEmpty() ? "N/A" : student.Email
                                   select new StudentListViewModel
                                   {
                                       ULI = student.ULI,
@@ -129,8 +129,8 @@ namespace QFRMS.Services.Services
 
                         _ => from student in await _repository.RetrieveAllAsync()
                              orderby student.LastName, student.FirstName
-                             let contactNo = student.ContactNo ?? "N/A"
-                             let email = student.Email ?? "N/A"
+                             let contactNo = student.ContactNo.IsNullOrEmpty() ? "N/A" : student.ContactNo
+                             let email = student.Email.IsNullOrEmpty() ? "N/A" : student.Email
                              select new StudentListViewModel
                              {
                                  ULI = student.ULI,
@@ -154,8 +154,8 @@ namespace QFRMS.Services.Services
                                  where
                                     trainor.UserName == TrainorName &&
                                     student.ULI.Contains(searchInput)
-                                 let contactNo = student.ContactNo ?? "N/A"
-                                 let email = student.Email ?? "N/A"
+                                 let contactNo = student.ContactNo.IsNullOrEmpty() ? "N/A" : student.ContactNo
+                                 let email = student.Email.IsNullOrEmpty() ? "N/A" : student.Email
                                  select new StudentListViewModel
                                  {
                                      ULI = student.ULI,
@@ -177,8 +177,8 @@ namespace QFRMS.Services.Services
                                     student.MiddleName.Contains(searchInput) ||
                                     student.LastName.Contains(searchInput) ||
                                     student.ExtensionName == searchInput
-                                  let contactNo = student.ContactNo ?? "N/A"
-                                  let email = student.Email ?? "N/A"
+                                  let contactNo = student.ContactNo.IsNullOrEmpty() ? "N/A" : student.ContactNo
+                                  let email = student.Email.IsNullOrEmpty() ? "N/A" : student.Email
                                   select new StudentListViewModel
                                   {
                                       ULI = student.ULI,
@@ -195,8 +195,8 @@ namespace QFRMS.Services.Services
                              join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
                              where trainor.UserName == TrainorName
                              orderby student.LastName, student.FirstName
-                             let contactNo = student.ContactNo ?? "N/A"
-                             let email = student.Email ?? "N/A"
+                             let contactNo = student.ContactNo.IsNullOrEmpty() ? "N/A" : student.ContactNo
+                             let email = student.Email.IsNullOrEmpty() ? "N/A" : student.Email
                              select new StudentListViewModel
                              {
                                  ULI = student.ULI,
@@ -227,8 +227,8 @@ namespace QFRMS.Services.Services
                              orderby student.LastName, student.FirstName
                              where
                                 student.ULI.Contains(searchInput)
-                             let contactNo = student.ContactNo ?? "N/A"
-                             let email = student.Email ?? "N/A"
+                             let contactNo = student.ContactNo.IsNullOrEmpty() ? "N/A" : student.ContactNo
+                             let email = student.Email.IsNullOrEmpty() ? "N/A" : student.Email
                              select new StudentListViewModel
                              {
                                  ULI = student.ULI,
@@ -247,8 +247,8 @@ namespace QFRMS.Services.Services
                                 student.MiddleName.Contains(searchInput) ||
                                 student.LastName.Contains(searchInput) ||
                                 student.ExtensionName == searchInput
-                              let contactNo = student.ContactNo ?? "N/A"
-                              let email = student.Email ?? "N/A"
+                              let contactNo = student.ContactNo.IsNullOrEmpty() ? "N/A" : student.ContactNo
+                              let email = student.Email.IsNullOrEmpty() ? "N/A" : student.Email
                               select new StudentListViewModel
                               {
                                   ULI = student.ULI,
@@ -262,8 +262,8 @@ namespace QFRMS.Services.Services
 
                     _ => from student in await _repository.RetrieveStudentsFromBatchAsync(batchId)
                          orderby student.LastName, student.FirstName
-                         let contactNo = student.ContactNo ?? "N/A"
-                         let email = student.Email ?? "N/A"
+                         let contactNo = student.ContactNo.IsNullOrEmpty() ? "N/A" : student.ContactNo
+                         let email = student.Email.IsNullOrEmpty() ? "N/A" : student.Email
                          select new StudentListViewModel
                          {
                              ULI = student.ULI,
@@ -385,7 +385,7 @@ namespace QFRMS.Services.Services
                 });
                 if(!work) throw new Exception("Work failed");
                 _work.Time = DateTime.Now;
-                _work.Message = $"Successfully Enrolled Student \'{model.FirstName} {model.MiddleName} {model.LastName} {model.ExtensionName}\'";
+                _work.Message = $"Successfully Enrolled Student \'{model.ULI}\'";
                 _work.Result = true;
                 return _work;
             }
@@ -437,7 +437,7 @@ namespace QFRMS.Services.Services
                 var work = await _repository.UpdateStudentAsync(student);
                 if (!work) throw new Exception("Work failed");
                 _work.Time = DateTime.Now;
-                _work.Message = $"Successfully Updated Student \'{model.FirstName} {model.MiddleName} {model.LastName} {model.ExtensionName}\'";
+                _work.Message = $"Successfully Updated Student \'{model.ULI}\'";
                 _work.Result = true;
                 return _work;
             }

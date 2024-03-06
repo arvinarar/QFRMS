@@ -305,7 +305,7 @@ namespace QFRMS.WebApp.Controllers
             {
                 await _signInManager.SignOutAsync();
                 _fileLogger.Log($"{LogType.UserType}, Sign-Out, {User.Identity?.Name}", true);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login", "Account");
             } 
             catch (Exception ex)
             {

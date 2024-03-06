@@ -6,6 +6,11 @@
     else if (User.IsInRole("Trainor")) signInUser = "Trainor";
 
     ViewData["Title"] = "Dashboard";
+    bool hasSeenMemo = true; // by default no memo will be shown
+    if (ViewData["HasSeenMemo"] != null)
+    {
+        hasSeenMemo = (bool)ViewData["HasSeenMemo"]!;
+    }
 }
 
 <div class="text-center">
@@ -19,7 +24,7 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            var hasSeenMemo = @((bool)ViewData["HasSeenMemo"] ? "true" : "false" ?? "true");
+            var hasSeenMemo = @(hasSeenMemo ? "true" : "false" ?? "true");
             if (hasSeenMemo == false) {
                 $.ajax({
                     type: "Get",

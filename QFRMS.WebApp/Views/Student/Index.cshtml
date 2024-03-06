@@ -47,12 +47,10 @@
         <div class="col-3 d-flex justify-content-end align-items-end">
             @if (User.IsInRole("Admin") || User.IsInRole("Registrar"))
             {
-                <button class="btn btn-primary no-glow">
-                    <a class="nav-link d-flex" asp-area="" asp-controller="Student" asp-action="Create">
-                        <img src="~/icons/add.svg" class="icons" />
-                        Enroll Student
-                    </a>
-                </button>
+                <a class="nav-link btn btn-primary no-glow" asp-area="" asp-controller="Student" asp-action="Create">
+                    <img src="~/icons/add.svg" class="icons" />
+                    Enroll Student
+                </a>
             }
         </div>
     </div>
@@ -103,8 +101,6 @@
         }
 
         jQuery(document).ready(function () {
-            //Enable Tooltip everywhere
-            $('[data-toggle="tooltip"]').tooltip()
 
             //AJAX Search and Pagination Script
             function RefreshPaginationElements() {
@@ -200,7 +196,7 @@
                     data: { "searchType": searchType, "searchInput": searchInput, "pageNumber": pageNumber },
                     async: true,
                     success: function (data) {
-                        $("#UserList").html(data);
+                        $("#TableList").html(data);
                         RefreshPaginationElements();
                     }
                 });
@@ -217,7 +213,7 @@
                     data: { "searchType": searchType, "searchInput": searchInput, "pageNumber": pageNumber },
                     async: true,
                     success: function (data) {
-                        $("#UserList").html(data);
+                        $("#TableList").html(data);
                         RefreshPaginationElements();
                     }
                 });

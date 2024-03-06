@@ -1,4 +1,5 @@
 ﻿@using QFRMS.Data.ViewModels
+@using QFRMS.Data.DTOs
 @model BatchDetailViewModel
 @{
     ViewData["Title"] = "Batch Details";
@@ -45,12 +46,10 @@
             }
             @if(User.IsInRole("Admin"))
             {
-                <button class="btn btn-primary no-glow">
-                    <a class="nav-link d-flex" asp-area="" asp-controller="Batch" asp-action="Edit" asp-route-Id="@Model.Id" asp-route-FromCoursePage="@(Model.CourseId != null)">
-                        <img src="~/icons/edit.svg" class="icons" />
-                        Edit
-                    </a>
-                </button>
+                <a class="nav-link btn btn-primary no-glow" asp-area="" asp-controller="Batch" asp-action="Edit" asp-route-Id="@Model.Id" asp-route-FromCoursePage="@(Model.CourseId != null)">
+                    <img src="~/icons/edit.svg" class="icons" />
+                    Edit
+                </a>
                 @if(Model.CanBeDeleted)
                 {
                     <a class="nav-link btn btn-danger no-glow ms-2" asp-controller="Batch" asp-action="DeleteModal" asp-route-Id="@Model.Id"
@@ -182,12 +181,25 @@
                 <img src="~/icons/document.svg" class="icons" />
                 See Grades
             </a>
-            <button class="btn btn-primary no-glow ms-2">
-                <a class="nav-link d-flex" asp-area="" asp-controller="Student" asp-action="Create" asp-route-batchId="@Model.Id" asp-route-FromCoursePage="@(Model.CourseId != null)">
-                    <img src="~/icons/add.svg" class="icons" />
-                    Enroll Student
-                </a>
-            </button>
+            @if (User.IsInRole("Admin") || User.IsInRole("Registrar"))
+            {
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle no-glow ms-2 align-items-center" type="button" id="EnrollStudentDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="~/icons/add.svg" class="icons" />
+                        Enroll Student
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="EnrollStudentDropdown">
+                        <a class="dropdown-item nav-link" asp-area="" asp-controller="Student" asp-action="Create" asp-route-batchId="@Model.Id" asp-route-FromCoursePage="@(Model.CourseId != null)">
+                            Manual Add
+                        </a>
+                        <div class="dropdown-divider w-100 mt-0"></div>
+                        <a class="dropdown-item nav-link" data-bs-toggle="modal" data-bs-target="#importSheet">
+                            From CSV
+                        </a>
+                    </div>
+                </div>
+                <partial name="_ImportSheet" model="new ImportSheet{FromCoursePage = Model.CourseId != null, BatchId = Model.Id}" />
+            }
         </div>
     </div>
     <table class="table">
@@ -249,8 +261,24 @@
             });
         }
 
-        //Search Function
         $(document).ready(function () {
+            //Import Sheet Form
+            $('#UploadField').on('change', function () {
+                if ($("#UploadField").get(0).files.length == 0) {
+                    $("#submitBtn").addClass("disabled");
+                }
+                else {
+                    $("#submitBtn").removeClass("disabled");
+                }
+
+                $('#submitBtn').click(function () {
+                    if (!$("#submitBtn").hasClass("disabled")) {
+                        $('#form').submit();
+                    }
+                });
+            });
+
+            //Search Function
             // On Page Load
             var studentpathname = "/Student/GetStudentList";
             var batchId = $('#BatchId').val();
@@ -264,13 +292,13 @@
                 async: true,
                 success: function (data) {
                     $("#TableList").html(data);
-                    StudentRefreshPaginationElements();
+                    BatchRefreshPaginationElements();
                 }
             });
 
 
             //AJAX Search and Pagination Script
-            function StudentRefreshPaginationElements() {
+            function BatchRefreshPaginationElements() {
                 if ($('#PrevFlag').val() == "False") {
                     $('#StudentPreviousBtn').removeClass("btn-success");
                     $('#StudentPreviousBtn').addClass("disabled");
@@ -296,7 +324,7 @@
                 $('#StudentItemIndex').val(string);
             }
 
-            StudentRefreshPaginationElements();
+            BatchRefreshPaginationElements();
 
             $(document).keyup(function (event) {
                 if ($("#StudentSearchField").is(":focus") && event.key == "Enter") {
@@ -310,7 +338,7 @@
                         async: true,
                         success: function (data) {
                             $("#TableList").html(data);
-                            StudentRefreshPaginationElements();
+                            BatchRefreshPaginationElements();
                         }
                     });
                 }
@@ -357,11 +385,11 @@
                 $.ajax({
                     url: studentpathname,
                     type: "post",
-                    data: { "batchId": batchId, "searchType": searchType, "searchInput": searchInput },
+                    data: { "batchId": batchId, "searchType": searchType, "searchInput": searchInput, "pageNumber": pageNumber },
                     async: true,
                     success: function (data) {
                         $("#TableList").html(data);
-                        StudentRefreshPaginationElements();
+                        BatchRefreshPaginationElements();
                     }
                 });
             });
@@ -374,11 +402,11 @@
                 $.ajax({
                     url: studentpathname,
                     type: "post",
-                    data: { "batchId": batchId, "searchType": searchType, "searchInput": searchInput },
+                    data: { "batchId": batchId, "searchType": searchType, "searchInput": searchInput, "pageNumber": pageNumber },
                     async: true,
                     success: function (data) {
                         $("#TableList").html(data);
-                        StudentRefreshPaginationElements();
+                        BatchRefreshPaginationElements();
                     }
                 });
             });

@@ -32,13 +32,13 @@ namespace QFRMS.WebApp.Controllers
             try
             {
                 var data = await _service.GetStudentListAsync(User.IsInRole("Trainor") ? User.Identity!.Name : null);
-                return View(await PaginatedList<StudentListViewModel>.CreateAsync(data, pageNumber ?? 1, _pageSize));
+                return View(await PaginatedList<StudentListViewModel>.CreateAsync(data, pageNumber ?? 1, 12));
             }
             catch (Exception ex)
             {
                 _logger.LogError("{datetime}: Failed to retrieve students. Error: {Message}", DateTime.Now.ToString(), ex.Message);
                 var dummyList = new List<StudentListViewModel>();
-                return View(await PaginatedList<StudentListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, 10));
+                return View(await PaginatedList<StudentListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, 12));
             }
         }
 
@@ -50,19 +50,19 @@ namespace QFRMS.WebApp.Controllers
                 if (string.IsNullOrEmpty(searchType) || string.IsNullOrEmpty(searchInput))
                 {
                     var result = _service.GetStudentListAsync(User.IsInRole("Trainor") ? User.Identity!.Name : null).Result;
-                    return PartialView("_StudentList", PaginatedList<StudentListViewModel>.CreateAsync(result, pageNumber ?? 1, 10).Result);
+                    return PartialView("_StudentList", PaginatedList<StudentListViewModel>.CreateAsync(result, pageNumber ?? 1, 12).Result);
                 }
                 else
                 {
                     var result = _service.SearchStudentListAsync(searchType, searchInput, User.IsInRole("Trainor") ? User.Identity!.Name : null).Result;
-                    return PartialView("_StudentList", PaginatedList<StudentListViewModel>.CreateAsync(result, pageNumber ?? 1, 10).Result);
+                    return PartialView("_StudentList", PaginatedList<StudentListViewModel>.CreateAsync(result, pageNumber ?? 1, 12).Result);
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError("{datetime}: Search Failed. Error: {Message}", DateTime.Now.ToString(), ex.Message);
                 var dummyList = new List<StudentListViewModel>();
-                return PartialView("_StudentList", PaginatedList<StudentListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, 10).Result);
+                return PartialView("_StudentList", PaginatedList<StudentListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, 12).Result);
             }
         }
 
@@ -196,7 +196,7 @@ namespace QFRMS.WebApp.Controllers
                     return RedirectToAction("Index", "Student");
                 }
                 _fileLogger.Log($"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
-                if (model!.FromCoursePage)
+                if (model.BatchId != null)
                     return RedirectToAction("Details", "Batch", new { Id = model.BatchId, FromCoursePage = model.FromCoursePage });
                 else
                     return RedirectToAction("Index", "Student");

@@ -81,6 +81,8 @@ namespace QFRMS.Data.Models
 
     public enum Sex
     {
+        [Description("TBA")]
+        TBA,
         [Description("Male")]
         Male,
         [Description("Female")]
@@ -89,30 +91,44 @@ namespace QFRMS.Data.Models
 
     public enum CivilStatus
     {
+        [Description("TBA")]
+        TBA,
         [Description("Single")]
         Single,
         [Description("Married")]
         Married,
         [Description("Divorced")]
         Divorced,
-        [Description("Widowed")]
+        [Description("Widow/er")]
         Widowed,
     }
 
     public enum HighestGrade
     {
-        [Description("Elementary")]
-        Elementary,
-        [Description("High School")]
-        HighSchool,
+        [Description("TBA")]
+        TBA,
+        [Description("Elementary Undergraduate")]
+        Elem_U,
+        [Description("Elementary Graduate")]
+        Elem_G,
+        [Description("High School Undergraduate")]
+        HS_U,
+        [Description("High School Graduate")]
+        HS_G,
+        [Description("Junior High(K-12)")]
+        JuniorHigh,
         [Description("Senior High(K-12)")]
         SeniorHigh,
-        [Description("College")]
-        College,
+        [Description("College Undergraduate")]
+        College_U,
+        [Description("College Graduate")]
+        College_G,
     }
 
     public enum TrainingStatus
     {
+        [Description("TBA")]
+        TBA,
         [Description("On-going")]
         Ongoing,
         [Description("Completed")]
@@ -123,6 +139,8 @@ namespace QFRMS.Data.Models
 
     public enum ESBT
     {
+        [Description("TBA")]
+        TBA,
         [Description("Unemployed")]
         Unemployed,
         [Description("Self-Employed")]

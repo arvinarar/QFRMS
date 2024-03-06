@@ -49,12 +49,10 @@
         <div class="col-3 d-flex justify-content-end align-items-end">
             @if (User.IsInRole("Admin"))
             {
-                <button class="btn btn-primary no-glow">
-                    <a class="nav-link d-flex" asp-area="" asp-controller="Batch" asp-action="Create">
-                        <img src="~/icons/add.svg" class="icons" />
-                        Add Batch
-                    </a>
-                </button>
+                <a class="nav-link btn btn-primary no-glow" asp-area="" asp-controller="Batch" asp-action="Create">
+                    <img src="~/icons/add.svg" class="icons" />
+                    Add Batch
+                </a>
             }
         </div>
     </div>

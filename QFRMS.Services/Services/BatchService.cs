@@ -15,6 +15,10 @@ using System.Text;
 using System.Threading.Tasks;
 using static QFRMS.Data.Constants;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using QFRMS.Data.Repositories;
+using QFRMS.Data.Enums;
+using System.Globalization;
 
 namespace QFRMS.Services.Services
 {
@@ -606,6 +610,144 @@ namespace QFRMS.Services.Services
             }
         }
 
+        public async Task<Work> AddStudentsFromCSV(ImportSheet model)
+        {
+            try
+            {
+                if (model.File == null) throw new Exception("NO CSV file found");
+                using (var filestream = model.File.OpenReadStream())
+                {
+                    var parser = new Microsoft.VisualBasic.FileIO.TextFieldParser(filestream);
+                    parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
+                    parser.SetDelimiters([","]);
+
+                    //Get CSV Header if CSV is valid and comes from the T2MIS website.
+                    //by checking the the first and last field of header line
+                    string[] headers = parser.ReadFields() ?? throw new Exception("Invalid CSV File");
+                    if (!headers[0].Contains("Region") && !headers[47].Contains("Salary")) throw new Exception("Invalid CSV File");
+
+                    List<Student> NewStudents = new List<Student>(); //For Adding New Students
+                    List<Student> ExistingStudents = new List<Student>(); //For Updating Existing Students
+
+                    //Get Batch
+                    var batch = await _repository.GetBatchAsync(model.BatchId) ?? throw new Exception("No Batch with RQM Code Found");
+
+                    //Set indexes as constants
+                    const int LastName = 15;
+                    const int FirstName = 16;
+                    const int MiddleName = 17;
+                    const int ExtensionName = 18;
+                    const int ULI = 19;
+                    const int ContactNo = 20;
+                    const int Email = 21;
+                    const int StreetNo = 22;
+                    const int Barangay = 23;
+                    const int MunicipalityCity = 24;
+                    const int District = 25;
+                    const int Province = 26;
+                    const int Sex = 27;
+                    const int BirthDate = 28;
+                    const int Age = 29;
+                    const int CivilStatus = 30;
+                    const int HighestGrade = 31;
+                    const int Nationality = 32;
+                    const int TS = 34;
+                    const int ESBT = 41;
+
+                    string ULIDuplicateChecker = "";
+                    while (!parser.EndOfData)
+                    {
+                        string[]? row = parser.ReadFields();
+                        if (row == null || row.Length == 0) continue;
+
+                        //Check if row is duplicating, T2MIS bogaloo
+                        if (row[ULI].Equals(ULIDuplicateChecker)) continue;
+                        ULIDuplicateChecker = row[ULI];
+
+                        //Check if Student already exist
+                        Console.WriteLine(row[ULI]);
+                        Student? student = await _studentRepository.GetStudentAsync(row[ULI]);
+
+                        //New Student
+                        if (student == null)
+                        {
+                            student = new Student
+                            {
+                                ULI = row[ULI],
+                                BatchId = model.BatchId,
+                                Batch = batch,
+                                FirstName = row[FirstName],
+                                MiddleName = row[MiddleName],
+                                LastName = row[LastName],
+                                ExtensionName = row[ExtensionName],
+                                ContactNo = row[ContactNo],
+                                Email = row[Email],
+                                StreetNo = row[StreetNo],
+                                Barangay = row[Barangay],
+                                MunicipalityCity = row[MunicipalityCity],
+                                District = row[District],
+                                Province = row[Province],
+                                Sex = GetValueFromDescription<Sex>(row[Sex]),
+                                BirthDate = DateTime.ParseExact(row[BirthDate], "MM/dd/yyyy", CultureInfo.InvariantCulture),
+                                Age = int.Parse(row[Age]),
+                                CivilStatus = GetValueFromDescription<CivilStatus>(row[CivilStatus]),
+                                HighestGrade = GetValueFromDescription<HighestGrade>(row[HighestGrade]),
+                                Nationality = row[Nationality],
+                                TrainingStatus = row[TS].IsNullOrEmpty() ? TrainingStatus.Ongoing : GetValueFromDescription<TrainingStatus>(row[TS]),
+                                ESBT = GetValueFromDescription<ESBT>(row[ESBT])
+                            };
+                            NewStudents.Add(student);
+                        }
+                        else
+                        {
+                            student.BatchId = model.BatchId;
+                            student.Batch = batch;
+                            student.FirstName = row[FirstName];
+                            student.MiddleName = row[MiddleName];
+                            student.LastName = row[LastName];
+                            student.ExtensionName = row[ExtensionName];
+                            student.ContactNo = row[ContactNo];
+                            student.Email = row[Email];
+                            student.StreetNo = row[StreetNo];
+                            student.Barangay = row[Barangay];
+                            student.MunicipalityCity = row[MunicipalityCity];
+                            student.District = row[District];
+                            student.Province = row[Province];
+                            student.Sex = GetValueFromDescription<Sex>(row[Sex]);
+                            student.BirthDate = DateTime.ParseExact(row[BirthDate], "MM/dd/yyyy", CultureInfo.InvariantCulture);
+                            student.Age = int.Parse(row[Age]);
+                            student.CivilStatus = GetValueFromDescription<CivilStatus>(row[CivilStatus]);
+                            student.HighestGrade = GetValueFromDescription<HighestGrade>(row[HighestGrade]);
+                            student.Nationality = row[Nationality];
+                            student.TrainingStatus = row[TS].IsNullOrEmpty() ? TrainingStatus.Ongoing : GetValueFromDescription<TrainingStatus>(row[TS]);
+                            student.ESBT = GetValueFromDescription<ESBT>(row[ESBT]);
+                            ExistingStudents.Add(student);
+                        }
+                    }
+                    if(NewStudents.Count > 0)
+                    {
+                        var AS = await _studentRepository.AddStudents(NewStudents);
+                    }
+                    if(ExistingStudents.Count > 0)
+                    {
+                        var US = await _studentRepository.UpdateStudents(NewStudents);
+                    }
+                }
+                _work.Time = DateTime.Now;
+                _work.Message = $"Successfully Added/Updated Students of Batch {model.BatchId}";
+                _work.Result = true;
+                return _work;
+            }
+            catch (Exception ex)
+            {
+                _work.ErrorCode = ex.Message;
+                _work.Time = DateTime.Now;
+                _work.Message = "Couldn't Add Student from CSV";
+                _work.Result = false;
+                return _work;
+            }
+        }
+
         public async Task<FileContentResult> GetDocument(string Id)
         {
             try
@@ -613,6 +755,19 @@ namespace QFRMS.Services.Services
                 return await _pdfRepository.GetPDFFile(Id);
             }
             catch(Exception)
+            {
+                throw;
+            }
+        }
+
+        //GET : CheckIfAlreadyExist
+        public async Task<bool> CheckIfAlreadyExist(string RQM)
+        {
+            try
+            {
+                return await _repository.GetBatchAsync(RQM) != null;
+            }
+            catch (Exception)
             {
                 throw;
             }

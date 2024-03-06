@@ -19,12 +19,10 @@
         <div class="col-auto d-flex justify-content-start align-items-center">
             @if(User.IsInRole("Admin"))
             {
-                <button class="btn btn-primary no-glow">
-                    <a class="nav-link d-flex" asp-area="" asp-controller="Course" asp-action="Edit" asp-route-id="@Model.Id">
-                        <img src="~/icons/edit.svg" class="icons" />
-                        Edit
-                    </a>
-                </button>
+                <a class="nav-link btn btn-primary no-glow" asp-area="" asp-controller="Course" asp-action="Edit" asp-route-id="@Model.Id">
+                    <img src="~/icons/edit.svg" class="icons" />
+                    Edit
+                </a>
                 @if(Model.CanBeDeleted)
                 {
                     <a class="nav-link btn btn-danger no-glow ms-2" asp-controller="Course" asp-action="DeleteModal" asp-route-id="@Model.Id"
@@ -44,12 +42,10 @@
             }
         </div>
         <div class="col d-flex justify-content-end align-items-center">
-            <button class="btn btn-back no-glow">
-                <a class="nav-link d-flex" asp-area="" asp-controller="Course" asp-action="Index">
-                    <img src="~/icons/back.svg" class="icons" />
-                    Back
-                </a>
-            </button>
+            <a class="nav-link btn btn-back no-glow" asp-area="" asp-controller="Course" asp-action="Index">
+                <img src="~/icons/back.svg" class="icons" />
+                Back
+            </a>
         </div>
     </div>
     <table class="table">
@@ -268,7 +264,7 @@
                 $.ajax({
                     url: batchpathname,
                     type: "post",
-                    data: { "courseId": courseId, "searchType": searchType, "searchInput": searchInput },
+                    data: { "courseId": courseId, "searchType": searchType, "searchInput": searchInput, "pageNumber": pageNumber },
                     async: true,
                     success: function (data) {
                         $("#TableList").html(data);
@@ -285,7 +281,7 @@
                 $.ajax({
                     url: batchpathname,
                     type: "post",
-                    data: { "courseId": courseId, "searchType": searchType, "searchInput": searchInput },
+                    data: { "courseId": courseId, "searchType": searchType, "searchInput": searchInput, "pageNumber": pageNumber },
                     async: true,
                     success: function (data) {
                         $("#TableList").html(data);

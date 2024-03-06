@@ -39,11 +39,14 @@
                 </a>
                 <div class="d-sm-inline-flex h-100">
                     <ul class="navbar-nav flex-grow-1">
-                        <a class="nav-item @(urlSegments[0] == "" ? "nav-selected" : "")" asp-area="" asp-controller="Home" asp-action="Index">
-                        <li class="nav-link">
-                            Home
-                        </li>
-                        </a>
+                        @if (signInUser != "Guest")
+                        {
+                            <a class="nav-item @(urlSegments[0] == "" ? "nav-selected" : "")" asp-area="" asp-controller="Home" asp-action="Index">
+                            <li class="nav-link">
+                                Home
+                            </li>
+                            </a>
+                        }
                         @if (signInUser == "Admin" || signInUser == "Registrar")
                         {
                             <a class="nav-item @(urlSegments[0] == "Course" ? "nav-selected" : "")" asp-area="" asp-controller="Course" asp-action="Index">
@@ -79,7 +82,7 @@
                                 </div>
                             </li>
                         }
-                        else
+                        else if (signInUser != "Guest")
                         {
                             <a class="nav-item @(activeUrl == "About" ? "nav-selected" : "")" asp-area="" asp-controller="Home" asp-action="About">
                             <li class="nav-link">
@@ -98,6 +101,14 @@
                                     <a class="dropdown-item-danger nav-link" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                                 </div>
                             </li>
+                        }
+                        @if (signInUser == "Guest")
+                        {
+                            <a class="nav-item" asp-area="" asp-controller="Account" asp-action="Login">
+                            <li class="nav-link">
+                                Login
+                            </li>
+                            </a>
                         }
                     </ul>
                 </div>

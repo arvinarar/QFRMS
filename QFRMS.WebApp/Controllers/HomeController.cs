@@ -10,7 +10,6 @@ using static QFRMS.Data.Constants;
 
 namespace QFRMS.WebApp.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -30,13 +29,15 @@ namespace QFRMS.WebApp.Controllers
         {
             try
             {
-                if (User.Identity == null) throw new Exception("No User Logged in at the moment.");
-                var Name = User.Identity.Name ?? throw new Exception("User has no name, wut.");
-                var HasSeenMemo = await _memoService.HasSeenMemo(Name);
-                if (HasSeenMemo)
-                    ViewData["HasSeenMemo"] = true;
-                else
-                    ViewData["HasSeenMemo"] = false;
+                if (User.Identity != null && User.Identity.Name != null)
+                {
+                    var Name = User.Identity.Name;
+                    var HasSeenMemo = await _memoService.HasSeenMemo(Name);
+                    if (HasSeenMemo)
+                        ViewData["HasSeenMemo"] = true;
+                    else
+                        ViewData["HasSeenMemo"] = false;
+                }
                 return View();
             }
             catch (Exception ex)
@@ -47,14 +48,11 @@ namespace QFRMS.WebApp.Controllers
             }
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
         /// <summary>
         /// Shows Information about the Institution
         /// </summary>
         /// <returns>The About page</returns>
+        [Authorize]
         public async Task<IActionResult> About()
         {
             try
@@ -89,6 +87,7 @@ namespace QFRMS.WebApp.Controllers
         /// </summary>
         /// <param name="model">The model containing the updated Info</param>
         /// <returns>To About Page if successful</returns>
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateInstituteInfo(InstituteInfo model)
         {
             try

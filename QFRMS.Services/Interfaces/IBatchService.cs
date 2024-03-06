@@ -21,6 +21,8 @@ namespace QFRMS.Services.Interfaces
         public Task<Work> AddBatchAsync(CreateBatch model);
         public Task<Work> UpdateBatchAsync(UpdateBatch model);
         public Task<Work> DeleteBatchAsync(string Id);
+        public Task<Work> AddStudentsFromCSV(ImportSheet model);
         public Task<FileContentResult> GetDocument(string Id);
+        public Task<bool> CheckIfAlreadyExist(string RQM);
     }
 }

@@ -20,5 +20,7 @@ namespace QFRMS.Data.Interfaces
         public Task<bool> DeleteStudentAsync(string Id);
         public Task<bool> UpdateGrades(IQueryable<Grade> grades);
         public Task<bool> UpdateTrainingStatus(IQueryable<Student> students);
+        public Task<bool> AddStudents(List<Student> students);
+        public Task<bool> UpdateStudents(List<Student> students);
     }
 }

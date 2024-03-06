@@ -20,31 +20,29 @@
             <span class="required-message required">Please fill-up the Mandatory Fields</span>
         </div>
         <div class="col d-flex justify-content-end align-items-center">
-            <button class="btn btn-back no-glow">
-                @{
-                    if (Model.FromCoursePage)
-                    {
-                        <a class="nav-link d-flex" asp-area="" asp-controller="Batch" asp-action="Details" asp-route-Id="@Model.BatchId" asp-route-FromCoursePage="@true">
-                            <img src="~/icons/back.svg" class="icons" />
-                            Back
-                        </a>
-                    }
-                    else if(Model.BatchId != null)
-                    {
-                        <a class="nav-link d-flex" asp-area="" asp-controller="Batch" asp-action="Details" asp-route-Id="@Model.BatchId" asp-route-FromCoursePage="@false">
-                            <img src="~/icons/back.svg" class="icons" />
-                            Back
-                        </a>
-                    }
-                    else
-                    {
-                        <a class="nav-link d-flex" asp-area="" asp-controller="Student" asp-action="Index">
-                            <img src="~/icons/back.svg" class="icons" />
-                            Back
-                        </a>
-                    }
+            @{
+                if (Model.FromCoursePage)
+                {
+                    <a class="nav-link btn btn-back no-glow" asp-area="" asp-controller="Batch" asp-action="Details" asp-route-Id="@Model.BatchId" asp-route-FromCoursePage="@true">
+                        <img src="~/icons/back.svg" class="icons" />
+                        Back
+                    </a>
                 }
-            </button>
+                else if(Model.BatchId != null)
+                {
+                    <a class="nav-link btn btn-back no-glow" asp-area="" asp-controller="Batch" asp-action="Details" asp-route-Id="@Model.BatchId" asp-route-FromCoursePage="@false">
+                        <img src="~/icons/back.svg" class="icons" />
+                        Back
+                    </a>
+                }
+                else
+                {
+                    <a class="nav-link btn btn-back no-glow" asp-area="" asp-controller="Student" asp-action="Index">
+                        <img src="~/icons/back.svg" class="icons" />
+                        Back
+                    </a>
+                }
+            }
         </div>
     </div>
     <form asp-action="EnrollStudent" method="post" id="form" class="form">
@@ -279,6 +277,7 @@
         $(document).ready(function () {
             $('#submitBtn').click(function () {
                 var ULI = $('#ULI').val();
+                $('#ULIValidator').text('');
 
                 $.ajax({
                     url: "/Student/CheckIfAlreadyExist",

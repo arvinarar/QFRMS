@@ -167,5 +167,41 @@ namespace QFRMS.Data.Repositories
                 throw;
             }
         }
+
+        public async Task<bool> AddStudents(List<Student> students)
+        {
+            try
+            {
+                //Also Add their grades row
+                List<Grade> grades = [];
+                foreach (Student student in students)
+                {
+                    grades.Add(new Grade { Student = student, ULI = student.ULI });
+                }
+
+                _context.Students.AddRange(students);
+                _context.Grades.AddRange(grades);
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<bool> UpdateStudents(List<Student> students)
+        {
+            try
+            {
+                _context.Students.UpdateRange(students);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

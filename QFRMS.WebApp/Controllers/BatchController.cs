@@ -122,10 +122,6 @@ namespace QFRMS.WebApp.Controllers
         {
             try
             {
-                if (TempData.ContainsKey("ErrorMessage"))
-                {
-                    ModelState.AddModelError(String.Empty, TempData["ErrorMessage"].ToString());
-                }
                 var data = await _batchService.GetCreateBatchDTOAsync(courseId ?? null);
                 return View(data);
             }
@@ -147,12 +143,7 @@ namespace QFRMS.WebApp.Controllers
                     var work = await _batchService.AddBatchAsync(model);
                     if (!work.Result)
                     {
-                        if (work.ErrorCode == ErrorType.Argument)
-                        {
-                            ModelState.AddModelError(string.Empty, work.Message);
-                        }
                         _logger.LogError("{datetime} Method Create Failed: {errorcode}, {message}", DateTime.Now.ToString(), work.ErrorCode, work.Message);
-                        TempData["ErrorMessage"] = work.Message;
                         return RedirectToAction("Create", "Batch", new { Id = model.CourseId });
                     }
                     _fileLogger.Log($"{LogType.DatabaseType}, {work.Message} \'{model?.RQMNumber?.ToUpperInvariant()}\', {User.Identity?.Name}", true);
@@ -221,6 +212,30 @@ namespace QFRMS.WebApp.Controllers
             }
         }
 
+        public async Task<IActionResult> ImportSheet(ImportSheet model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var work = await _batchService.AddStudentsFromCSV(model);
+                        if (!work.Result)
+                    {
+                        _logger.LogError("{datetime} Method Update Failed: {errorcode}, {message}", DateTime.Now.ToString(), work.ErrorCode, work.Message);
+                        return RedirectToAction("Details", "Batch", new { Id = model!.BatchId, model.FromCoursePage });
+                    }
+                    _fileLogger.Log($"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
+                    return RedirectToAction("Details", "Batch", new { Id = model!.BatchId, model.FromCoursePage });
+                }
+                return RedirectToAction("Details", "Batch", new { Id = model.BatchId, model.FromCoursePage });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{datetime}: Failed to Update Batch, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                return RedirectToAction("Index", "Batch");
+            }
+        }
+
         public async Task<FileContentResult?> GetDocument(string Id)
         {
             try
@@ -233,5 +248,22 @@ namespace QFRMS.WebApp.Controllers
                 return null;
             }
         }
+
+        //GET : CheckIfAlreadyExist
+        public async Task<bool> CheckIfAlreadyExist(string RQM)
+        {
+            try
+            {
+                var data = await _batchService.CheckIfAlreadyExist(RQM);
+                return data;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{datetime}: Failed to check RQM, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                return false;
+            }
+        }
+
+
     }
 }

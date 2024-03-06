@@ -445,15 +445,15 @@ input[type=number] {
 
 /* Navbar Dropdown CSS */
 
-.dropdown {
+.navbar-nav .dropdown {
     padding: 0;
     margin: 0;
     border-bottom: 0;
     align-items: flex-end;
 }
-    .dropdown:hover,
-    .dropdown:focus,
-    .dropdown:active:focus {
+    .navbar-nav .dropdown:hover,
+    .navbar-nav .dropdown:focus,
+    .navbar-nav .dropdown:active:focus {
         border-top: 1px rgba(255,255,255,0);
         background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0));
         padding: 0;
@@ -461,13 +461,13 @@ input[type=number] {
         border-bottom: 0;
     }
 
-.nav-dropdown-selected {
+.navbar-nav .nav-dropdown-selected {
     padding-bottom: 0 !important;
     background: linear-gradient(to bottom, rgba(238, 199, 89, 0), rgba(255, 255, 255, 0.5)) !important;
     border-bottom: 0.375rem solid #C9DB2C !important;
 }
 
-.dropdown-toggle {
+.navbar-nav .dropdown-toggle {
     height: 3.45rem;
     padding: 0px;
     color: inherit;
@@ -478,15 +478,15 @@ input[type=number] {
     transition: none;
     border: 1px solid #156736;
 }
-    .dropdown-toggle:hover {
+    .navbar-nav .dropdown-toggle:hover {
         padding-bottom: 0;
         background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.5));
         border-top: 0;
         border-bottom: 0.375rem solid rgba(255, 255, 255, 0.9);
     }
-    .dropdown-toggle.focus,
-    .dropdown-toggle:focus,
-    .dropdown-toggle:active:focus {
+    .navbar-nav .dropdown-toggle.focus,
+    .navbar-nav .dropdown-toggle:focus,
+    .navbar-nav .dropdown-toggle:active:focus {
         transition: none;
         background: none;
         padding-bottom: 0.375rem;
@@ -494,24 +494,29 @@ input[type=number] {
         box-shadow: none;
     }
 
-    .dropdown-menu {
+.dropdown-menu {
     background-color: #156736;
     width: inherit;
-    min-width: 100%;
     text-align: center;
-    font-size: 1.25rem;
     padding-top: 0;
     padding-bottom: 0;
 }
 
-    .dropdown-menu[data-bs-popper] {
-        top: 95%;
-        border-top: 0px solid #C9DB2C;
-        border-left: 1px solid #C9DB2C;
-        border-right: 1px solid #C9DB2C;
-        border-bottom: 1px solid #C9DB2C;
-        border-radius: 0 0 .25rem .25rem;
-    }
+.navbar-nav .dropdown-menu {
+    font-size: 1.25rem;
+    top: 95% !important;
+    min-width: 100%;
+    border-top: 0px solid #C9DB2C;
+    border-left: 1px solid #C9DB2C;
+    border-right: 1px solid #C9DB2C;
+    border-bottom: 1px solid #C9DB2C;
+    border-radius: 0 0 .25rem .25rem;
+}
+
+.dropdown-menu {
+    min-width: 95%;
+    border: 1px solid #C9DB2C;
+}
 
 .dropdown-divider {
     width: 80%;
@@ -525,13 +530,20 @@ input[type=number] {
     padding-bottom: 0.5rem;
 }
 
-    .dropdown-item:hover,
-    .dropdown-item:focus,
-    .dropdown-item:active:focus {
-        transition: none;
-        background: linear-gradient(to right, rgba(238, 199, 89, 0), rgba(255, 255, 255, 0.5));
-        border-right: 0.5rem solid #C9DB2C !important;
-    }
+.dropdown-item:hover,
+.dropdown-item:focus,
+.dropdown-item:active:focus {
+    transition: none;
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.navbar-nav .dropdown-item:hover,
+.navbar-nav .dropdown-item:focus,
+.navbar-nav .dropdown-item:active:focus {
+    transition: none;
+    background: linear-gradient(to right, rgba(238, 199, 89, 0), rgba(255, 255, 255, 0.5));
+    border-right: 0.5rem solid #C9DB2C !important;
+}
 
 .dropdown-item-danger {
     border-right: 0.5rem solid rgba(255, 255, 255, 0);

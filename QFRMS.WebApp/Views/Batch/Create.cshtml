@@ -19,22 +19,20 @@
             <span class="required-message required">Please fill-up the Mandatory Fields</span>
         </div>
         <div class="col d-flex justify-content-end align-items-center">
-            <button class="btn btn-back no-glow">
-                @if(Model.FromCoursePage)
-                {
-                    <a class="nav-link d-flex" asp-area="" asp-controller="Course" asp-action="Details" asp-route-Id="@Model.CourseId">
-                        <img src="~/icons/back.svg" class="icons" />
-                        Back
-                    </a>
-                }
-                else
-                {
-                    <a class="nav-link d-flex" asp-area="" asp-controller="Batch" asp-action="Index">
-                        <img src="~/icons/back.svg" class="icons" />
-                        Back
-                    </a>
-                }
-            </button>
+            @if(Model.FromCoursePage)
+            {
+                <a class="nav-link btn btn-back no-glow" asp-area="" asp-controller="Course" asp-action="Details" asp-route-Id="@Model.CourseId">
+                    <img src="~/icons/back.svg" class="icons" />
+                    Back
+                </a>
+            }
+            else
+            {
+                <a class="nav-link btn btn-back no-glow" asp-area="" asp-controller="Batch" asp-action="Index">
+                    <img src="~/icons/back.svg" class="icons" />
+                    Back
+                </a>
+            }
         </div>
     </div>
     <form asp-action="CreateBatch" enctype="multipart/form-data" method="post" id="form" class="form">
@@ -111,6 +109,9 @@
                     <input asp-for="RQMNumber" class="form-control" style='text-transform:uppercase' />
                 </div>
                 <span asp-validation-for="RQMNumber" class="row text-center text-danger"></span>
+                <span class="row text-center text-danger">
+                    <span id="RQMValidator"></span>
+                </span>
             </div>
         </div>
         <div class="row">
@@ -193,7 +194,7 @@
         </div>
         <div class="row form-footer">
             <div class="col footer-left">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input id="submitBtn" type="button" value="Create" class="btn btn-primary" />
             </div>
             <div class="col footer-right">
                 <input type="reset" value="Reset" class="btn btn-warning" />
@@ -223,6 +224,26 @@
 
             $('#CourseId').on('change', function () {
                 GetDuration();
+            });
+
+            $('#submitBtn').click(function () {
+                var RQM = $('#RQMNumber').val();
+                $('#RQMValidator').text('');
+
+                $.ajax({
+                    url: "/Batch/CheckIfAlreadyExist",
+                    type: "post",
+                    data: { "RQM": RQM },
+                    async: true,
+                    success: function (data) {
+                        if (!data) {
+                            $('#form').submit();
+                        }
+                        else {
+                            $('#RQMValidator').text('Batch with this RQM Code already exist');
+                        }
+                    }
+                });
             });
         });
     </script>
