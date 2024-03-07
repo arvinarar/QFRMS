@@ -1,0 +1,32 @@
+﻿@using QFRMS.Services.Utils
+@using QFRMS.Data.ViewModels
+@model PaginatedList<BatchCourseListViewModel>
+@{
+    int StartIndex = ((Model.PageIndex - 1) * Model.PageSize) + 1;
+    int LastIndex = Model.PageIndex * Model.PageSize;
+    LastIndex = (LastIndex > Model.TotalItems) ? Model.TotalItems : LastIndex;
+}
+
+@* Pagination Variables to pass to JQuery *@
+<input type="hidden" id="StartIndex" value="@StartIndex" />
+<input type="hidden" id="LastIndex" value="@LastIndex" />
+<input type="hidden" id="PageIndex" value="@Model.PageIndex" />
+<input type="hidden" id="TotalItems" value="@Model.TotalItems" />
+<input type="hidden" id="PrevFlag" value="@Model.HasPreviousPage.ToString()" />
+<input type="hidden" id="NextFlag" value="@Model.HasNextPage.ToString()" />
+
+@{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td class="RQMNo">@item.RQMCode</td>
+            <td>@item.Trainor</td>
+            <td>@item.DateStarted</td>
+            <td>@item.DateFinished</td>
+            <td>@item.LearningMode</td>
+            <td class="action">
+                <a class="nav-link btn btn-primary no-glow" asp-controller="Batch" asp-action="Details" asp-route-id="@item.Id" asp-route-FromCoursePage="@true">Details</a>
+            </td>
+        </tr>
+    }
+}

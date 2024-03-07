@@ -22,13 +22,25 @@
             <td>@item.FullName</td>
             <td>@item.UserName</td>
             <td>@item.Role</td>
-            <td class="action">
+            <td class="action user">
                 <a class="nav-link btn btn-primary no-glow me-1" asp-controller="Account" asp-action="EditAccount" asp-route-id="@item.Id">Edit</a>
-                <a class="nav-link btn btn-danger no-glow" asp-controller="Account" asp-action="DeleteModal" asp-route-id="@item.Id" 
-                data-bs-toggle="modal" data-bs-target="@("#deleteUser-"+item.Id)">
-                    Delete
-                </a>
-                <partial name="_DeleteModal" model="item" />
+
+                @if (User.Identity != null && User.Identity.Name != item.UserName)
+                {
+                    <a class="nav-link btn btn-danger no-glow" asp-controller="Account" asp-action="DeleteModal" asp-route-id="@item.Id"
+                       data-bs-toggle="modal" data-bs-target="@("#deleteUser-"+item.Id)">
+                        Delete
+                    </a>
+                    <partial name="_DeleteModal" model="item" />
+                }
+                else
+                {
+                    <span class="d-inline-block" data-toggle="tooltip" data-placement="top" title="You can't delete your own account!">
+                        <button type="button" class="nav-link btn btn-danger disabled no-glow" >
+                            Delete
+                        </button>
+                    </span>
+                }
             </td>
         </tr>
     }

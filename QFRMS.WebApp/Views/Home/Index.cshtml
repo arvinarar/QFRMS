@@ -4,11 +4,38 @@
     if (User.IsInRole("Admin")) signInUser = "Admin";
     else if (User.IsInRole("Registrar")) signInUser = "Registrar";
     else if (User.IsInRole("Trainor")) signInUser = "Trainor";
+
+    ViewData["Title"] = "Dashboard";
+    bool hasSeenMemo = true; // by default no memo will be shown
+    if (ViewData["HasSeenMemo"] != null)
+    {
+        hasSeenMemo = (bool)ViewData["HasSeenMemo"]!;
+    }
 }
 
 <div class="text-center">
 @if (signInUser != "Guest")
 {
     <h1 class="display-4">Dashboard</h1>
-}
+    }
 </div>
+<div id="modalDiv"></div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var hasSeenMemo = @(hasSeenMemo ? "true" : "false" ?? "true");
+            if (hasSeenMemo == false) {
+                $.ajax({
+                    type: "Get",
+                    url: "/Memo/DisplayMemoModal",
+                    async: true,
+                    success: function (result) {
+                        $("#modalDiv").html(result);
+                        $("#currentMemo").modal('show');
+                    }
+                })
+            }
+        });
+    </script>
+}

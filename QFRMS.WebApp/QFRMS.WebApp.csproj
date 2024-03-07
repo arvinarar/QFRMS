@@ -21,4 +21,8 @@
 	<ProjectReference Include="..\QFRMS.Services\QFRMS.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\PDFs\" />
+  </ItemGroup>
+
 </Project>

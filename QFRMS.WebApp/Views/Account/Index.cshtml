@@ -15,19 +15,21 @@
 </div>
 <div class="page-body small mx-auto">
     <div class="row body-header">
-        <div class="col-8 search-container">
+        <div class="col-8 search-container justify-content-start">
             <div class="row">
                 <div class="type-group col">
-                    <label class="search-label">Search in Column: </label>
-                    <select id="SearchType" class="form-select search-type no-glow">
-                        <option value="Name" selected>Full Name</option>
-                        <option value="UserName">Username</option>
-                        <option value="Role">Role</option>
-                    </select>
+                    <label class="search-label">Search in Column: 
+                        <select id="SearchType" class="form-select search-type no-glow">
+                            <option value="Name" selected>Full Name</option>
+                            <option value="UserName">Username</option>
+                            <option value="Role">Role</option>
+                        </select>
+                    </label>
                 </div>
                 <div class="field-group col">
-                    <label class="search-label">Search: </label>
-                    <input type="text" class="form-group search-input no-glow" id="SearchField">
+                    <label class="search-label">Search: 
+                        <input type="text" class="form-group search-input no-glow" id="SearchField">
+                    </label>
                 </div>
                 <div class="search-group col">
                     <button class="btn btn-primary no-glow" value="Search" id="Search">
@@ -55,7 +57,7 @@
                 <th class="table-header col-auto" scope="col">Action</th>
             </tr>
         </thead>
-        <tbody id="UserList">
+        <tbody id="TableList">
             <partial name="_UserList" model="Model" />
         </tbody>
     </table>
@@ -69,3 +71,129 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        jQuery(document).ready(function () {
+            //Enable Tooltip everywhere
+            $('[data-toggle="tooltip"]').tooltip()
+
+            //AJAX Search and Pagination Script
+            function RefreshPaginationElements() {
+                if ($('#PrevFlag').val() == "False") {
+                    $('#PreviousBtn').removeClass("btn-success");
+                    $('#PreviousBtn').addClass("disabled");
+                }
+                else {
+                    $('#PreviousBtn').addClass("btn-success");
+                    $('#PreviousBtn').removeClass("disabled");
+                }
+                if ($('#NextFlag').val() == "False") {
+                    $('#NextBtn').removeClass("btn-success");
+                    $('#NextBtn').addClass("disabled");
+                }
+                else {
+                    $('#NextBtn').addClass("btn-success");
+                    $('#NextBtn').removeClass("disabled");
+                }
+
+                var StartIndex = $('#StartIndex').val();
+                var LastIndex = $('#LastIndex').val();
+                var TotalItems = $('#TotalItems').val();
+                var string = (TotalItems == 0) ? 'No entries found' : 'Showing ' + StartIndex + ' to ' + LastIndex + ' of ' + TotalItems + ' entries';
+
+                $('#ItemIndex').val(string);
+            }
+
+            RefreshPaginationElements()
+
+            var pathname = window.location.pathname;
+            pathname = pathname + '/Search';
+
+            $(document).keyup(function (event) {
+                if ($("#SearchField").is(":focus") && event.key == "Enter") {
+                    var searchType = $('#SearchType').val();
+                    var searchInput = $("#SearchField").val();
+
+                    $.ajax({
+                        url: pathname,
+                        type: "post",
+                        data: { "searchType": searchType, "searchInput": searchInput },
+                        async: true,
+                        success: function (data) {
+                            $("#TableList").html(data);
+                            RefreshPaginationElements();
+                        }
+                    });
+                }
+            });
+
+            $("#Search").click(function (e) {
+                var searchType = $('#SearchType').val();
+                var searchInput = $("#SearchField").val();
+
+                $.ajax({
+                    url: pathname,
+                    type: "post",
+                    data: { "searchType": searchType, "searchInput": searchInput },
+                    async: true,
+                    success: function (data) {
+                        $("#TableList").html(data);
+                        RefreshPaginationElements();
+                    }
+                });
+            });
+
+            $('select').on('change', function () {
+                var searchType = null;
+                var searchInput = null;
+                $("#SearchField").val('');
+
+                $.ajax({
+                    url: pathname,
+                    type: "post",
+                    data: { "searchType": searchType, "searchInput": searchInput },
+                    async: true,
+                    success: function (data) {
+                        $("#TableList").html(data);
+                        RefreshPaginationElements();
+                    }
+                });
+            });
+
+            $("#PreviousBtn").click(function () {
+                var searchType = $('#SearchType').val();
+                var searchInput = $("#SearchField").val();
+                var pageNumber = parseInt($('#PageIndex').val(), 10) - 1;
+
+                $.ajax({
+                    url: pathname,
+                    type: "post",
+                    data: { "searchType": searchType, "searchInput": searchInput, "pageNumber": pageNumber },
+                    async: true,
+                    success: function (data) {
+                        $("#UserList").html(data);
+                        RefreshPaginationElements();
+                    }
+                });
+            });
+
+            $("#NextBtn").click(function () {
+                var searchType = $('#SearchType').val();
+                var searchInput = $("#SearchField").val();
+                var pageNumber = parseInt($('#PageIndex').val(), 10) + 1;
+
+                $.ajax({
+                    url: pathname,
+                    type: "post",
+                    data: { "searchType": searchType, "searchInput": searchInput, "pageNumber": pageNumber },
+                    async: true,
+                    success: function (data) {
+                        $("#UserList").html(data);
+                        RefreshPaginationElements();
+                    }
+                });
+            });
+        });
+    </script>
+}

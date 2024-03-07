@@ -1,0 +1,294 @@
+﻿@using QFRMS.Data.ViewModels
+@model CourseDetailViewModel
+@{
+    ViewData["Title"] = "Course Details";
+}
+<input type="hidden" id="CourseId" value="@Model.Id" />
+<div class="page-header mx-auto">
+    <div class="header">
+        <img src="~/icons/building.svg" class="header-icon" />
+        <h2 class="header-title">COURSES</h2>
+    </div>
+    <div class="header-hr"></div>
+</div>
+<div class="page-body mx-auto">
+    <div class="row body-header title">
+        <div class="col-auto d-flex justify-content-start align-items-center me-3">
+            <h4 class="body-title">Course Detail</h4>
+        </div>
+        <div class="col-auto d-flex justify-content-start align-items-center">
+            @if(User.IsInRole("Admin"))
+            {
+                <a class="nav-link btn btn-primary no-glow" asp-area="" asp-controller="Course" asp-action="Edit" asp-route-id="@Model.Id">
+                    <img src="~/icons/edit.svg" class="icons" />
+                    Edit
+                </a>
+                @if(Model.CanBeDeleted)
+                {
+                    <a class="nav-link btn btn-danger no-glow ms-2" asp-controller="Course" asp-action="DeleteModal" asp-route-id="@Model.Id"
+                       data-bs-toggle="modal" data-bs-target="#deleteCourse">
+                        Delete
+                    </a>
+                    <partial name="_DeleteModal" model="Model" />
+                }
+                else
+                {
+                    <span class="d-inline-block ms-2" data-toggle="tooltip" data-placement="top" title="Course still has Batch/es">
+                        <button type="button" class="nav-link btn btn-danger disabled no-glow">
+                            Delete
+                        </button>
+                    </span>
+                }
+            }
+        </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            <a class="nav-link btn btn-back no-glow" asp-area="" asp-controller="Course" asp-action="Index">
+                <img src="~/icons/back.svg" class="icons" />
+                Back
+            </a>
+        </div>
+    </div>
+    <table class="table">
+        <tbody>
+            <tr>
+                <td class="col-9 course-detail">
+                    <h6>Program Title :</h6> @Model.ProgramTitle
+                </td>
+                <td class="col-3 course-detail">
+                    <h6>COPR # : </h6> <span class="COPRNo">@Model.COPRNo</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5 course-detail">
+                    <h6>Sector : </h6> @Model.Sector
+                </td>
+                <td class="col-4 course-detail">
+                    <h6>Delivery Mode :</h6> @Model.DeliveryMode
+                </td>
+                <td class="col-3 course-detail">
+                    <h6>Status :</h6> @Model.Status
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5 course-detail">
+                    <h6>Type of Scholarship : </h6> @Model.ScholarshipType
+                </td>
+                <td class="col-4 course-detail">
+                    <h6>Classifications of Clients :</h6> @Model.ClientClassification
+                </td>
+                <td class="col-3 course-detail">
+                    <h6>Status :</h6> @($"{Model.Duration} Hours")
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="page-body mx-auto mt-3">
+    <div class="row body-header">
+        <div class="col-3 d-flex justify-content-start align-items-end">
+            <h4 class="header-title">List of Batches</h4>
+        </div>
+        <div class="col-6 search-container">
+            <div class="row">
+                <div class="type-group col">
+                    <label class="search-label">
+                        Search in Column:
+                        <select id="BatchSearchType" class="form-select search-type no-glow">
+                            <option value="RQM" selected>RQM Code</option>
+                            <option value="Trainor">Trainor</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="field-group col">
+                    <label class="search-label">
+                        Search:
+                        <input type="text" class="form-group search-input no-glow" id="BatchSearchField">
+                    </label>
+                </div>
+                <div class="search-group col">
+                    <button class="btn btn-primary no-glow" value="Search" id="BatchSearch">
+                        <img src="~/icons/search.svg" class="icons" />
+                        Search
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 d-flex justify-content-end align-items-end">
+            @if (User.IsInRole("Admin"))
+            {
+                <button class="btn btn-primary no-glow">
+                    <a class="nav-link d-flex" 
+                    asp-area="" 
+                    asp-controller="Batch" 
+                    asp-action="Create"
+                    asp-route-courseId="@Model.Id">
+                        <img src="~/icons/add.svg" class="icons" />
+                        Add Batch
+                    </a>
+                </button>
+            }
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="table-header col-2half" scope="col">RQM Code</th>
+                <th class="table-header col-3" scope="col">Trainor</th>
+                <th class="table-header col-1half" scope="col">Date Started</th>
+                <th class="table-header col-1half" scope="col">Date Finished</th>
+                <th class="table-header col-2half" scope="col">Learning Mode</th>
+                <th class="table-header col-1" scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody id="TableList">
+        </tbody>
+    </table>
+    <div class="row body-footer">
+        <div class="col">
+            <input class="item-index no-glow" type="text" id="BatchItemIndex" readonly />
+        </div>
+        <div class="col pagination-btn">
+            <a class="btn left-btn disabled" id="BatchPreviousBtn">&#10094;&#10094;</a>
+            <a class="btn right-btn disabled" id="BatchNextBtn">&#10095;&#10095;</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // On Page Load
+            var batchpathname = "/Batch/GetBatchList";
+            var courseId = $('#CourseId').val();
+            var searchType = $('#BatchSearchType').val();
+            var searchInput = $("#BatchSearchField").val();
+
+            $.ajax({
+                url: batchpathname,
+                type: "post",
+                data: { "courseId": courseId, "searchType": searchType, "searchInput": searchInput },
+                async: true,
+                success: function (data) {
+                    $("#TableList").html(data);
+                    BatchRefreshPaginationElements();
+                }
+            });
+
+
+            //AJAX Search and Pagination Script
+            function BatchRefreshPaginationElements() {
+                if ($('#PrevFlag').val() == "False") {
+                    $('#BatchPreviousBtn').removeClass("btn-success");
+                    $('#BatchPreviousBtn').addClass("disabled");
+                }
+                else {
+                    $('#BatchPreviousBtn').addClass("btn-success");
+                    $('#BatchPreviousBtn').removeClass("disabled");
+                }
+                if ($('#NextFlag').val() == "False") {
+                    $('#BatchNextBtn').removeClass("btn-success");
+                    $('#BatchNextBtn').addClass("disabled");
+                }
+                else {
+                    $('#BatchNextBtn').addClass("btn-success");
+                    $('#BatchNextBtn').removeClass("disabled");
+                }
+
+                var StartIndex = $('#StartIndex').val();
+                var LastIndex = $('#LastIndex').val();
+                var TotalItems = $('#TotalItems').val();
+                var string = (TotalItems == 0) ? 'No entries found' : 'Showing ' + StartIndex + ' to ' + LastIndex + ' of ' + TotalItems + ' entries';
+
+                $('#BatchItemIndex').val(string);
+            }
+
+            BatchRefreshPaginationElements();
+
+            $(document).keyup(function (event) {
+                if ($("#BatchSearchField").is(":focus") && event.key == "Enter") {
+                    var searchType = $('#BatchSearchType').val();
+                    var searchInput = $("#BatchSearchField").val();
+
+                    $.ajax({
+                        url: batchpathname,
+                        type: "post",
+                        data: { "courseId": courseId, "searchType": searchType, "searchInput": searchInput },
+                        async: true,
+                        success: function (data) {
+                            $("#TableList").html(data);
+                            BatchRefreshPaginationElements();
+                        }
+                    });
+                }
+            });
+
+            $("#BatchSearch").click(function (e) {
+                var searchType = $('#BatchSearchType').val();
+                var searchInput = $("#BatchSearchField").val();
+
+                $.ajax({
+                    url: batchpathname,
+                    type: "post",
+                    data: { "courseId": courseId, "searchType": searchType, "searchInput": searchInput },
+                    async: true,
+                    success: function (data) {
+                        $("#TableList").html(data);
+                        BatchRefreshPaginationElements();
+                    }
+                });
+            });
+
+            $('#BatchSearchType').on('change', function () {
+                var searchType = null;
+                var searchInput = null;
+                $("#BatchSearchField").val('');
+
+                $.ajax({
+                    url: batchpathname,
+                    type: "post",
+                    data: { "courseId": courseId, "searchType": searchType, "searchInput": searchInput },
+                    async: true,
+                    success: function (data) {
+                        $("#TableList").html(data);
+                        BatchRefreshPaginationElements();
+                    }
+                });
+            });
+
+            $("#BatchPreviousBtn").click(function () {
+                var searchType = $('#BatchSearchType').val();
+                var searchInput = $("#BatchSearchField").val();
+                var pageNumber = parseInt($('#PageIndex').val(), 10) - 1;
+
+                $.ajax({
+                    url: batchpathname,
+                    type: "post",
+                    data: { "courseId": courseId, "searchType": searchType, "searchInput": searchInput, "pageNumber": pageNumber },
+                    async: true,
+                    success: function (data) {
+                        $("#TableList").html(data);
+                        BatchRefreshPaginationElements();
+                    }
+                });
+            });
+
+            $("#BatchNextBtn").click(function () {
+                var searchType = $('#BatchSearchType').val();
+                var searchInput = $("#BatchSearchField").val();
+                var pageNumber = parseInt($('#PageIndex').val(), 10) + 1;
+
+                $.ajax({
+                    url: batchpathname,
+                    type: "post",
+                    data: { "courseId": courseId, "searchType": searchType, "searchInput": searchInput, "pageNumber": pageNumber },
+                    async: true,
+                    success: function (data) {
+                        $("#TableList").html(data);
+                        BatchRefreshPaginationElements();
+                    }
+                });
+            });
+        });
+    </script>
+}

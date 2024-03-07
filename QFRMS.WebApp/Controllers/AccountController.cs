@@ -186,7 +186,7 @@ namespace QFRMS.WebApp.Controllers
                 {
                     var work = await _userAccountService.DeleteUser(model.Id!);
                     if (!work.Result)
-                        _logger.LogError(work.Message, work.ErrorCode);
+                        _logger.LogError("Work Failed, {ErrorCode} {Message}", work.ErrorCode, work.Message);
 
                     _fileLogger.Log($"{LogType.DatabaseType}, {work.Message} \'{model?.UserName}\', {User.Identity?.Name}", true);
 
@@ -233,7 +233,7 @@ namespace QFRMS.WebApp.Controllers
                     var result = await _signInManager.PasswordSignInAsync(model.Username!, model.Password!, false, false);
                     if (result.Succeeded)
                     {
-                        _fileLogger.Log($"{LogType.UserType}, Sign-In, {model.Username}", true);
+                        _fileLogger.Log($"{LogType.UserType}, Sign-In, {User.Identity?.Name}", true);
                         return RedirectToAction("Index", "Home");
                     }
                     ModelState.AddModelError("", "Invalid Username or Pasword");
@@ -305,7 +305,7 @@ namespace QFRMS.WebApp.Controllers
             {
                 await _signInManager.SignOutAsync();
                 _fileLogger.Log($"{LogType.UserType}, Sign-Out, {User.Identity?.Name}", true);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login", "Account");
             } 
             catch (Exception ex)
             {

@@ -1,0 +1,300 @@
+﻿@using QFRMS.Data.DTOs
+@using QFRMS.Data.Models
+@using static QFRMS.Data.Enums.EnumHelper;
+@model EnrollStudent
+@{
+    ViewData["Title"] = "Enroll Student";
+}
+<div class="page-header mx-auto">
+    <div class="header">
+        <img src="~/icons/student.svg" class="header-icon" />
+        <h2 class="header-title">STUDENT</h2>
+    </div>
+    <div class="header-hr"></div>
+</div>
+<h2 class="page-banner">ENROLL STUDENT</h2>
+<div class="page-body mx-auto">
+    <div class="row body-header title">
+        <div class="col d-flex justify-content-start align-items-center">
+            <h4 class="body-title">Personal Details</h4>
+            <span class="required-message required">Please fill-up the Mandatory Fields</span>
+        </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            @{
+                if (Model.FromCoursePage)
+                {
+                    <a class="nav-link btn btn-back no-glow" asp-area="" asp-controller="Batch" asp-action="Details" asp-route-Id="@Model.BatchId" asp-route-FromCoursePage="@true">
+                        <img src="~/icons/back.svg" class="icons" />
+                        Back
+                    </a>
+                }
+                else if(Model.BatchId != null)
+                {
+                    <a class="nav-link btn btn-back no-glow" asp-area="" asp-controller="Batch" asp-action="Details" asp-route-Id="@Model.BatchId" asp-route-FromCoursePage="@false">
+                        <img src="~/icons/back.svg" class="icons" />
+                        Back
+                    </a>
+                }
+                else
+                {
+                    <a class="nav-link btn btn-back no-glow" asp-area="" asp-controller="Student" asp-action="Index">
+                        <img src="~/icons/back.svg" class="icons" />
+                        Back
+                    </a>
+                }
+            }
+        </div>
+    </div>
+    <form asp-action="EnrollStudent" method="post" id="form" class="form">
+        <input asp-for="FromCoursePage" type="hidden" value="@Model.FromCoursePage" />
+        <div asp-validation-summary="ModelOnly" class="row text-danger" role="alert"></div>
+        <div class="row mt-2">
+            <div class="col-3">
+                <div class="form-group">
+                    <label asp-for="FirstName" class="control-label required"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                </div>
+                <span asp-validation-for="FirstName" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label asp-for="MiddleName" class="control-label required"></label>
+                    <input asp-for="MiddleName" class="form-control" />
+                </div>
+                <span asp-validation-for="MiddleName" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label asp-for="LastName" class="control-label required"></label>
+                    <input asp-for="LastName" class="form-control" />
+                </div>
+                <span asp-validation-for="LastName" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label asp-for="ExtensionName" class="control-label me-2"></label>
+                    <input asp-for="ExtensionName" class="form-control" />
+                </div>
+                <span asp-validation-for="ExtensionName" class="row text-center text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-1half">
+                <div class="form-group">
+                    <label asp-for="Age" class="control-label required"></label>
+                    <input asp-for="Age" class="form-control" />
+                </div>
+                <span asp-validation-for="Age" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label asp-for="BirthDate" class="control-label required"></label>
+                    <input asp-for="BirthDate" class="form-control text-center" />
+                </div>
+                <span asp-validation-for="BirthDate" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <label asp-for="Sex" class="control-label required"></label>
+                    <select asp-for="Sex" class="form-select">
+                        <option selected disabled value="">Choose...</option>
+                        @{
+                            foreach (var S in Enum.GetValues<Sex>())
+                            {
+                                        <option value="@S">@GetEnumDescription(S)</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <span asp-validation-for="Sex" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-2half">
+                <div class="form-group">
+                    <label asp-for="CivilStatus" class="control-label required"></label>
+                    <select asp-for="CivilStatus" class="form-select">
+                        <option selected disabled value="">Choose...</option>
+                        @{
+                            foreach (var CS in Enum.GetValues<CivilStatus>())
+                            {
+                                        <option value="@CS">@GetEnumDescription(CS)</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <span asp-validation-for="CivilStatus" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label asp-for="Nationality" class="control-label required"></label>
+                    <input asp-for="Nationality" class="form-control" />
+                </div>
+                <span asp-validation-for="Nationality" class="row text-center text-danger"></span>
+            </div>
+        </div>
+        <h4 class="body-title body-header mt-3">Contact Detail</h4>
+        <div class="row mt-2">
+            <div class="col-4">
+                <div class="form-group">
+                    <label asp-for="ContactNo" class="control-label me-2"></label>
+                    <input asp-for="ContactNo" class="form-control" />
+                </div>
+                <span asp-validation-for="ContactNo" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label me-2"></label>
+                    <input asp-for="Email" class="form-control" />
+                </div>
+                <span asp-validation-for="Email" class="row text-center text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <div class="form-group">
+                    <label asp-for="StreetNo" class="control-label me-2"></label>
+                    <input asp-for="StreetNo" class="form-control" />
+                </div>
+                <span asp-validation-for="StreetNo" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-2half">
+                <div class="form-group">
+                    <label asp-for="Barangay" class="control-label required"></label>
+                    <input asp-for="Barangay" class="form-control" />
+                </div>
+                <span asp-validation-for="Barangay" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label asp-for="MunicipalityCity" class="control-label required"></label>
+                    <input asp-for="MunicipalityCity" class="form-control" />
+                </div>
+                <span asp-validation-for="MunicipalityCity" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-1half">
+                <div class="form-group">
+                    <label asp-for="District" class="control-label me-2"></label>
+                    <input asp-for="District" class="form-control" />
+                </div>
+                <span asp-validation-for="District" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <label asp-for="Province" class="control-label required"></label>
+                    <input asp-for="Province" class="form-control" />
+                </div>
+                <span asp-validation-for="Province" class="row text-center text-danger"></span>
+            </div>
+        </div>
+        <h4 class="body-title body-header mt-3">Learner Details</h4>
+        <div class="row mt-2">
+            <div class="col-4">
+                <div class="form-group">
+                    <label asp-for="ULI" class="control-label required"></label>
+                    <input asp-for="ULI" class="form-control" />
+                </div>
+                <span asp-validation-for="ULI" class="row text-center text-danger"></span>
+                <span class="row text-center text-danger">
+                    <span id="ULIValidator"></span>
+                </span>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label asp-for="HighestGrade" class="control-label required"></label>
+                    <select asp-for="HighestGrade" class="form-select">
+                        <option selected disabled value="">Choose...</option>
+                        @{
+                            foreach (var HG in Enum.GetValues<HighestGrade>())
+                            {
+                                        <option value="@HG">@GetEnumDescription(HG)</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <span asp-validation-for="HighestGrade" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label asp-for="BatchId" class="control-label required"></label>
+                    <select asp-for="BatchId" class="form-select">
+                        @if (Model.BatchList != null)
+                        {
+                            <option selected disabled value="">Choose...</option>
+                            foreach (var batch in Model.BatchList)
+                            {
+                                <option value="@batch.RQMCode">@batch.RQMCode</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <span asp-validation-for="Sex" class="row text-center text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-5half">
+                <div class="form-group">
+                    <label asp-for="ESBT" class="control-label required"></label>
+                    <select asp-for="ESBT" class="form-select">
+                        <option selected disabled value="">Choose...</option>
+                        @{
+                            foreach (var ESBT in Enum.GetValues<ESBT>())
+                            {
+                                        <option value="@ESBT">@GetEnumDescription(ESBT)</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <span asp-validation-for="ESBT" class="row text-center text-danger"></span>
+            </div>
+            <div class="col-3half">
+                <div class="form-group">
+                    <label asp-for="TrainingStatus" class="control-label required"></label>
+                    <select asp-for="TrainingStatus" class="form-select">
+                        <option selected disabled value="">Choose...</option>
+                        @{
+                            foreach (var TS in Enum.GetValues<TrainingStatus>())
+                            {
+                                        <option value="@TS">@GetEnumDescription(TS)</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <span asp-validation-for="TrainingStatus" class="row text-center text-danger"></span>
+            </div>
+        </div>
+        <div class="row form-footer">
+            <div class="col footer-left">
+                <input id="submitBtn" type="button" value="Enroll" class="btn btn-primary" />
+            </div>
+            <div class="col footer-right">
+                <input type="reset" value="Reset" class="btn btn-warning" />
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#submitBtn').click(function () {
+                var ULI = $('#ULI').val();
+                $('#ULIValidator').text('');
+
+                $.ajax({
+                    url: "/Student/CheckIfAlreadyExist",
+                    type: "post",
+                    data: { "ULI": ULI },
+                    async: true,
+                    success: function (data) {
+                        if (!data) {
+                            $('#form').submit();
+                        }
+                        else {
+                            $('#ULIValidator').text('Student with this ID already exist');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

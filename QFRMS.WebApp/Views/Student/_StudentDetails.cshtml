@@ -1,0 +1,139 @@
+﻿@using QFRMS.Services.Utils
+@using QFRMS.Data.ViewModels
+@model StudentDetailViewModel
+
+<!-- Modal -->
+<div class="modal fade" id="studentDetails" tabindex="-1" aria-labelledby="studentDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content page-body bg-white">
+            <div class="modal-header body-header p-2">
+                <h4 class="body-title me-3" id="studentDetailsModalLabel">Personal Details</h4>
+                @if(User.IsInRole("Admin") || User.IsInRole("Registrar")){
+                    <a class="nav-link d-flex btn btn-primary no-glow me-2" asp-area="" asp-controller="Student" asp-action="Edit" asp-route-ULI="@Model.ULI" asp-route-batchId="@Model.BatchId" asp-route-FromCoursePage="@Model.FromCoursePage">
+                        <img src="~/icons/edit.svg" class="icons" />
+                        Edit
+                    </a>
+                    <a class="nav-link d-flex btn btn-danger no-glow" data-bs-dismiss="modal" data-bs-target="#deleteStudent" data-bs-toggle="modal">
+                        Delete
+                    </a>
+                    <partial name="_DeleteModal" model="Model" />
+                }
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td class="col-6 course-detail">
+                            <h6>Full Name :</h6> @Model.Name
+                        </td>
+                        <td class="col-6 course-detail">
+                            <h6>Learner's ID :</h6> @Model.ULI
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-12 course-detail">
+                            <h6>Address :</h6> @Model.Address
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-6 course-detail">
+                            <h6>Birth Date :</h6> @Model.BirthDate
+                        </td>
+                        <td class="col-2 course-detail">
+                            <h6>Age :</h6> @Model.Age
+                        </td>
+                        <td class="col-4 course-detail">
+                            <h6>Sex :</h6> @Model.Sex
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-6 course-detail">
+                            <h6>Civil Status :</h6> @Model.CivilStatus
+                        </td>
+                        <td class="col-6 course-detail">
+                            <h6>Nationality :</h6> @Model.Nationality
+                    </tr>
+                    <tr>
+                        <td class="col-6 course-detail">
+                            <h6>Contact No. :</h6> @Model.ContactNo
+                        </td>
+                        <td class="col-6 course-detail">
+                            <h6>Email :</h6> @Model.Email
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-12 course-detail">
+                            <h6>Highest Grade Completed :</h6> @Model.HighestGrade
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-12 course-detail">
+                            <h6>Employment Status before Training :</h6> @Model.ESBT
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="body-header p-2 mt-2">
+                <h4 class="body-title">Training Details</h4>
+            </div>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td class="col-12 course-detail">
+                            <h6>Enrolled To :</h6> @Model.EnrolledProgram
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-12 course-detail">
+                            <h6>Training Status :</h6> @Model.TrainingStatus
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-4 course-detail">
+                            <h6>Pre-Test Grade :</h6> @Model.PreTestGrade
+                        </td>
+                        <td class="col-4 course-detail">
+                            <h6>Post-Test Grade :</h6> @Model.PostTestGrade
+                        </td>
+                        <td class="col-4 course-detail">
+                            <h6>Final Grade :</h6> @Model.FinalGrade
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            @if(Model.Occupation != null)
+            {
+                <div class="body-header p-2 mt-2">
+                    <h4 class="body-title">Employment Details</h4>
+                </div>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td class="col-6 course-detail">
+                                <h6>Occupation :</h6> @Model.Occupation
+                            </td>
+                            <td class="col-6 course-detail">
+                                <h6>Salary :</h6> @Model.Salary
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-12 course-detail">
+                                <h6>Employment Classification :</h6> @Model.Classification
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-12 course-detail">
+                                <h6>Employer's Name :</h6> @Model.EmployerName
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-12 course-detail">
+                                <h6>Employer's Address :</h6> @Model.EmployerAddress
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

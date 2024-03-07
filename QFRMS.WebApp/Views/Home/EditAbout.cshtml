@@ -19,12 +19,10 @@
         <div class="col d-flex justify-content-end align-items-center">
             @if (User.IsInRole("Admin"))
             {
-                <button class="btn btn-back no-glow">
-                    <a class="nav-link d-flex" asp-area="" asp-controller="Home" asp-action="About">
-                        <img src="~/icons/back.svg" class="icons" />
-                        Edit
-                    </a>
-                </button>
+                <a class="nav-link btn btn-primary no-glow" asp-area="" asp-controller="Home" asp-action="About">
+                    <img src="~/icons/back.svg" class="icons" />
+                    Edit
+                </a>
             }
         </div>
     </div>

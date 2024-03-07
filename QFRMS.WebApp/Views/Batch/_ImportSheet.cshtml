@@ -1,0 +1,52 @@
+﻿@using QFRMS.Services.Utils
+@using QFRMS.Data.DTOs
+@model ImportSheet
+
+<!-- Modal -->
+<div class="modal fade" id="importSheet" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="importSheetModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content page-body bg-white">
+            <div class="modal-header body-header p-2">
+                <h4 class="body-title" id="importSheetModalLabel">Import from CSV</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="ImportSheet" enctype="multipart/form-data" method="post" id="form">
+                <input asp-for="BatchId" type="hidden" value="@Model.BatchId" />
+                <input asp-for="FromCoursePage" type="hidden" value="@Model.FromCoursePage" />
+                <div asp-validation-summary="ModelOnly" class="row text-danger" role="alert"></div>
+                <div class="row d-flex justify-content-center">
+                    <div class="col-6 my-4">
+                        <div class="form-group">
+                            <input asp-for="File" type="file" class="form-control" for="floatingInput" accept=".csv" id="UploadField" />
+                            <span asp-validation-for="File" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer form-footer m-0 p-0 pt-2">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                    <button id="submitBtn" type="submit" class="btn btn-primary disabled">Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).on("change", "#UploadField", function () {
+            if ($("#UploadField").get(0).files.length == 0) {
+                $("#submitBtn").addClass("disabled");
+            }
+            else {
+                $("#submitBtn").removeClass("disabled");
+            }
+
+            $('#submitBtn').click(function () {
+                if (!$("#submitBtn").hasClass("disabled")) {
+                    $('#form').submit();
+                }
+            });
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

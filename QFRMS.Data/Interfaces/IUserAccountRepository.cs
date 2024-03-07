@@ -18,5 +18,6 @@ namespace QFRMS.Data.Interfaces
         public Task<IQueryable<IdentityUserRole<string>>> GetUserRolesAsync();
         public Task<UserAccount?> GetUserByIdAsync(string Id);
         public Task<int> SaveChangesAsync();
+        public Task<UserAccount?> GetUserByName(string name);
     }
 }

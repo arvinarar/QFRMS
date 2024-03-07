@@ -1,0 +1,64 @@
+﻿@using QFRMS.Data.DTOs
+@using Microsoft.AspNetCore.Http;
+@model UploadMemo
+@{
+    ViewData["Title"] = "Set New Memo";
+}
+<div class="page-header small mx-auto">
+    <div class="header">
+        <img src="~/icons/settings.svg" class="header-icon" />
+        <h2 class="header-title">MEMO</h2>
+    </div>
+    <div class="header-hr"></div>
+</div>
+<div class="page-body small mx-auto">
+    <div class="row body-header title">
+        <div class="col-2 d-flex justify-content-start align-items-center">
+        </div>
+        <div class="col-8 d-flex justify-content-center align-items-center">
+            <h4 class="body-title">New Memo</h4>
+        </div>
+        <div class="col-2 d-flex justify-content-end align-items-center">
+            <a class="nav-link btn btn-back no-glow" asp-area="" asp-controller="Memo" asp-action="Index">
+                <img src="~/icons/back.svg" class="icons" />
+                Back
+            </a>
+        </div>
+    </div>
+    <form asp-action="UploadMemo" enctype="multipart/form-data" method="post" id="form">
+        <div asp-validation-summary="ModelOnly" class="row text-danger" role="alert"></div>
+        <div class="row d-flex justify-content-center">
+            <div class="col-6 mt-4">
+                <div class="form-group">
+                    <input asp-for="File" type="file" class="form-control" for="floatingInput" accept=".pdf" id="UploadField" />
+                    <span asp-validation-for="File" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row form-footer">
+            <div class="col d-flex justify-content-center">
+                <input id="submitBtn" type="button" value="Upload" class="btn btn-primary disabled" />
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).on("change", "#UploadField", function () {
+            if ($("#UploadField").get(0).files.length == 0) {
+                $("#submitBtn").addClass("disabled");
+            }
+            else {
+                $("#submitBtn").removeClass("disabled");
+            }
+
+            $('#submitBtn').click(function () {
+                if (!$("#submitBtn").hasClass("disabled")) {
+                    $('#form').submit();
+                }
+            });
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

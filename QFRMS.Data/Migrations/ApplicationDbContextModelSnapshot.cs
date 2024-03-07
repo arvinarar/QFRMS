@@ -192,6 +192,154 @@ namespace QFRMS.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("QFRMS.Data.Models.Batch", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CertificatesId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CourseId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LearningDelivery")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LearningMode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NTPId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RQMNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("TimeEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("TimeStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TrainorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CertificatesId");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("NTPId");
+
+                    b.HasIndex("TrainorId");
+
+                    b.ToTable("Batches");
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.Course", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("COPRNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClientClassification")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeliveryMode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProgramTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ScholarshipType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sector")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.DeploymentDetails", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BatchId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Classification")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployerAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Occupation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Salary")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BatchId")
+                        .IsUnique();
+
+                    b.ToTable("DeploymentDetails");
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.Grade", b =>
+                {
+                    b.Property<string>("ULI")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal?>("PostTest")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal?>("PreTest")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.HasKey("ULI");
+
+                    b.ToTable("Grades");
+                });
+
             modelBuilder.Entity("QFRMS.Data.Models.InstituteInfo", b =>
                 {
                     b.Property<string>("Id")
@@ -261,6 +409,146 @@ namespace QFRMS.Data.Migrations
                             Region = "Region VIII - Eastern Visayas",
                             TelephoneNo = "09088661297"
                         });
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.Memo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("DateUploaded")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FileId");
+
+                    b.ToTable("Memo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1
+                        });
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.PDF", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PDFs");
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.SeenUsers", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("SeenUsers");
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.Student", b =>
+                {
+                    b.Property<string>("ULI")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Barangay")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BatchId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CivilStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(24)");
+
+                    b.Property<string>("ContactNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("District")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ESBT")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(24)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExtensionName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HighestGrade")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(24)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MiddleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MunicipalityCity")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nationality")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sex")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(24)");
+
+                    b.Property<string>("StreetNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrainingStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(24)");
+
+                    b.HasKey("ULI");
+
+                    b.HasIndex("BatchId");
+
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("QFRMS.Data.Models.UserAccount", b =>
@@ -443,6 +731,94 @@ namespace QFRMS.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.Batch", b =>
+                {
+                    b.HasOne("QFRMS.Data.Models.PDF", "Certificates")
+                        .WithMany()
+                        .HasForeignKey("CertificatesId");
+
+                    b.HasOne("QFRMS.Data.Models.Course", "Course")
+                        .WithMany("Batches")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("QFRMS.Data.Models.PDF", "NTP")
+                        .WithMany()
+                        .HasForeignKey("NTPId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("QFRMS.Data.Models.UserAccount", "Trainor")
+                        .WithMany()
+                        .HasForeignKey("TrainorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Certificates");
+
+                    b.Navigation("Course");
+
+                    b.Navigation("NTP");
+
+                    b.Navigation("Trainor");
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.DeploymentDetails", b =>
+                {
+                    b.HasOne("QFRMS.Data.Models.Batch", "Batch")
+                        .WithOne("DeploymentDetails")
+                        .HasForeignKey("QFRMS.Data.Models.DeploymentDetails", "BatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Batch");
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.Grade", b =>
+                {
+                    b.HasOne("QFRMS.Data.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("ULI")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.Memo", b =>
+                {
+                    b.HasOne("QFRMS.Data.Models.PDF", "File")
+                        .WithMany()
+                        .HasForeignKey("FileId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("File");
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.Student", b =>
+                {
+                    b.HasOne("QFRMS.Data.Models.Batch", "Batch")
+                        .WithMany("Students")
+                        .HasForeignKey("BatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Batch");
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.Batch", b =>
+                {
+                    b.Navigation("DeploymentDetails");
+
+                    b.Navigation("Students");
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.Course", b =>
+                {
+                    b.Navigation("Batches");
                 });
 #pragma warning restore 612, 618
         }

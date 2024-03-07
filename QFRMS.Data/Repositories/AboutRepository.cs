@@ -58,7 +58,7 @@ namespace QFRMS.Data.Repositories
             }
             catch (Exception)
             {
-                return false;
+                throw;
             }
         }
     }

@@ -1,0 +1,416 @@
+﻿@using QFRMS.Data.ViewModels
+@using QFRMS.Data.DTOs
+@model BatchDetailViewModel
+@{
+    ViewData["Title"] = "Batch Details";
+}
+<input type="hidden" id="BatchId" value="@Model.Id" />
+<input type="hidden" id="FromCoursePage" value="@((Model.CourseId != null).ToString())" />
+<div class="page-header mx-auto">
+    <div class="header">
+        <img src="~/icons/building.svg" class="header-icon" />
+        <h2 class="header-title">BATCH</h2>
+    </div>
+    <div class="header-hr"></div>
+</div>
+<div class="page-body mx-auto">
+    <div class="row body-header title">
+        <div class="col-auto d-flex justify-content-start align-items-center me-3">
+            <h4 class="body-title">Batch Detail</h4>
+        </div>
+        <div class="col-auto d-flex justify-content-start align-items-center">
+            @if (!User.IsInRole("Trainor"))
+            {
+                <a class="nav-link d-flex btn btn-terminal no-glow me-2" target="_blank"
+                   asp-area="" asp-controller="Batch" asp-action="GenerateTerminalReport" asp-route-Id="@Model.Id">
+                    <img src="~/icons/document.svg" class="icons" />
+                    Generate Terminal Report
+                </a>
+                @if(Model.HasDeploymentDetail)
+                {
+                    <a class="nav-link d-flex btn btn-primary no-glow me-2" data-bs-toggle="modal" data-bs-target="#deploymentDetails">
+                        <img src="~/icons/document.svg" class="icons" />
+                        Deployment Details
+                    </a>
+                    <partial name="_DeploymentDetails" model="Model" />
+                }
+                else
+                {
+                    <span class="d-inline-block me-2" data-toggle="tooltip" data-placement="top" title="Batch currently has no Deployment Details.">
+                        <button type="button" class="nav-link btn btn-danger disabled no-glow">
+                            <img src="~/icons/document.svg" class="icons" />
+                            Deployment Details
+                        </button>
+                    </span>
+                }
+                
+            }
+            @if(User.IsInRole("Admin"))
+            {
+                <a class="nav-link btn btn-primary no-glow" asp-area="" asp-controller="Batch" asp-action="Edit" asp-route-Id="@Model.Id" asp-route-FromCoursePage="@(Model.CourseId != null)">
+                    <img src="~/icons/edit.svg" class="icons" />
+                    Edit
+                </a>
+                @if(Model.CanBeDeleted)
+                {
+                    <a class="nav-link btn btn-danger no-glow ms-2" asp-controller="Batch" asp-action="DeleteModal" asp-route-Id="@Model.Id"
+                       data-bs-toggle="modal" data-bs-target="#deleteBatch">
+                        Delete
+                    </a>
+                    <partial name="_DeleteModal" model="Model" />
+                }
+                else
+                {
+                    <span class="d-inline-block ms-2" data-toggle="tooltip" data-placement="top" title="Batch still has student/s enrolled.">
+                        <button type="button" class="nav-link btn btn-danger disabled no-glow">
+                            Delete
+                        </button>
+                    </span>
+                }
+            }
+        </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            <button class="btn btn-back no-glow">
+                @if(Model.CourseId != null)
+                {
+                    <a class="nav-link d-flex" asp-area="" asp-controller="Course" asp-action="Details" asp-route-Id="@Model.CourseId">
+                        <img src="~/icons/back.svg" class="icons" />
+                        Back
+                    </a>
+                }
+                else
+                {
+                    <a class="nav-link d-flex" asp-area="" asp-controller="Batch" asp-action="Index">
+                        <img src="~/icons/back.svg" class="icons" />
+                        Back
+                    </a>
+                }
+            </button>
+        </div>
+    </div>
+    <table class="table">
+        <tbody>
+            <tr>
+                <td class="col-8half course-detail">
+                    <h6>Program Title :</h6> @Model.ProgramTitle
+                </td>
+                <td class="col-3half course-detail">
+                    <h6>RQM Code : </h6> <span class="RQMNo">@Model.RQMCode</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5 course-detail ">
+                    <h6>Trainor : </h6> @Model.TrainorName
+                </td>
+                <td class="col-3half course-detail">
+                    <h6>Session :</h6> @Model.Session
+                </td>
+                <td class="col-3half course-detail">
+                    <h6>Learning Mode :</h6> @Model.LearningMode
+                </td>
+            </tr>
+            <tr>
+                <td class="col-8half course-detail">
+                    <h6>Learning Delivery : </h6> @Model.LearningDelivery
+                </td>
+                <td class="col-3half course-detail">
+                    <h6>Schedule :</h6> @Model.Schedule
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    @if ((User.IsInRole("Registrar") && Model.CertificatesId != null) || User.IsInRole("Admin"))
+    {
+        <div class="attached-documents-container">
+            <div class="course-detail">
+                <h6>Attached Document/s :</h6>
+            </div>
+            <div class="d-flex mt-2">
+                @if (Model.NTPId != null && User.IsInRole("Admin"))
+                {
+                    <a class="attached-document-btn" target="_blank"
+                       asp-area="" asp-controller="Batch" asp-action="GetDocument" asp-route-Id="@Model.NTPId">
+                        <img src="~/icons/pdf.svg" class="pdf-icon" />
+                        NTP
+                    </a>
+                }
+                @if(Model.CertificatesId != null)
+                {
+                    <a class="attached-document-btn" target="_blank"
+                       asp-area="" asp-controller="Batch" asp-action="GetDocument" asp-route-Id="@Model.CertificatesId">
+                        <img src="~/icons/pdf.svg" class="pdf-icon" />
+                        Certificates
+                    </a>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<div class="page-body mx-auto mt-3">
+    <div class="row body-header">
+        <div class="col-3half d-flex justify-content-start align-items-end">
+            <h4 class="header-title">List of Students</h4>
+        </div>
+        <div class="col-5 search-container">
+            <div class="row">
+                <div class="type-group col">
+                    <label class="search-label">
+                        Search in Column:
+                        <select id="StudentSearchType" class="form-select search-type no-glow">
+                            <option value="ULI">Learner's ID</option>
+                            <option value="Name" selected>Name</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="field-group col">
+                    <label class="search-label">
+                        Search:
+                        <input type="text" class="form-group search-input no-glow" id="StudentSearchField">
+                    </label>
+                </div>
+                <div class="search-group col">
+                    <button class="btn btn-primary no-glow" value="Search" id="StudentSearch">
+                        <img src="~/icons/search.svg" class="icons" />
+                        Search
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-3half d-flex justify-content-end align-items-end">
+            <a class="nav-link btn btn-primary no-glow" onclick="GetGrades('@Model.Id', '@User.IsInRole("Trainor")')">
+                <img src="~/icons/document.svg" class="icons" />
+                See Grades
+            </a>
+            @if (User.IsInRole("Admin") || User.IsInRole("Registrar"))
+            {
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle no-glow ms-2 align-items-center" type="button" id="EnrollStudentDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="~/icons/add.svg" class="icons" />
+                        Enroll Student
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="EnrollStudentDropdown">
+                        <a class="dropdown-item nav-link" asp-area="" asp-controller="Student" asp-action="Create" asp-route-batchId="@Model.Id" asp-route-FromCoursePage="@(Model.CourseId != null)">
+                            Manual Add
+                        </a>
+                        <div class="dropdown-divider w-100 mt-0"></div>
+                        <a class="dropdown-item nav-link" data-bs-toggle="modal" data-bs-target="#importSheet">
+                            From CSV
+                        </a>
+                    </div>
+                </div>
+                <partial name="_ImportSheet" model="new ImportSheet{FromCoursePage = Model.CourseId != null, BatchId = Model.Id}" />
+            }
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="table-header col-2" scope="col">Learner's ID</th>
+                <th class="table-header col-2" scope="col">Name</th>
+                <th class="table-header col-half" scope="col">Age</th>
+                <th class="table-header col-1half" scope="col">Contact No.</th>
+                <th class="table-header col-2half" scope="col">Email</th>
+                <th class="table-header col-1half" scope="col">Highest Grade</th>
+                <th class="table-header col-1" scope="col">Status</th>
+                <th class="table-header col-1" scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody id="TableList">
+        </tbody>
+    </table>
+    <div class="row body-footer">
+        <div class="col">
+            <input class="item-index no-glow" type="text" id="StudentItemIndex" readonly />
+        </div>
+        <div class="col pagination-btn">
+            <a class="btn left-btn disabled" id="StudentPreviousBtn">&#10094;&#10094;</a>
+            <a class="btn right-btn disabled" id="StudentNextBtn">&#10095;&#10095;</a>
+        </div>
+    </div>
+</div>
+<div id="modalDiv"></div>
+
+@section Scripts {
+    <script>
+        function Details(ULI) {
+            var batchId = $("#BatchId").val();
+            var fromCoursePage = $("#FromCoursePage").val();
+            $.ajax({
+                type: "Get",
+                url: "/Student/GetStudentDetail",
+                data: { "ULI": ULI, "batchId": batchId, "fromCoursePage": fromCoursePage },
+                async: true,
+                success: function (result) {
+                    $("#modalDiv").html(result);
+                    $("#studentDetails").modal('show');
+                }
+            });
+        }
+
+        function GetGrades(batchId, isTrainor) {
+            var fromCoursePage = $("#FromCoursePage").val();
+            $.ajax({
+                type: "Get",
+                url: "/Student/GetStudentGrades",
+                data: { "batchId": batchId, "isTrainor": isTrainor, "fromCoursePage": fromCoursePage },
+                async: true,
+                success: function (result) {
+                    $("#modalDiv").html(result);
+                    $("#gradesList").modal('show');
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            //Import Sheet Form
+            $('#UploadField').on('change', function () {
+                if ($("#UploadField").get(0).files.length == 0) {
+                    $("#submitBtn").addClass("disabled");
+                }
+                else {
+                    $("#submitBtn").removeClass("disabled");
+                }
+
+                $('#submitBtn').click(function () {
+                    if (!$("#submitBtn").hasClass("disabled")) {
+                        $('#form').submit();
+                    }
+                });
+            });
+
+            //Search Function
+            // On Page Load
+            var studentpathname = "/Student/GetStudentList";
+            var batchId = $('#BatchId').val();
+            var searchType = $('#StudentSearchType').val();
+            var searchInput = $("#StudentSearchField").val();
+
+            $.ajax({
+                url: studentpathname,
+                type: "post",
+                data: { "batchId": batchId, "searchType": searchType, "searchInput": searchInput },
+                async: true,
+                success: function (data) {
+                    $("#TableList").html(data);
+                    BatchRefreshPaginationElements();
+                }
+            });
+
+
+            //AJAX Search and Pagination Script
+            function BatchRefreshPaginationElements() {
+                if ($('#PrevFlag').val() == "False") {
+                    $('#StudentPreviousBtn').removeClass("btn-success");
+                    $('#StudentPreviousBtn').addClass("disabled");
+                }
+                else {
+                    $('#StudentPreviousBtn').addClass("btn-success");
+                    $('#StudentPreviousBtn').removeClass("disabled");
+                }
+                if ($('#NextFlag').val() == "False") {
+                    $('#StudentNextBtn').removeClass("btn-success");
+                    $('#StudentNextBtn').addClass("disabled");
+                }
+                else {
+                    $('#StudentNextBtn').addClass("btn-success");
+                    $('#StudentNextBtn').removeClass("disabled");
+                }
+
+                var StartIndex = $('#StartIndex').val();
+                var LastIndex = $('#LastIndex').val();
+                var TotalItems = $('#TotalItems').val();
+                var string = (TotalItems == 0) ? 'No entries found' : 'Showing ' + StartIndex + ' to ' + LastIndex + ' of ' + TotalItems + ' entries';
+
+                $('#StudentItemIndex').val(string);
+            }
+
+            BatchRefreshPaginationElements();
+
+            $(document).keyup(function (event) {
+                if ($("#StudentSearchField").is(":focus") && event.key == "Enter") {
+                    var searchType = $('#StudentSearchType').val();
+                    var searchInput = $("#StudentSearchField").val();
+
+                    $.ajax({
+                        url: studentpathname,
+                        type: "post",
+                        data: { "batchId": batchId, "searchType": searchType, "searchInput": searchInput },
+                        async: true,
+                        success: function (data) {
+                            $("#TableList").html(data);
+                            BatchRefreshPaginationElements();
+                        }
+                    });
+                }
+            });
+
+            $("#StudentSearch").click(function (e) {
+                var searchType = $('#StudentSearchType').val();
+                var searchInput = $("#StudentSearchField").val();
+
+                $.ajax({
+                    url: studentpathname,
+                    type: "post",
+                    data: { "batchId": batchId, "searchType": searchType, "searchInput": searchInput },
+                    async: true,
+                    success: function (data) {
+                        $("#TableList").html(data);
+                        BatchRefreshPaginationElements();
+                    }
+                });
+            });
+
+            $('#StudentSearchType').on('change', function () {
+                var searchType = null;
+                var searchInput = null;
+                $("#StudentSearchField").val('');
+
+                $.ajax({
+                    url: studentpathname,
+                    type: "post",
+                    data: { "batchId": batchId, "searchType": searchType, "searchInput": searchInput },
+                    async: true,
+                    success: function (data) {
+                        $("#TableList").html(data);
+                        BatchRefreshPaginationElements();
+                    }
+                });
+            });
+
+            $("#StudentPreviousBtn").click(function () {
+                var searchType = $('#StudentSearchType').val();
+                var searchInput = $("#StudentSearchField").val();
+                var pageNumber = parseInt($('#PageIndex').val(), 10) - 1;
+
+                $.ajax({
+                    url: studentpathname,
+                    type: "post",
+                    data: { "batchId": batchId, "searchType": searchType, "searchInput": searchInput, "pageNumber": pageNumber },
+                    async: true,
+                    success: function (data) {
+                        $("#TableList").html(data);
+                        BatchRefreshPaginationElements();
+                    }
+                });
+            });
+
+            $("#StudentNextBtn").click(function () {
+                var searchType = $('#StudentSearchType').val();
+                var searchInput = $("#StudentSearchField").val();
+                var pageNumber = parseInt($('#PageIndex').val(), 10) + 1;
+
+                $.ajax({
+                    url: studentpathname,
+                    type: "post",
+                    data: { "batchId": batchId, "searchType": searchType, "searchInput": searchInput, "pageNumber": pageNumber },
+                    async: true,
+                    success: function (data) {
+                        $("#TableList").html(data);
+                        BatchRefreshPaginationElements();
+                    }
+                });
+            });
+        });
+    </script>
+}

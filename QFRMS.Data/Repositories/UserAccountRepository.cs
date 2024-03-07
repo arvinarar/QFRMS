@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace QFRMS.Data.Repositories
 {
@@ -84,6 +85,16 @@ namespace QFRMS.Data.Repositories
             }
         }
 
-        
+        public async Task<UserAccount?> GetUserByName(string name)
+        {
+            try
+            {
+                return await _context.Users.FirstOrDefaultAsync(e => e.UserName == name);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

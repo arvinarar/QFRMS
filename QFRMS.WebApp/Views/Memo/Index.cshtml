@@ -1,9 +1,68 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using QFRMS.Data.Models
+@model Memo
 @{
     ViewData["Title"] = "Memo";
+    bool MemoExist = Model.Id == 1 ? true : false;
 }
-<div class="text-center">
-    <h1 class="display-4">Memo</h1>
+<div class="page-header small mx-auto">
+    <div class="header">
+        <img src="~/icons/settings.svg" class="header-icon" />
+        <h2 class="header-title">MEMO</h2>
+    </div>
+    <div class="header-hr"></div>
 </div>
+<div class="page-body small mx-auto">
+    <div class="row body-header title">
+        <div class="col d-flex justify-content-center align-items-center">
+            <h4 class="body-title">Memo Notification</h4>
+        </div>
+    </div>
+    <table class="table">
+        <tbody>
+            <tr>
+                <td class="col-12 user-detail memo justify-content-center">
+                    <h6>Current Memo :</h6>
+                    @if (Model.File != null)
+                    {
+                        <a class="memo-name" onclick="ShowMemo()">@Model.File.Name</a>
+                    } else
+                    {
+                        <h6>None</h6>
+                    }
+                </td>
+            </tr>
+            @if (Model.DateUploaded != null)
+            {
+                <tr>
+                    <td class="col-12 user-detail memo justify-content-center pt-0">
+                        Date Uploaded : @Model.DateUploaded.Value.ToShortDateString()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="row form-footer mt-3 mb-2">
+        <div class="col d-flex justify-content-center">
+            <a class="btn btn-primary" asp-area="" asp-controller="Memo" asp-action="UploadNewMemo">
+                Set New Memo
+            </a>
+        </div>
+    </div>
+    <div id="modalDiv"></div>
+</div>
+
+@section Scripts {
+    <script>
+        function ShowMemo() {
+            $.ajax({
+                type: "Get",
+                url: "/Memo/DisplayMemoModal",
+                async: true,
+                success: function (result) {
+                    $("#modalDiv").html(result);
+                    $("#currentMemo").modal('show');
+                }
+            })
+        }
+    </script>
+}

@@ -16,12 +16,27 @@ namespace QFRMS.Data
 
         public DbSet<InstituteInfo> InstituteInfo { get; set; }
 
+        public DbSet<Course> Courses { get; set; }
+
+        public DbSet<Batch> Batches { get; set; }
+
+        public DbSet<DeploymentDetails> DeploymentDetails { get; set; }
+
+        public DbSet<Student> Students { get; set; }
+        public DbSet<Grade> Grades { get; set; }
+
+        public DbSet<Memo> Memo { get; set; }
+
+        public DbSet<SeenUsers> SeenUsers { get; set; }
+
+        public DbSet<PDF> PDFs { get; set; }
 
         //Seed Database
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
+            #region Seeding Database
             //Institute Info
             builder.Entity<InstituteInfo>().HasData(
                 new InstituteInfo
@@ -154,6 +169,14 @@ namespace QFRMS.Data
                     RoleId = "e6e46fe3-51d2-4ecf-8d49-81745433a737"
                 }
                 );
+
+            builder.Entity<Memo>().HasData(
+                new Memo
+                {
+                    Id = 1
+                }
+                );
+            #endregion
         }
     }
 }

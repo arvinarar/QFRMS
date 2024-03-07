@@ -1,0 +1,28 @@
+﻿@using QFRMS.Services.Utils
+@using QFRMS.Data.ViewModels
+@model StudentDetailViewModel
+
+<!-- Modal -->
+<div class="modal fade" id="deleteStudent" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content page-body bg-white">
+            <form asp-action="DeleteStudent" method="post">
+                <input asp-for="ULI" type="hidden"/>
+                <input asp-for="BatchId" type="hidden" value="@Model.BatchId" />
+                <input asp-for="FromCoursePage" type="hidden" value="@Model.FromCoursePage" />
+                <div class="modal-header body-header p-2">
+                    <h4 class="body-title" id="deleteModalLabel">Delete Student</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body body-header">
+                    <h5>Are you sure you want to delete this Student?</h5>
+                    <center>This action cannot be undo.</center>
+                </div>
+                <div class="modal-footer form-footer m-0 p-0 pt-2">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

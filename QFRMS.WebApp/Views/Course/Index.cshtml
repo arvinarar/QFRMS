@@ -1,9 +1,204 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using QFRMS.Services.Utils
+@using QFRMS.Data.ViewModels
+
+@model PaginatedList<CourseListViewModel>
 @{
     ViewData["Title"] = "Courses";
 }
-<div class="text-center">
-    <h1 class="display-4">Courses</h1>
+<div class="page-header mx-auto">
+    <div class="header">
+        <img src="~/icons/building.svg" class="header-icon" />
+        <h2 class="header-title">COURSES</h2>
+    </div>
+    <div class="header-hr"></div>
 </div>
+<div class="page-body mx-auto">
+    <div class="row body-header">
+        <div class="col-3 d-flex justify-content-start align-items-end">
+            <h4 class="header-title">List of Courses</h4>
+        </div>
+        <div class="col-6 search-container">
+            <div class="row">
+                <div class="type-group col">
+                    <label class="search-label">Search in Column: 
+                        <select id="SearchType" class="form-select search-type no-glow">
+                            <option value="Sector" selected>Sector</option>
+                            <option value="Title">Program Title</option>
+                            <option value="Status">Status</option>
+                            <option value="COPR">COPR #</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="field-group col">
+                    <label class="search-label">Search: 
+                        <input type="text" class="form-group search-input no-glow" id="SearchField">
+                    </label>
+                </div>
+                <div class="search-group col">
+                    <button class="btn btn-primary no-glow" value="Search" id="Search">
+                        <img src="~/icons/search.svg" class="icons" />
+                        Search
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 d-flex justify-content-end align-items-end">
+            @if(User.IsInRole("Admin"))
+            {
+                <a class="nav-link btn btn-primary no-glow" asp-area="" asp-controller="Course" asp-action="Create">
+                    <img src="~/icons/add.svg" class="icons" />
+                    Add Course
+                </a>
+            }
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="table-header col-3" scope="col">Sector</th>
+                <th class="table-header col-5" scope="col">Program Title</th>
+                <th class="table-header col-1" scope="col">Status</th>
+                <th class="table-header col-2" scope="col">COPR #</th>
+                <th class="table-header col-auto" scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody id="TableList">
+            <partial name="_CourseList" model="Model" />
+        </tbody>
+    </table>
+    <div class="row body-footer">
+        <div class="col">
+            <input class="item-index no-glow" type="text" id="ItemIndex" readonly />
+        </div>
+        <div class="col pagination-btn">
+            <a class="btn left-btn disabled" id="PreviousBtn">&#10094;&#10094;</a>
+            <a class="btn right-btn disabled" id="NextBtn">&#10095;&#10095;</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        jQuery(document).ready(function () {
+            //Enable Tooltip everywhere
+            $('[data-toggle="tooltip"]').tooltip()
+
+            //AJAX Search and Pagination Script
+            function RefreshPaginationElements() {
+                if ($('#PrevFlag').val() == "False") {
+                    $('#PreviousBtn').removeClass("btn-success");
+                    $('#PreviousBtn').addClass("disabled");
+                }
+                else {
+                    $('#PreviousBtn').addClass("btn-success");
+                    $('#PreviousBtn').removeClass("disabled");
+                }
+                if ($('#NextFlag').val() == "False") {
+                    $('#NextBtn').removeClass("btn-success");
+                    $('#NextBtn').addClass("disabled");
+                }
+                else {
+                    $('#NextBtn').addClass("btn-success");
+                    $('#NextBtn').removeClass("disabled");
+                }
+
+                var StartIndex = $('#StartIndex').val();
+                var LastIndex = $('#LastIndex').val();
+                var TotalItems = $('#TotalItems').val();
+                var string = (TotalItems == 0) ? 'No entries found' : 'Showing ' + StartIndex + ' to ' + LastIndex + ' of ' + TotalItems + ' entries';
+
+                $('#ItemIndex').val(string);
+            }
+
+            RefreshPaginationElements()
+
+            var pathname = window.location.pathname;
+            pathname = pathname + '/Search';
+
+            $(document).keyup(function (event) {
+                if ($("#SearchField").is(":focus") && event.key == "Enter") {
+                    var searchType = $('#SearchType').val();
+                    var searchInput = $("#SearchField").val();
+
+                    $.ajax({
+                        url: pathname,
+                        type: "post",
+                        data: { "searchType": searchType, "searchInput": searchInput },
+                        async: true,
+                        success: function (data) {
+                            $("#TableList").html(data);
+                            RefreshPaginationElements();
+                        }
+                    });
+                }
+            });
+
+            $("#Search").click(function (e) {
+                var searchType = $('#SearchType').val();
+                var searchInput = $("#SearchField").val();
+
+                $.ajax({
+                    url: pathname,
+                    type: "post",
+                    data: { "searchType": searchType, "searchInput": searchInput },
+                    async: true,
+                    success: function (data) {
+                        $("#TableList").html(data);
+                        RefreshPaginationElements();
+                    }
+                });
+            });
+
+            $('select').on('change', function () {
+                var searchType = null;
+                var searchInput = null;
+                $("#SearchField").val('');
+
+                $.ajax({
+                    url: pathname,
+                    type: "post",
+                    data: { "searchType": searchType, "searchInput": searchInput },
+                    async: true,
+                    success: function (data) {
+                        $("#TableList").html(data);
+                        RefreshPaginationElements();
+                    }
+                });
+            });
+
+            $("#PreviousBtn").click(function () {
+                var searchType = $('#SearchType').val();
+                var searchInput = $("#SearchField").val();
+                var pageNumber = parseInt($('#PageIndex').val(), 10) - 1;
+
+                $.ajax({
+                    url: pathname,
+                    type: "post",
+                    data: { "searchType": searchType, "searchInput": searchInput, "pageNumber": pageNumber },
+                    async: true,
+                    success: function (data) {
+                        $("#UserList").html(data);
+                        RefreshPaginationElements();
+                    }
+                });
+            });
+
+            $("#NextBtn").click(function () {
+                var searchType = $('#SearchType').val();
+                var searchInput = $("#SearchField").val();
+                var pageNumber = parseInt($('#PageIndex').val(), 10) + 1;
+
+                $.ajax({
+                    url: pathname,
+                    type: "post",
+                    data: { "searchType": searchType, "searchInput": searchInput, "pageNumber": pageNumber },
+                    async: true,
+                    success: function (data) {
+                        $("#UserList").html(data);
+                        RefreshPaginationElements();
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -39,23 +39,34 @@
                 </a>
                 <div class="d-sm-inline-flex h-100">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item @(urlSegments[0] == "" ? "nav-selected" : "")">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
+                        @if (signInUser != "Guest")
+                        {
+                            <a class="nav-item @(urlSegments[0] == "" ? "nav-selected" : "")" asp-area="" asp-controller="Home" asp-action="Index">
+                            <li class="nav-link">
+                                Home
+                            </li>
+                            </a>
+                        }
                         @if (signInUser == "Admin" || signInUser == "Registrar")
                         {
-                            <li class="nav-item @(urlSegments[0] == "Course" ? "nav-selected" : "")">
-                                <a class="nav-link" asp-area="" asp-controller="Course" asp-action="Index">Courses</a>
+                            <a class="nav-item @(urlSegments[0] == "Course" ? "nav-selected" : "")" asp-area="" asp-controller="Course" asp-action="Index">
+                            <li class="nav-link">
+                                Courses
                             </li>
+                            </a>
                         }
                         @if(signInUser != "Guest")
                         {
-                            <li class="nav-item @(urlSegments[0] == "Batch" ? "nav-selected" : "")">
-                                <a class="nav-link" asp-area="" asp-controller="Batch" asp-action="Index">Batch</a>
+                            <a class="nav-item @(urlSegments[0] == "Batch" ? "nav-selected" : "")" asp-area="" asp-controller="Batch" asp-action="Index">
+                            <li class="nav-link">
+                                Batch
                             </li>
-                            <li class="nav-item @(urlSegments[0] == "Student" ? "nav-selected" : "")">
-                                <a class="nav-link" asp-area="" asp-controller="Student" asp-action="Index">Students</a>
+                            </a>
+                            <a class="nav-item @(urlSegments[0] == "Student" ? "nav-selected" : "")" asp-area="" asp-controller="Student" asp-action="Index">
+                            <li class="nav-link">
+                                Students
                             </li>
+                            </a>
                         }
                         @if (signInUser == "Admin")
                         {
@@ -71,16 +82,18 @@
                                 </div>
                             </li>
                         }
-                        else
+                        else if (signInUser != "Guest")
                         {
-                            <li class="nav-item @(activeUrl == "About" ? "nav-selected" : "")">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                            <a class="nav-item @(activeUrl == "About" ? "nav-selected" : "")" asp-area="" asp-controller="Home" asp-action="About">
+                            <li class="nav-link">
+                                About
                             </li>
+                            </a>
                         }
                         @if(signInUser != "Guest")
                         {
                             <li class="nav-item dropdown">
-                                <button class="btn nav-link dropdown-toggle @(activeUrl == "Details" || activeUrl == "EditDetails" ? "nav-dropdown-selected" : "")" id="SystemDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Account</button>
+                                <button class="btn nav-link dropdown-toggle @(urlSegments[0] == "Account" && activeUrl == "Details" || activeUrl == "EditDetails" ? "nav-dropdown-selected" : "")" id="SystemDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Account</button>
                                 <div class="dropdown-menu" aria-labelledby="SystemDropdown">
                                     <div class="dropdown-divider mt-0"></div>
                                     <a class="dropdown-item nav-link" asp-area="" asp-controller="Account" asp-action="Details">Manage</a>
@@ -88,6 +101,14 @@
                                     <a class="dropdown-item-danger nav-link" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                                 </div>
                             </li>
+                        }
+                        @if (signInUser == "Guest")
+                        {
+                            <a class="nav-item" asp-area="" asp-controller="Account" asp-action="Login">
+                            <li class="nav-link">
+                                Login
+                            </li>
+                            </a>
                         }
                     </ul>
                 </div>
@@ -103,7 +124,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container text-center">
-            &copy; 2024 - Quilantang Farms Insitute Record Management System
+            &copy; 2024 - Quilantang Farms Insitute Records Management System
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

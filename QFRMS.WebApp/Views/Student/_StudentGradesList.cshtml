@@ -1,0 +1,233 @@
+﻿@using QFRMS.Data.DTOs
+@using QFRMS.Data.Models
+@using static QFRMS.Data.Enums.EnumHelper;
+
+@model StudentGradesList
+
+<!-- Modal -->
+<div class="modal fade" id="gradesList" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="gradesListModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content page-body bg-white">
+            <form asp-action="UpdateGrades" method="post">
+                <input asp-for="IsTrainor" type="hidden" value="@Model.IsTrainor" />
+                <input asp-for="BatchId" type="hidden" value="@Model.BatchId" />
+                <input asp-for="FromCoursePage" type="hidden" value="@Model.FromCoursePage" />
+                <div class="modal-header body-header p-2">
+                    <h4 class="body-title" id="gradesListModalLabel">Student Grades</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body body-header p-0">
+                    @if(User.IsInRole("Trainor")) {
+                        <table class="table student-grades-table">
+                            <thead>
+                                <tr>
+                                    <th class="table-header col-5" scope="col">Name</th>
+                                    <th class="table-header col-2" scope="col">Pre-Test</th>
+                                    <th class="table-header col-2" scope="col">Post-Test </th>
+                                    <th class="table-header col-3" scope="col">Training Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for(var i = 0; i < Model.Students.Count(); i++)
+                                {
+                                    <input asp-for="Students[i].ULI" type="hidden" value="@Model.Students[i].ULI" />
+                                    if(Model.Students[i].TrainingStatus == TrainingStatus.Ongoing)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <input asp-for="Students[i].Name" type="hidden" value="@Model.Students[i].Name" />
+                                                <h6>@Model.Students[i].Name</h6>
+                                            </td>
+                                            <td>
+                                                <div class="d-inline-flex justify-content-center align-items-center">
+                                                    <input asp-for="Students[i].Pretest" type="number" step=".01" class="form-control text-center w-50" /> <h6>&nbsp;/ 100</h6>
+                                                </div>
+                                                <span asp-validation-for="Students[i].Pretest" class="row text-center text-danger"></span>
+                                            </td>
+                                            <td>
+                                                <div class="d-inline-flex justify-content-center align-items-center">
+                                                    <input asp-for="Students[i].Posttest" type="number" step=".01" class="form-control text-center w-50" /> <h6>&nbsp;/ 100</h6>
+                                                </div>
+                                                <span asp-validation-for="Students[i].Posttest" class="row text-center text-danger"></span>
+                                            </td>
+                                            <td>
+                                                <input asp-for="Students[i].TrainingStatus" type="hidden" value="@Model.Students[i].TrainingStatus" />
+                                                <h6>@GetEnumDescription(Model.Students[i].TrainingStatus)</h6>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else if (Model.Students[i].TrainingStatus == TrainingStatus.Completed)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <input asp-for="Students[i].Name" type="hidden" value="@Model.Students[i].Name" />
+                                                <h6>@Model.Students[i].Name</h6>
+                                            </td>
+                                            <td>
+                                                <input asp-for="Students[i].Pretest" type="hidden" value="@Model.Students[i].Pretest" />
+                                                @if (Model.Students[i].Pretest.HasValue)
+                                                {
+                                                    <h6>@Model.Students[i].Pretest / 100</h6>
+                                                }
+                                                else
+                                                {
+                                                    <h6>TBA</h6>
+                                                }
+                                            </td>
+                                            <td>
+                                                <input asp-for="Students[i].Posttest" type="hidden" value="@Model.Students[i].Posttest" />
+                                                @if (Model.Students[i].Posttest.HasValue)
+                                                {
+                                                    <h6>@Model.Students[i].Posttest / 100</h6>
+                                                }
+                                                else
+                                                {
+                                                    <h6>TBA</h6>
+                                                }
+                                            </td>
+                                            <td>
+                                                <input asp-for="Students[i].TrainingStatus" type="hidden" value="@Model.Students[i].TrainingStatus" />
+                                                <h6>@GetEnumDescription(Model.Students[i].TrainingStatus)</h6>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else if (Model.Students[i].TrainingStatus == TrainingStatus.Dropout)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <input asp-for="Students[i].Name" type="hidden" value="@Model.Students[i].Name" />
+                                                <h6>@Model.Students[i].Name</h6>
+                                            </td>
+                                            <td>
+                                                <input asp-for="Students[i].Pretest" type="hidden" value="@Model.Students[i].Pretest" />
+                                                <h6>Dropped</h6>
+                                            </td>
+                                            <td>
+                                                <input asp-for="Students[i].Posttest" type="hidden" value="@Model.Students[i].Posttest" />
+                                                <h6>Dropped</h6>
+                                            </td>
+                                            <td>
+                                                <input asp-for="Students[i].TrainingStatus" type="hidden" value="@Model.Students[i].TrainingStatus" />
+                                                <h6>@GetEnumDescription(Model.Students[i].TrainingStatus)</h6>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else if (User.IsInRole("Admin") || User.IsInRole("Registrar"))
+                    {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="table-header col-4" scope="col">Name</th>
+                                    <th class="table-header col-2" scope="col">Pre-Test</th>
+                                    <th class="table-header col-2" scope="col">Post-Test</th>
+                                    <th class="table-header col-2" scope="col">Final</th>
+                                    <th class="table-header col-2" scope="col">Training Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (var i = 0; i < Model.Students.Count(); i++)
+                                {
+                                    <input asp-for="Students[i].ULI" type="hidden" value="@Model.Students[i].ULI" />
+                                    if (Model.Students[i].TrainingStatus == TrainingStatus.Dropout)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <input asp-for="Students[i].Name" type="hidden" value="@Model.Students[i].Name" />
+                                                <h6>@Model.Students[i].Name</h6>
+                                            </td>
+                                            <td>
+                                                <input asp-for="Students[i].Pretest" type="hidden" value="@Model.Students[i].Pretest" />
+                                                <h6>Dropped</h6>
+                                            </td>
+                                            <td>
+                                                <input asp-for="Students[i].Posttest" type="hidden" value="@Model.Students[i].Posttest" />
+                                                <h6>Dropped</h6>
+                                            </td>
+                                            <td>
+                                                <input asp-for="Students[i].FinalGrade" type="hidden" value="@Model.Students[i].FinalGrade" />
+                                                <h6>Dropped</h6>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <select asp-for="Students[i].TrainingStatus" class="form-select">
+                                                        @{
+                                                            foreach (var TS in Enum.GetValues<TrainingStatus>())
+                                                            {
+                                                                <option value="@TS">@GetEnumDescription(TS)</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <span asp-validation-for="Students[i].Posttest" class="row text-center text-danger"></span>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td>
+                                                <input asp-for="Students[i].Name" type="hidden" value="@Model.Students[i].Name" />
+                                                <h6>@Model.Students[i].Name</h6>
+                                            </td>
+                                            <td>
+                                                <input asp-for="Students[i].Pretest" type="hidden" value="@Model.Students[i].Pretest" />
+                                                @if (Model.Students[i].Pretest.HasValue)
+                                                {
+                                                    <h6>@Model.Students[i].Pretest / 100</h6>
+                                                }
+                                                else
+                                                {
+                                                    <h6>TBA</h6>
+                                                }
+                                            </td>
+                                            <td>
+                                                <input asp-for="Students[i].Posttest" type="hidden" value="@Model.Students[i].Posttest" />
+                                                @if (Model.Students[i].Posttest.HasValue)
+                                                {
+                                                    <h6>@Model.Students[i].Posttest / 100</h6>
+                                                }
+                                                else
+                                                {
+                                                    <h6>TBA</h6>
+                                                }
+                                            </td>
+                                            <td>
+                                                <input asp-for="Students[i].FinalGrade" type="hidden" value="@Model.Students[i].FinalGrade" />
+                                                <h6>@Model.Students[i].FinalGrade</h6>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <select asp-for="Students[i].TrainingStatus" class="form-select">
+                                                        @{
+                                                            foreach (var TS in Enum.GetValues<TrainingStatus>())
+                                                            {
+                                                                <option value="@TS">@GetEnumDescription(TS)</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <span asp-validation-for="Students[i].Posttest" class="row text-center text-danger"></span>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+                <div class="modal-footer form-footer m-0 p-0 pt-2">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                    <button type="submit" class="btn btn-primary">Update Grades</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

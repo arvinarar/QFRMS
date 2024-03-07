@@ -16,19 +16,17 @@
             <h4 class="body-title">User Detail</h4>
         </div>
         <div class="col d-flex justify-content-end align-items-center">
-            <button class="btn btn-primary no-glow">
-                <a class="nav-link d-flex" asp-area="" asp-controller="Account" asp-action="EditDetails">
-                    <img src="~/icons/edit.svg" class="icons" />
-                    Edit
-                </a>
-            </button>
+            <a class="nav-link btn btn-primary no-glow" asp-area="" asp-controller="Account" asp-action="EditDetails">
+                <img src="~/icons/edit.svg" class="icons" />
+                Edit
+            </a>
         </div>
     </div>
     <table class="table">
         <tbody>
             <tr>
                 <td class="col-6 user-detail">
-                    <h6>FullName :</h6> @Model.FullName
+                    <h6>Full Name :</h6> @Model.FullName
                 </td>
                 <td class="col-6 user-detail">
                     <h6>Role :</h6> @Model.Role
