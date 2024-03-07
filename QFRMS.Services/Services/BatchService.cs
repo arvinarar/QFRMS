@@ -831,11 +831,11 @@ namespace QFRMS.Services.Services
                     //Set Row Heights and Column Widths
                     worksheet.Cells["A1:AV26"].EntireRow.Height = 15;
                     //Page 1
-                    worksheet.Column(1).Width = TrueColumnWidth(23); // Region
+                    worksheet.Column(1).Width = TrueColumnWidth(25); // Region
                     worksheet.Column(2).Width = TrueColumnWidth(5); // Province
                     worksheet.Column(3).Width = TrueColumnWidth(3); // Congressional District
                     worksheet.Column(4).Width = TrueColumnWidth(11); // Municipality City
-                    worksheet.Column(5).Width = TrueColumnWidth(57); // Name of Provider
+                    worksheet.Column(5).Width = TrueColumnWidth(55); // Name of Provider
                     worksheet.Column(6).Width = TrueColumnWidth(25); // Complete Address
                     worksheet.Column(7).Width = TrueColumnWidth(7); // Type of Provider
                     worksheet.Column(8).Width = TrueColumnWidth(5); // Classification of Provider
