@@ -86,7 +86,7 @@ namespace QFRMS.WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<FileContentResult?> DownloadMemo()
+        public async Task<IActionResult?> DownloadMemo()
         {
             try
             {
@@ -95,7 +95,7 @@ namespace QFRMS.WebApp.Controllers
             catch (Exception ex)
             {
                 _logger.LogError("{datetime}: Failed to download Memo, Error: {message}", DateTime.Now.ToString(), ex.Message);
-                return null;
+                return NotFound();
             }
         }
 
@@ -109,7 +109,7 @@ namespace QFRMS.WebApp.Controllers
             catch (Exception ex)
             {
                 _logger.LogError("{datetime}: Failed to display Memo modal, Error: {message}", DateTime.Now.ToString(), ex.Message);
-                return RedirectToAction("Index", "Memo");
+                return RedirectToAction("Index", "Home");
             }
         }
     }

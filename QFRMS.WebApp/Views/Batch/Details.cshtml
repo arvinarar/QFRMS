@@ -21,7 +21,8 @@
         <div class="col-auto d-flex justify-content-start align-items-center">
             @if (!User.IsInRole("Trainor"))
             {
-                <a class="nav-link d-flex btn btn-terminal no-glow me-2" data-bs-toggle="modal" data-bs-target="#deploymentDetails">
+                <a class="nav-link d-flex btn btn-terminal no-glow me-2" target="_blank"
+                   asp-area="" asp-controller="Batch" asp-action="GenerateTerminalReport" asp-route-Id="@Model.Id">
                     <img src="~/icons/document.svg" class="icons" />
                     Generate Terminal Report
                 </a>

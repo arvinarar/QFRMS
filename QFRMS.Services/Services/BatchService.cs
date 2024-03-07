@@ -15,16 +15,20 @@ using System.Text;
 using System.Threading.Tasks;
 using static QFRMS.Data.Constants;
 using Microsoft.AspNetCore.Mvc;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using QFRMS.Data.Repositories;
 using QFRMS.Data.Enums;
 using System.Globalization;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using System.Net;
+using System.Net.NetworkInformation;
 
 namespace QFRMS.Services.Services
 {
     public class BatchService : IBatchService
     {
         private readonly IBatchRepository _repository;
+        private readonly IAboutRepository _aboutRepository;
         private readonly ICourseRepository _courseRepository;
         private readonly IUserAccountRepository _userRepository;
         private readonly IStudentRepository _studentRepository;
@@ -32,9 +36,10 @@ namespace QFRMS.Services.Services
         private readonly ILogger<BatchService> _logger;
         private readonly Work _work = new Work();
 
-        public BatchService(IBatchRepository repository, ICourseRepository courseRepository, IUserAccountRepository userAccountRepository, IStudentRepository studentRepository, IPDFRepository pdfRepository, ILogger<BatchService> logger)
+        public BatchService(IBatchRepository repository, IAboutRepository aboutRepository, ICourseRepository courseRepository, IUserAccountRepository userAccountRepository, IStudentRepository studentRepository, IPDFRepository pdfRepository, ILogger<BatchService> logger)
         {
             _repository = repository;
+            _aboutRepository = aboutRepository;
             _courseRepository = courseRepository;
             _userRepository = userAccountRepository;
             _studentRepository = studentRepository;
@@ -760,7 +765,6 @@ namespace QFRMS.Services.Services
             }
         }
 
-        //GET : CheckIfAlreadyExist
         public async Task<bool> CheckIfAlreadyExist(string RQM)
         {
             try
@@ -770,6 +774,199 @@ namespace QFRMS.Services.Services
             catch (Exception)
             {
                 throw;
+            }
+        }
+
+        public async Task<FileContentResult> GenerateTerminalReport(string Id, string registrarUsername)
+        {
+            try
+            {
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                using (var package = new ExcelPackage())
+                {
+                    //Get all neccessary models for the Terminal Report
+                    var InstituteInfo = await _aboutRepository.GetInstituteInfosAsync() ?? throw new NullReferenceException("Institute Info not found");
+                    var batch = await _repository.GetBatchAsync(Id) ?? throw new NullReferenceException("Batch with RQM Code not found");
+                    var deploymentDetails = batch.DeploymentDetails ?? throw new NullReferenceException("Batch Deployment Details not found");
+                    var course = await _courseRepository.GetCourseOfBatchAsync(batch.CourseId) ?? throw new NullReferenceException("Course not found");
+                    var students = _studentRepository.RetrieveStudentsFromBatchAsync(Id).Result.ToList() ?? throw new NullReferenceException("Students not found");
+                    var registrar = await _userRepository.GetUserByName(registrarUsername) ?? throw new NullReferenceException("Registrar not found");
+                    var trainor = await _userRepository.GetUserByIdAsync(batch.TrainorId) ?? throw new NullReferenceException("Trainor not found"); ;
+                    var registrarName = $"{registrar.FirstName} {registrar.MiddleName![0]}. {registrar.LastName} {registrar.ExtensionName}";
+                    var trainorName = $"{trainor.FirstName} {trainor.MiddleName![0]}. {trainor.LastName} {trainor.ExtensionName}";
+
+                    //Create WorkSheet
+                    var worksheet = package.Workbook.Worksheets.Add("Terminal Report");
+                    worksheet.View.PageLayoutView = true;
+
+                    //Set Worksheet size and margin
+                    worksheet.PrinterSettings.Orientation = eOrientation.Landscape;
+                    worksheet.PrinterSettings.PaperSize = ePaperSize.A4;
+                    worksheet.PrinterSettings.TopMargin = 0.75m;
+                    worksheet.PrinterSettings.BottomMargin = 0.75m;
+                    worksheet.PrinterSettings.LeftMargin = 0.25m;
+                    worksheet.PrinterSettings.RightMargin = 0.25m;
+                    worksheet.PrinterSettings.HeaderMargin = 0.3m;
+                    worksheet.PrinterSettings.FooterMargin = 0.3m;
+
+                    //Set Worksheet header
+                    worksheet.HeaderFooter.ScaleWithDocument = true;
+                    worksheet.HeaderFooter.AlignWithMargins = false;
+                    worksheet.HeaderFooter.OddHeader.LeftAlignedText = $"T2MIS TERMINAL REPORT {batch.DateStart:MM/dd/yy} - {batch.DateEnd:MM/dd/yy}";
+                    worksheet.HeaderFooter.OddFooter.LeftAlignedText = $"&U&\"-,Bold\"{registrarName.ToUpper()}&\"-,Regular\"&U\r\nRegistrar";
+                    worksheet.HeaderFooter.OddFooter.CenteredText = $"&U&\"-,Bold\"{trainorName.ToUpper()}&\"-,Regular\"&U\r\nTrainor";
+                    worksheet.HeaderFooter.OddFooter.RightAlignedText = $"&U&\"-,Bold\"{InstituteInfo.FocalPerson.ToUpper()}&\"-,Regular\"&U\r\nFarm School Administrator";
+
+                    //Format Cells
+                    worksheet.Cells["A1:AV26"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells["A1:AV26"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells["A1:AV26"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells["A1:AV26"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells["A1:AV26"].Style.VerticalAlignment = ExcelVerticalAlignment.Top;
+                    worksheet.Cells["A1:AV26"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    worksheet.Cells["A1:AV26"].Style.Font.Name = "Segoe UI";
+                    worksheet.Cells["A1:AV26"].Style.Font.Size = 10;
+                    worksheet.Cells["A1:AV26"].Style.WrapText = true;
+
+                    //Set Row Heights and Column Widths
+                    worksheet.Cells["A1:AV26"].EntireRow.Height = 15;
+                    //Page 1
+                    worksheet.Column(1).Width = TrueColumnWidth(23); // Region
+                    worksheet.Column(2).Width = TrueColumnWidth(5); // Province
+                    worksheet.Column(3).Width = TrueColumnWidth(3); // Congressional District
+                    worksheet.Column(4).Width = TrueColumnWidth(11); // Municipality City
+                    worksheet.Column(5).Width = TrueColumnWidth(57); // Name of Provider
+                    worksheet.Column(6).Width = TrueColumnWidth(25); // Complete Address
+                    worksheet.Column(7).Width = TrueColumnWidth(7); // Type of Provider
+                    worksheet.Column(8).Width = TrueColumnWidth(5); // Classification of Provider
+                    //Page 2
+                    worksheet.Column(9).Width = TrueColumnWidth(30); // Industry, Sector of Qualification
+                    worksheet.Column(10).Width = TrueColumnWidth(4); // TVET Program Registration Status
+                    worksheet.Column(11).Width = TrueColumnWidth(59); // Qualification Program Title
+                    worksheet.Column(12).Width = TrueColumnWidth(2); // Cluster
+                    worksheet.Column(13).Width = TrueColumnWidth(13); // CTPR
+                    worksheet.Column(14).Width = TrueColumnWidth(2); // Training Calendar Code
+                    worksheet.Column(15).Width = TrueColumnWidth(27); // Delivery Mode
+                    //Page 3
+                    worksheet.Column(16).Width = TrueColumnWidth(14); // Last Name
+                    worksheet.Column(17).Width = TrueColumnWidth(20); // First Name
+                    worksheet.Column(18).Width = TrueColumnWidth(14); // Middle Name
+                    worksheet.Column(19).Width = TrueColumnWidth(3); // Extension Name
+                    worksheet.Column(20).Width = TrueColumnWidth(20); // ULI
+                    worksheet.Column(21).Width = TrueColumnWidth(13); // Contact Number
+                    worksheet.Column(22).Width = TrueColumnWidth(26); // E mail Address
+                    worksheet.Column(23).Width = TrueColumnWidth(26); // Street No and Street address
+                    //Page 4
+                    worksheet.Column(24).Width = TrueColumnWidth(16); // Barangay
+                    worksheet.Column(25).Width = TrueColumnWidth(14); // Municipality City
+                    worksheet.Column(26).Width = TrueColumnWidth(3); // District
+                    worksheet.Column(27).Width = TrueColumnWidth(5); // Province 
+                    worksheet.Column(28).Width = TrueColumnWidth(7); // Sex
+                    worksheet.Column(29).Width = TrueColumnWidth(10); // Date of Birth
+                    worksheet.Column(30).Width = TrueColumnWidth(3); // Age
+                    worksheet.Column(31).Width = TrueColumnWidth(9); // Civil Status
+                    worksheet.Column(32).Width = TrueColumnWidth(24); // Highest Grade Completed
+                    worksheet.Column(33).Width = TrueColumnWidth(8); // Nationality
+                    worksheet.Column(34).Width = TrueColumnWidth(10); // Classification of Clients
+                    worksheet.Column(35).Width = TrueColumnWidth(9); // Training Status
+                    worksheet.Column(36).Width = TrueColumnWidth(15); // Type of Scholarships
+                    //Page 5
+                    worksheet.Column(37).Width = TrueColumnWidth(25); // Voucher Number
+                    worksheet.Column(38).Width = TrueColumnWidth(10); // Date Started
+                    worksheet.Column(39).Width = TrueColumnWidth(10); // Date Finished
+                    worksheet.Column(40).Width = TrueColumnWidth(2); // Date Assessed
+                    worksheet.Column(41).Width = TrueColumnWidth(2); // Assessment Results
+                    worksheet.Column(42).Width = TrueColumnWidth(13); // Employment Status Before the Training
+                    worksheet.Column(43).Width = TrueColumnWidth(10); // Date Of Employment
+                    worksheet.Column(44).Width = TrueColumnWidth(7); // Occupation
+                    worksheet.Column(45).Width = TrueColumnWidth(7); // Name of Employer
+                    worksheet.Column(46).Width = TrueColumnWidth(24); // Address
+                    worksheet.Column(47).Width = TrueColumnWidth(12); // Classification
+                    worksheet.Column(48).Width = TrueColumnWidth(12); // Salary
+
+                    //Prepare the sheet Fields
+                    List<TerminalReport> TerminalReportList = [];
+                    foreach(var student in students)
+                    {
+                        var terminalReport = new TerminalReport
+                        {
+                            I_Region = InstituteInfo.Region,
+                            I_Province = InstituteInfo.Province,
+                            I_District = InstituteInfo.District,
+                            I_City = InstituteInfo.City,
+                            I_Name = InstituteInfo.Name,
+                            I_Address = InstituteInfo.Address,
+                            I_ProviderType = InstituteInfo.ProviderType,
+                            I_ProviderClassification = InstituteInfo.ProviderClassification,
+                            C_Sector = course.Sector,
+                            C_Status = course.Status,
+                            C_ProgramTitle = course.ProgramTitle,
+                            C_COPRNo = course.COPRNo,
+                            C_DeliveryMode = course.DeliveryMode,
+                            S_LastName = student.LastName,
+                            S_FirstName = student.FirstName,
+                            S_MiddleName = student.MiddleName,
+                            S_ExtensionName = student.ExtensionName,
+                            S_ULI = student.ULI,
+                            S_ContactNo = Int64.TryParse(student.ContactNo, out Int64 contactNo) ? $"0{contactNo:###-###-####}" : student.ContactNo,
+                            S_Email = student.Email,
+                            S_StreetNo = student.StreetNo,
+                            S_Barangay = student.Barangay,
+                            S_MunicipalityCity = student.MunicipalityCity,
+                            S_District = student.District,
+                            S_Province = student.Province,
+                            S_Sex = GetEnumDescription(student.Sex),
+                            S_BirthDate = student.BirthDate.ToString("MM/dd/yyyy"),
+                            S_Age = student.Age.ToString(),
+                            S_CivilStatus = GetEnumDescription(student.CivilStatus),
+                            S_HighestGrade = GetEnumDescription(student.HighestGrade),
+                            S_Nationality = student.Nationality.ToUpper(),
+                            C_ClientClassification = course.ClientClassification,
+                            S_TrainingStatus = (student.TrainingStatus == TrainingStatus.Ongoing) ? "": GetEnumDescription(student.TrainingStatus),
+                            C_ScholarshipType = course.ScholarshipType,
+                            B_VoucherNo = batch.RQMNumber,
+                            B_DateStart = batch.DateStart.ToString("MM/dd/yyyy"),
+                            B_DateEnd = batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "",
+                            S_ESBT = GetEnumDescription(student.ESBT)
+                        };
+                        if(student.TrainingStatus == TrainingStatus.Completed)
+                        {
+                            terminalReport.S_DateEmployed = "";
+                            terminalReport.D_Occupation = deploymentDetails.Occupation;
+                            terminalReport.D_EmployerName = deploymentDetails.EmployerName;
+                            terminalReport.D_EmployerAddress = deploymentDetails.EmployerAddress;
+                            terminalReport.D_Classification = deploymentDetails.Classification;
+                            terminalReport.D_Salary = deploymentDetails.Salary;
+                        }
+                        TerminalReportList.Add(terminalReport);
+                    }
+
+                    //Populate the Excel Fields
+                    worksheet.Cells["A1"].LoadFromCollection(TerminalReportList, true);
+
+                    //Export as Excel Sheet
+                    var excelData = package.GetAsByteArray();
+                    var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    var fileName = $"{Id}_Terminal_Report.xlsx";
+
+                    return new FileContentResult(excelData, contentType) { FileDownloadName = fileName };
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public static double TrueColumnWidth(double width)
+        {
+            if (width < 1)
+            {
+                return (12.0 / 7) * width;
+            }
+            else
+            {
+                return width + (5.0 / 7);
             }
         }
     }

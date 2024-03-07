@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 using QFRMS.Data.DTOs;
 using QFRMS.Data.Models;
 using QFRMS.Data.ViewModels;
 using QFRMS.Services.Interfaces;
 using QFRMS.Services.Services;
 using QFRMS.Services.Utils;
+using System.Runtime.Intrinsics.Arm;
 using static QFRMS.Data.Constants;
 
 namespace QFRMS.WebApp.Controllers
@@ -236,7 +238,7 @@ namespace QFRMS.WebApp.Controllers
             }
         }
 
-        public async Task<FileContentResult?> GetDocument(string Id)
+        public async Task<IActionResult> GetDocument(string Id)
         {
             try
             {
@@ -245,7 +247,7 @@ namespace QFRMS.WebApp.Controllers
             catch (Exception ex)
             {
                 _logger.LogError("{datetime}: Failed to get document, Error: {message}", DateTime.Now.ToString(), ex.Message);
-                return null;
+                return NotFound();
             }
         }
 
@@ -264,6 +266,21 @@ namespace QFRMS.WebApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin, Registrar")]
+        public async Task<IActionResult> GenerateTerminalReport(string Id)
+        {
+            try
+            {
+                var TerminalReport = await _batchService.GenerateTerminalReport(Id, User.Identity?.Name);
+                _fileLogger.Log($"{LogType.UserType}, Generated Terminal Report for Batch \'{Id}\', {User.Identity?.Name}", true);
 
+                return TerminalReport;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{datetime}: Failed to Generate Terminal Report, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                return NotFound();
+            }
+        }
     }
 }

@@ -55,6 +55,20 @@ namespace QFRMS.Data.Repositories
             }
         }
 
+        public async Task<Course?> GetCourseOfBatchAsync(string Id)
+        {
+            try
+            {
+                return await Task.FromResult(_context.Set<Course>()
+                    .Where(c => c.Id == Id)
+                    .FirstOrDefault());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<bool> CreateCourseAsync(Course model)
         {
             try

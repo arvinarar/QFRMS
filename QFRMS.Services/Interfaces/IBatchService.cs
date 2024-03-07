@@ -24,5 +24,6 @@ namespace QFRMS.Services.Interfaces
         public Task<Work> AddStudentsFromCSV(ImportSheet model);
         public Task<FileContentResult> GetDocument(string Id);
         public Task<bool> CheckIfAlreadyExist(string RQM);
+        public Task<FileContentResult> GenerateTerminalReport(string Id, string registrarUserName);
     }
 }
