@@ -56,7 +56,7 @@ namespace QFRMS.Services.Services
                     return await Task.FromResult(from batch in await _repository.RetrieveAllAsync()
                                                  join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
                                                  join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
-                                                 orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                                                 orderby course.ProgramTitle, batch.RQMNumber, trainor.FirstName
                                                  select new BatchListViewModel
                                                  {
                                                      Id = batch.Id,
@@ -72,7 +72,7 @@ namespace QFRMS.Services.Services
                                                  join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
                                                  join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
                                                  where trainor.UserName == TrainorName
-                                                 orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                                                 orderby course.ProgramTitle, batch.RQMNumber, trainor.FirstName
                                                  select new BatchListViewModel
                                                  {
                                                      Id = batch.Id,
@@ -84,9 +84,8 @@ namespace QFRMS.Services.Services
                 }
                 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} GetBatchListAsync Failed: {message}", DateTime.Now.ToString(), ex.Message);
                 throw;
             }
         }
@@ -102,7 +101,7 @@ namespace QFRMS.Services.Services
                         "RQM" => from batch in await _repository.RetrieveAllAsync()
                                  join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
                                  join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
-                                 orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                                 orderby course.ProgramTitle, batch.RQMNumber, trainor.FirstName
                                  where
                                     batch.RQMNumber.Contains(searchInput)
                                  select new BatchListViewModel
@@ -117,7 +116,7 @@ namespace QFRMS.Services.Services
                         "Title" => from batch in await _repository.RetrieveAllAsync()
                                    join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
                                    join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
-                                   orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                                   orderby course.ProgramTitle, batch.RQMNumber, trainor.FirstName
                                    where course.ProgramTitle.Contains(searchInput)
                                    select new BatchListViewModel
                                    {
@@ -131,7 +130,7 @@ namespace QFRMS.Services.Services
                         "Trainor" => from batch in await _repository.RetrieveAllAsync()
                                      join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
                                      join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
-                                     orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                                     orderby course.ProgramTitle, batch.RQMNumber, trainor.FirstName
                                      where
                                         trainor.FirstName!.Contains(searchInput) ||
                                         trainor.MiddleName!.Contains(searchInput) ||
@@ -149,7 +148,7 @@ namespace QFRMS.Services.Services
                         _ => from batch in await _repository.RetrieveAllAsync()
                              join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
                              join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
-                             orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                             orderby course.ProgramTitle, batch.RQMNumber, trainor.FirstName
                              select new BatchListViewModel
                              {
                                  Id = batch.Id,
@@ -167,7 +166,7 @@ namespace QFRMS.Services.Services
                         "RQM" => from batch in await _repository.RetrieveAllAsync()
                                  join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
                                  join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
-                                 orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                                 orderby course.ProgramTitle, batch.RQMNumber, trainor.FirstName
                                  where
                                     trainor.UserName == TrainorName &&
                                     batch.RQMNumber.Contains(searchInput)
@@ -183,7 +182,7 @@ namespace QFRMS.Services.Services
                         "Title" => from batch in await _repository.RetrieveAllAsync()
                                    join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
                                    join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
-                                   orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                                   orderby course.ProgramTitle, batch.RQMNumber, trainor.FirstName
                                    where 
                                     trainor.UserName == TrainorName &&
                                     course.ProgramTitle.Contains(searchInput)
@@ -200,7 +199,7 @@ namespace QFRMS.Services.Services
                              join course in await _courseRepository.RetrieveAllAsync() on batch.CourseId equals course.Id
                              join trainor in await _userRepository.GetUsersAsync() on batch.TrainorId equals trainor.Id
                              where trainor.UserName == TrainorName
-                             orderby batch.RQMNumber, course.ProgramTitle, trainor.FirstName
+                             orderby course.ProgramTitle, batch.RQMNumber, trainor.FirstName
                              select new BatchListViewModel
                              {
                                  Id = batch.Id,
@@ -212,9 +211,8 @@ namespace QFRMS.Services.Services
                     };
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} SearchBatchListAsync Failed: {message}", DateTime.Now.ToString(), ex.Message);
                 throw;
             }
         }
@@ -424,9 +422,8 @@ namespace QFRMS.Services.Services
 
                 return detail;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} GetBatchListAsync Failed: {message}", DateTime.Now.ToString(), ex.Message);
                 throw;
             }
         }
@@ -501,7 +498,7 @@ namespace QFRMS.Services.Services
                 _work.Result = false;
                 return _work;
             }
-            catch (Exception ex)
+            catch (NullReferenceException ex)
             {
                 _work.ErrorCode = ex.Message;
                 _work.Time = DateTime.Now;
@@ -509,6 +506,11 @@ namespace QFRMS.Services.Services
                 _work.Result = false;
                 return _work;
             }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
 
         public async Task<Work> UpdateBatchAsync(UpdateBatch model)
@@ -568,20 +570,23 @@ namespace QFRMS.Services.Services
                 }
 
                 var work = await _repository.UpdateBatchAsync(batch, batch.DeploymentDetails);
-                if (!work) throw new Exception("Work failed");
 
                 _work.Time = DateTime.Now;
                 _work.Message = "Successfully Updated Batch";
                 _work.Result = true;
                 return _work;
             }
-            catch (Exception ex)
+            catch (NullReferenceException ex)
             {
                 _work.ErrorCode = ex.Message;
                 _work.Time = DateTime.Now;
                 _work.Message = "Couldn't Update Batch";
                 _work.Result = false;
                 return _work;
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
@@ -594,7 +599,6 @@ namespace QFRMS.Services.Services
 
 
                 var work = await _repository.DeleteBatchAsync(batch.Id);
-                if (!work) throw new Exception("Work failed");
 
                 //Delete attached document
                 _ = await _pdfRepository.DeletePDF(batch.NTPId);
@@ -605,7 +609,7 @@ namespace QFRMS.Services.Services
                 _work.Result = true;
                 return _work;
             }
-            catch (Exception ex)
+            catch (NullReferenceException ex)
             {
                 _work.ErrorCode = ex.Message;
                 _work.Time = DateTime.Now;
@@ -613,13 +617,17 @@ namespace QFRMS.Services.Services
                 _work.Result = false;
                 return _work;
             }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<Work> AddStudentsFromCSV(ImportSheet model)
         {
             try
             {
-                if (model.File == null) throw new Exception("NO CSV file found");
+                if (model.File == null) throw new NullReferenceException("NO CSV file found");
                 using (var filestream = model.File.OpenReadStream())
                 {
                     var parser = new Microsoft.VisualBasic.FileIO.TextFieldParser(filestream);
@@ -628,14 +636,14 @@ namespace QFRMS.Services.Services
 
                     //Get CSV Header if CSV is valid and comes from the T2MIS website.
                     //by checking the the first and last field of header line
-                    string[] headers = parser.ReadFields() ?? throw new Exception("Invalid CSV File");
-                    if (!headers[0].Contains("Region") && !headers[47].Contains("Salary")) throw new Exception("Invalid CSV File");
+                    string[] headers = parser.ReadFields() ?? throw new ArgumentException("Invalid CSV File");
+                    if (!headers[0].Contains("Region") && !headers[47].Contains("Salary")) throw new ArgumentException("Invalid CSV File");
 
                     List<Student> NewStudents = new List<Student>(); //For Adding New Students
                     List<Student> ExistingStudents = new List<Student>(); //For Updating Existing Students
 
                     //Get Batch
-                    var batch = await _repository.GetBatchAsync(model.BatchId) ?? throw new Exception("No Batch with RQM Code Found");
+                    var batch = await _repository.GetBatchAsync(model.BatchId) ?? throw new NullReferenceException("No Batch with RQM Code Found");
 
                     //Set indexes as constants
                     const int LastName = 15;
@@ -743,13 +751,25 @@ namespace QFRMS.Services.Services
                 _work.Result = true;
                 return _work;
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
+            {
+                _work.ErrorCode = ErrorType.Argument;
+                _work.Time = DateTime.Now;
+                _work.Message = ex.Message;
+                _work.Result = false;
+                return _work;
+            }
+            catch (NullReferenceException ex)
             {
                 _work.ErrorCode = ex.Message;
                 _work.Time = DateTime.Now;
                 _work.Message = "Couldn't Add Student from CSV";
                 _work.Result = false;
                 return _work;
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
@@ -777,7 +797,7 @@ namespace QFRMS.Services.Services
             }
         }
 
-        public async Task<FileContentResult> GenerateTerminalReport(string Id, string registrarUsername)
+        public async Task<FileContentResult> GenerateTerminalReport(string Id, string? registrarUsername)
         {
             try
             {
@@ -790,7 +810,7 @@ namespace QFRMS.Services.Services
                     var deploymentDetails = batch.DeploymentDetails ?? throw new NullReferenceException("Batch Deployment Details not found");
                     var course = await _courseRepository.GetCourseOfBatchAsync(batch.CourseId) ?? throw new NullReferenceException("Course not found");
                     var students = _studentRepository.RetrieveStudentsFromBatchAsync(Id).Result.ToList() ?? throw new NullReferenceException("Students not found");
-                    var registrar = await _userRepository.GetUserByName(registrarUsername) ?? throw new NullReferenceException("Registrar not found");
+                    var registrar = await _userRepository.GetUserByName(registrarUsername ?? throw new NullReferenceException("Registrar not found")) ?? throw new NullReferenceException("Registrar not found");
                     var trainor = await _userRepository.GetUserByIdAsync(batch.TrainorId) ?? throw new NullReferenceException("Trainor not found"); ;
                     var registrarName = $"{registrar.FirstName} {registrar.MiddleName![0]}. {registrar.LastName} {registrar.ExtensionName}";
                     var trainorName = $"{trainor.FirstName} {trainor.MiddleName![0]}. {trainor.LastName} {trainor.ExtensionName}";

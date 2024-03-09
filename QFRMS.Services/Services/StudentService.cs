@@ -77,10 +77,9 @@ namespace QFRMS.Services.Services
                                                  });
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} GetStudentListAsync Failed: {message}", DateTime.Now.ToString(), ex.Message);
-                return await Task.FromResult(Enumerable.Empty<StudentListViewModel>().AsQueryable());
+                throw;
             }
         }
         public async Task<IQueryable<StudentListViewModel>> SearchStudentListAsync(string searchType, string searchInput, string? TrainorName)
@@ -210,10 +209,9 @@ namespace QFRMS.Services.Services
                     };
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} SearchStudentListAsync Failed: {message}", DateTime.Now.ToString(), ex.Message);
-                return await Task.FromResult(Enumerable.Empty<StudentListViewModel>().AsQueryable());
+                throw;
             }
         }
 
@@ -276,10 +274,9 @@ namespace QFRMS.Services.Services
                          }
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} SearchStudentBatchListAsync Failed: {message}", DateTime.Now.ToString(), ex.Message);
-                return await Task.FromResult(Enumerable.Empty<StudentListViewModel>().AsQueryable());
+                throw;
             }
         }
 
@@ -383,7 +380,7 @@ namespace QFRMS.Services.Services
                     TrainingStatus = model.TrainingStatus!.Value,
                     ESBT = model.ESBT!.Value
                 });
-                if(!work) throw new Exception("Work failed");
+                if (!work) throw new Exception("Work failed");
                 _work.Time = DateTime.Now;
                 _work.Message = $"Successfully Enrolled Student \'{model.ULI}\'";
                 _work.Result = true;
@@ -397,13 +394,17 @@ namespace QFRMS.Services.Services
                 _work.Result = false;
                 return _work;
             }
-            catch (Exception ex)
+            catch (NullReferenceException ex)
             {
                 _work.ErrorCode = ex.Message;
                 _work.Time = DateTime.Now;
                 _work.Message = "Couldn't Enroll Student";
                 _work.Result = false;
                 return _work;
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
@@ -441,13 +442,17 @@ namespace QFRMS.Services.Services
                 _work.Result = true;
                 return _work;
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
                 _work.ErrorCode = ex.Message;
                 _work.Time = DateTime.Now;
                 _work.Message = "Couldn't Update Student";
                 _work.Result = false;
                 return _work;
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
@@ -464,14 +469,11 @@ namespace QFRMS.Services.Services
                 return _work;
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _work.ErrorCode = ex.Message;
-                _work.Time = DateTime.Now;
-                _work.Message = "Couldn't Delete Student";
-                _work.Result = false;
-                return _work;
+                throw;
             }
+
         }
 
         public async Task<Work> UpdateGrades(StudentGradesList model)
@@ -511,13 +513,9 @@ namespace QFRMS.Services.Services
                     return _work;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _work.ErrorCode = ex.Message;
-                _work.Time = DateTime.Now;
-                _work.Message = "Couldn't Update Grades";
-                _work.Result = false;
-                return _work;
+                throw;
             }
         }
 

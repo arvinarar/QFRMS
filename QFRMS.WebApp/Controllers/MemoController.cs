@@ -35,7 +35,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to get Memo. Error: {Message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Memo Index Failed: {ex.Message}, {ex.InnerException}", true);
                 Memo dummyData = new() { Id = 0};
                 return View(dummyData);
             }
@@ -50,13 +50,7 @@ namespace QFRMS.WebApp.Controllers
                 if(ModelState.IsValid)
                 {
                     var work = await _memoService.UploadMemoAsync(model);
-                    if (!work.Result)
-                    {
-                        _logger.LogError("{datetime} Method UploadMemo Failed: {errorcode}, {message}", DateTime.Now.ToString(), work.ErrorCode, work.Message);
-                        return RedirectToAction("Index", "Memo");
-                    }
-                    
-                    _fileLogger.Log($"{LogType.DatabaseType}, {work.Message} \'{model?.File.FileName}\', {User.Identity?.Name}", true);
+                    _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.File.FileName}\', {User.Identity?.Name}", true);
 
                     //Add Admin to SeenUserTable
                     if (User.Identity == null) throw new ArgumentException("No User Logged in at the moment.");
@@ -69,32 +63,40 @@ namespace QFRMS.WebApp.Controllers
             }
             catch(ArgumentException ex)
             {
-                _logger.LogError("{datetime}: Failed to Add Admin to SeenUsers, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Upload Memo Failed: {ex.GetType} {ex.Message}", true);
                 return RedirectToAction("Index", "Memo");
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to upload Memo, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Upload Memo Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Memo");
             }
         }
 
         [Authorize(Roles = "Admin")]
         public IActionResult UploadNewMemo() 
-        { 
-            return View();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult?> DownloadMemo()
         {
             try
             {
-                return await _memoService.DownloadMemo() ?? throw new Exception("No Memo File");
+                return View();
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to download Memo, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Upload New Memo Page Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("Index", "Memo");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadMemo()
+        {
+            try
+            {
+                return await _memoService.DownloadMemo();
+            }
+            catch (Exception ex)
+            {
+                _fileLogger.Log(LogType.ErrorType, $"Download Memo Failed: {ex.Message}, {ex.InnerException}", true);
                 return NotFound();
             }
         }
@@ -108,7 +110,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to display Memo modal, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Display Memo Modal Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Home");
             }
         }

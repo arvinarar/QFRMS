@@ -643,6 +643,21 @@ input[type=number] {
 .student-grades-table h6 {
     margin-bottom: 0;
     padding: 0.375rem 0;
+    font-size: 0.9rem;
+}
+
+.student-grades-table .form-select {
+    font-size: 0.9rem;
+    padding: 0.2rem 2rem 0.2rem 0.3rem;
+}
+    
+.student-grades-table .form-group {
+    margin: 0.25rem 0;
+}
+
+.student-grades-table .form-control {
+    padding: 0.2rem 0.3rem;
+    font-size: 0.9rem;
 }
 
 #TableList td {

@@ -42,7 +42,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to get neccesary data for Memo notification: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Failed to get neccesary data for Memo notification: {ex.Message}, {ex.InnerException}", true);
                 ViewData["HasSeenMemo"] = true;
                 return View();
             }
@@ -59,8 +59,9 @@ namespace QFRMS.WebApp.Controllers
             {
                 return View(await _aboutService.GetInstituteInfoAsync());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _fileLogger.Log(LogType.ErrorType, $"About Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Home");
             }
         }
@@ -76,8 +77,9 @@ namespace QFRMS.WebApp.Controllers
             { 
                 return View(await _aboutService.GetInstituteInfoAsync());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _fileLogger.Log(LogType.ErrorType, $"Edit About Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("About", "Home");
             }
         }
@@ -97,10 +99,10 @@ namespace QFRMS.WebApp.Controllers
                     var work = await _aboutService.UpdateInstituteInfoAsync(model);
                     if(!work.Result)
                     {
-                        _logger.LogError("Work Failed, {ErrorCode} {Message}", work.ErrorCode, work.Message);
+                        _fileLogger.Log(LogType.ErrorType, $"Update Institute Info Failed: {work.ErrorCode} {work.Message}", true);
                         return View("EditAbout", model);
                     }
-                    _fileLogger.Log($"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
+                    _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
                     return RedirectToAction("About", "Home");
                 }
                 ModelState.AddModelError(string.Empty, "Please fill-up all the fields");
@@ -108,7 +110,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to Update Insitute Info: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Update Institute Info Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("About", "Home");
             }
         }

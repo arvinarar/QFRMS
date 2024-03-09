@@ -31,9 +31,8 @@ namespace QFRMS.Services.Services
             {
                 return await _repository.RetrieveMemoAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} GetMemoAsync Failed: {message}", DateTime.Now.ToString(), ex.Message);
                 throw;
             }
         }
@@ -59,20 +58,15 @@ namespace QFRMS.Services.Services
                 };
 
                 var work = await _repository.UploadMemo(memo);
-                if(!work) throw new Exception("Work failed");
 
                 _work.Time = DateTime.Now;
                 _work.Message = "Successfully Uploaded Memo";
                 _work.Result = true;
                 return _work;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _work.ErrorCode = ex.Message;
-                _work.Time = DateTime.Now;
-                _work.Message = "Couldn't Upload Memo";
-                _work.Result = false;
-                return _work;
+                throw;
             }
         }
 
@@ -96,14 +90,13 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                var user = await _userAccountRepository.GetUserByName(name) ?? throw new Exception("User doesn't exist");
+                var user = await _userAccountRepository.GetUserByName(name) ?? throw new NullReferenceException("User doesn't exist");
                 var HasSeenMemo = await _repository.HasSeenMemo(user.Id);
                 return HasSeenMemo;
             }
-            catch(Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} HasSeenMemo Failed: {message}", DateTime.Now.ToString(), ex.Message);
-                return true;
+                throw;
             }
         }
     }

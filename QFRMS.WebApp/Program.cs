@@ -10,7 +10,7 @@ using QFRMS.Services.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("default");
+var connectionString = builder.Configuration.GetConnectionString("Development"); //Change to Deployed if set system to production
 
 //Add Logger
 builder.Services.AddSingleton<IFileLogger, FileLogger>();
@@ -37,7 +37,8 @@ builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(
-        options => options.UseSqlServer(connectionString)
+        options => options.UseSqlServer(connectionString,
+        providerOptions => providerOptions.EnableRetryOnFailure())
     );
 
 builder.Services.AddIdentity<UserAccount, IdentityRole>(

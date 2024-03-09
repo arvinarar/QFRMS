@@ -52,9 +52,8 @@ namespace QFRMS.Services.Services
                                                  Role = role.Name
                                              });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} GetAllUsersAsync Failed: {message}", DateTime.Now.ToString(), ex.Message);
                 throw;
             }
         }
@@ -63,8 +62,8 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                var user = await _repository.GetUserByIdAsync(Id) ?? throw new Exception("User not Found");
-                var getRole = _userManager.GetRolesAsync(user!).Result.FirstOrDefault() ?? throw new Exception("Couldn't Retrieve Role");
+                var user = await _repository.GetUserByIdAsync(Id) ?? throw new NullReferenceException("User not Found");
+                var getRole = _userManager.GetRolesAsync(user!).Result.FirstOrDefault() ?? throw new NullReferenceException("Couldn't Retrieve Role");
                 return new UsersViewModel
                 {
                     Id = user.Id,
@@ -73,9 +72,8 @@ namespace QFRMS.Services.Services
                     Role = getRole
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} GetUserById Failed: {message}", DateTime.Now.ToString(), ex.Message);
                 throw;
             }
         }
@@ -84,19 +82,18 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                var user = await _repository.GetUserByIdAsync(Id) ?? throw new Exception("User not Found");
-                var getRole = _userManager.GetRolesAsync(user).Result.FirstOrDefault() ?? throw new Exception("Couldn't Retrieve Role");
+                var user = await _repository.GetUserByIdAsync(Id) ?? throw new NullReferenceException("User not Found");
+                var getRole = _userManager.GetRolesAsync(user).Result.FirstOrDefault() ?? throw new NullReferenceException("Couldn't Retrieve Role");
                 return new UpdateUserDetails
                 {
                     Id = user.Id,
                     FullName = $"{user.FirstName} {user.MiddleName} {user.LastName} {user.ExtensionName}",
-                    Username = user.UserName ?? throw new Exception("UserName not Found"),
+                    Username = user.UserName ?? throw new NullReferenceException("UserName not Found"),
                     Role = getRole
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} GetUserDetails Failed: {message}", DateTime.Now.ToString(), ex.Message);
                 throw;
             }
         }
@@ -165,9 +162,8 @@ namespace QFRMS.Services.Services
                          },
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} SearchUsersAsync Method Failed: {message}", DateTime.Now.ToString(), ex.Message);
                 throw;
             }
         }
@@ -176,8 +172,8 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                var user = await _repository.GetUserByIdAsync(Id) ?? throw new Exception("User not Found");
-                var getRole = _userManager.GetRolesAsync(user!).Result.FirstOrDefault() ?? throw new Exception("Couldn't Retrieve Role");
+                var user = await _repository.GetUserByIdAsync(Id) ?? throw new NullReferenceException("User not Found");
+                var getRole = _userManager.GetRolesAsync(user!).Result.FirstOrDefault() ?? throw new NullReferenceException("Couldn't Retrieve Role");
                 UserRoles role = Enum.Parse<UserRoles>(getRole!, true);
 
                 return new UpdateUser
@@ -193,9 +189,8 @@ namespace QFRMS.Services.Services
                     NewPassword = ""
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} GetUpdateUserDTO Method Failed: {message}", DateTime.Now.ToString(), ex.Message);
                 throw;
             }
         }
@@ -215,7 +210,7 @@ namespace QFRMS.Services.Services
                     ExtensionName = model.ExtensionName,
                 };
                 var role = _roleManager.FindByNameAsync(GetEnumDescription(model.userRoles)).Result
-                    ?? throw new Exception("Role not Found");
+                    ?? throw new NullReferenceException("Role not Found");
                 var createUser = await _userManager.CreateAsync(user, model.Password!);
                 _ = await _userManager.AddToRoleAsync(user, role.Name!);
 
@@ -232,7 +227,7 @@ namespace QFRMS.Services.Services
                 _work.Result = false;
                 return _work;
             }
-            catch (Exception ex)
+            catch (NullReferenceException ex)
             {
                 _work.ErrorCode = ex.Message;
                 _work.Time = DateTime.Now;
@@ -240,14 +235,18 @@ namespace QFRMS.Services.Services
                 _work.Result = false;
                 return _work;
             }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<Work> UpdateUser(UpdateUser model)
         {
             try
             {
-                var user = await _userManager.FindByIdAsync(model.Id) ?? throw new Exception("Couldn't Retrieve User");
-                var oldRole = _userManager.GetRolesAsync(user).Result.FirstOrDefault() ?? throw new Exception("Couldn't Retrieve Role");
+                var user = await _userManager.FindByIdAsync(model.Id) ?? throw new NullReferenceException("Couldn't Retrieve User");
+                var oldRole = _userManager.GetRolesAsync(user).Result.FirstOrDefault() ?? throw new NullReferenceException("Couldn't Retrieve Role");
 
                 user.FirstName = model.FirstName;
                 user.MiddleName = model.MiddleName;
@@ -280,7 +279,7 @@ namespace QFRMS.Services.Services
                 _work.Result = false;
                 return _work;
             }
-            catch (Exception ex)
+            catch (NullReferenceException ex)
             {
                 _work.ErrorCode = ErrorType.Generic;
                 _work.Time = DateTime.Now;
@@ -288,13 +287,17 @@ namespace QFRMS.Services.Services
                 _work.Result = false;
                 return _work;
             }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<Work> UpdateUserDetails(UpdateUserDetails model)
         {
             try
             {
-                var user = await _userManager.FindByIdAsync(model.Id) ?? throw new Exception("Couldn't Retrieve User");
+                var user = await _userManager.FindByIdAsync(model.Id) ?? throw new NullReferenceException("Couldn't Retrieve User");
                 user.UserName = model.Username;
 
                 if (model.OldPassword != null)
@@ -320,7 +323,7 @@ namespace QFRMS.Services.Services
                 _work.Result = false;
                 return _work;
             }
-            catch (Exception ex)
+            catch (NullReferenceException ex)
             {
                 _work.ErrorCode = ErrorType.Generic;
                 _work.Time = DateTime.Now;
@@ -328,13 +331,17 @@ namespace QFRMS.Services.Services
                 _work.Result = false;
                 return _work;
             }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<Work> DeleteUser(string Id)
         {
             try
             {
-                var user = await _userManager.FindByIdAsync(Id!) ?? throw new Exception("Couldn't Retrieve User");
+                var user = await _userManager.FindByIdAsync(Id!) ?? throw new NullReferenceException("Couldn't Retrieve User");
                 var result = await _userManager.DeleteAsync(user);
                 if(result.Succeeded)
                 {
@@ -348,13 +355,17 @@ namespace QFRMS.Services.Services
                     throw new Exception(result.Errors.ToString());
                 }
             }
-            catch (Exception ex)
+            catch (NullReferenceException ex)
             {
                 _work.ErrorCode = ex.Message;
                 _work.Time = DateTime.Now;
                 _work.Message = ErrorType.Generic;
                 _work.Result = false;
                 return _work;
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
     }

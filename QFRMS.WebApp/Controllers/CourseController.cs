@@ -32,7 +32,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to retrieve courses. Error: {Message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Course Index Failed: {ex.Message}, {ex.InnerException}", true);
                 var dummyList = new List<CourseListViewModel>();
                 return View(await PaginatedList<CourseListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, _pageSize));
             }
@@ -56,7 +56,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Search Failed. Error: {Message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Course Search Failed: {ex.Message}, {ex.InnerException}", true);
                 var dummyList = new List<CourseListViewModel>();
                 return PartialView("_CourseList", PaginatedList<CourseListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, _pageSize).Result);
             }
@@ -72,7 +72,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to get Course Duration, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"GetCourseDuration Failed: {ex.Message}, {ex.InnerException}", true);
                 return "--";
             }
         }
@@ -98,18 +98,18 @@ namespace QFRMS.WebApp.Controllers
                         {
                             ModelState.AddModelError(string.Empty, work.Message);
                         }
-                        _logger.LogError("{datetime} Method Create Failed: {errorcode}, {message}", DateTime.Now.ToString(), work.ErrorCode, work.Message);
+                        _fileLogger.Log(LogType.ErrorType, $"Create Course Failed: {work.ErrorCode} {work.Message}", true);
                         return View();
                     }
 
-                    _fileLogger.Log($"{LogType.DatabaseType}, {work.Message} \'{model?.ProgramTitle}\', {User.Identity?.Name}", true);
+                    _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.ProgramTitle}\', {User.Identity?.Name}", true);
                     return RedirectToAction("Index", "Course");
                 }
                 return View();
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to create new Course, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Create Course Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Course");
             }
         }
@@ -129,18 +129,18 @@ namespace QFRMS.WebApp.Controllers
                         {
                             ModelState.AddModelError(string.Empty, work.Message);
                         }
-                        _logger.LogError("{datetime} Method EditCourse Failed: {errorcode}, {message}", DateTime.Now.ToString(), work.ErrorCode, work.Message);
+                        _fileLogger.Log(LogType.ErrorType, $"Edit Course Failed: {work.ErrorCode} {work.Message}", true);
                         return View();
                     }
 
-                    _fileLogger.Log($"{LogType.DatabaseType}, {work.Message} \'{model?.ProgramTitle}\', {User.Identity?.Name}", true);
+                    _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.ProgramTitle}\', {User.Identity?.Name}", true);
                     return RedirectToAction("Index", "Course");
                 }
                 return View();
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to create new Course, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Edit Course Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Course");
             }
         }
@@ -154,7 +154,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch(Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to get Course Detail, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Course Details Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Course");
             }
         }
@@ -169,7 +169,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to get Course Edit View, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Edit Course Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Course");
             }
         }
@@ -187,7 +187,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to load Delete Modal. Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Delete Course Modal Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Details", "Course");
             }
         }
@@ -198,14 +198,13 @@ namespace QFRMS.WebApp.Controllers
             try
             {
                 var work = await _courseService.DeleteCourseAsync(model.Id);
-                if (!work.Result) throw new Exception("Work Failed");
 
-                _fileLogger.Log($"{LogType.DatabaseType}, {work.Message} \'{model?.ProgramTitle}\', {User.Identity?.Name}", true);
+                _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.ProgramTitle}\', {User.Identity?.Name}", true);
                 return RedirectToAction("Index", "Course");
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to delete. Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Delete Course Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Course");
             }
         }
