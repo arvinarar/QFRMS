@@ -1,4 +1,7 @@
-﻿@{
+﻿@using QFRMS.Data.Models
+@model List<HomePageArticlesVideo>
+
+@{
     ViewData["Title"] = "Home";
 
     ViewData["Title"] = "Dashboard";
@@ -10,11 +13,58 @@
 }
 
 <div class="row">
-    <div class="col-6">
-
+    <h1 class="display-5 text-center mb-4">Welcome to Quilantang Farms</h1>
+    <div class="col-6 ps-0">
+        <div id="HomeImagesControl" class="carousel slide home-image-container" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                @{
+                    bool active = true;
+                    for (int i = 2; i < 8; i++)
+                    {
+                        if (Model[i - 1].Title != null)
+                        {
+                            <div class="carousel-item @(active ? "active": "")" data-bs-interval="10000">
+                                <h4 class="home-image-title">
+                                    @Model[i-1].Title
+                                </h4>
+                                <div class="home-image">
+                                    <img src="~/homepage/@(Model[i-1].FilePath)" alt="...">
+                                </div>
+                                <div class="home-image-description">
+                                    @Html.Raw(Model[i-1].Description)
+                                </div>
+                            </div>
+                            active = false;
+                        }
+                    }
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#HomeImagesControl" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#HomeImagesControl" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
     </div>
-    <div class="col-6">
-
+    <div class="col-6 pe-0">
+        @if (Model[0].Title != null)
+        {
+            <div class="home-video-container">
+                <video class="home-video" controls loop>
+                    <source src="~/homepage/@(Model[0].FilePath)" type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+                <h4 class="home-video-title">
+                    @Model[0].Title
+                </h4>
+                <div class="home-video-description">
+                    @Html.Raw(Model[0].Description)
+                </div>
+            </div>
+        }
     </div>
 </div>
 <div id="modalDiv"></div>

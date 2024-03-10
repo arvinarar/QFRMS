@@ -10,7 +10,7 @@ using QFRMS.Services.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("Development"); //Change to 'Deployed' if set system to production
+var connectionString = builder.Configuration.GetConnectionString("Development"); //Change to 'Deployed' if set system to production, 'Development' otherwise
 
 //Add Logger
 builder.Services.AddSingleton<IFileLogger, FileLogger>();

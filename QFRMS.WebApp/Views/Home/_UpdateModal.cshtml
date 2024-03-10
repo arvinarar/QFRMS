@@ -1,0 +1,69 @@
+﻿@using QFRMS.Services.Utils
+@using QFRMS.Data.DTOs
+
+@model UpdateArticleVideo
+
+<!-- Modal -->
+<div class="modal fade" id="updateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content page-body bg-white">
+            <form asp-action="UpdateArticleVideo" enctype="multipart/form-data" method="post">
+                <input asp-for="Id" type="hidden"/>
+                <div asp-validation-summary="ModelOnly" class="row text-danger" role="alert"></div>
+                <div class="modal-header body-header p-2">
+                    <h4 class="body-title" id="updateModalLabel">Set @(Model.Id == "1" ? "Video" : $"Article {int.Parse(Model.Id) - 1}")</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body body-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label asp-for="Title" class="control-label required"></label>
+                                <input asp-for="Title" class="form-control" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label asp-for="Description" class="control-label required"></label>
+                                <textarea asp-for="Description" class="form-control"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="File" class="control-label @(Model.Title == null ? "required": "")">@(Model.Id == "1" ? "Video" : "Image") File</label>
+                                <input asp-for="File" type="file" class="form-control" accept=@(Model.Id == "1"? ".mp4": "image/*") />
+                                <span asp-validation-for="File" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer form-footer m-0 p-0 pt-2">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                    <button type="submit" class="btn btn-primary">Set @(Model.Id == "1" ? "Video" : "Image")</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#Description').summernote({
+            placeholder: 'Enter Description Here',
+            //tabsize: 2,
+            height: 300,
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['para', ['paragraph', 'ul', 'ol']],
+                ['view', ['codeview']]
+            ]
+        });
+    });
+</script>
+<partial name="_ValidationScriptsPartial" />

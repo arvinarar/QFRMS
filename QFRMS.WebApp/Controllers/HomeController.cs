@@ -7,6 +7,8 @@ using QFRMS.Services.Utils;
 using QFRMS.WebApp.Models;
 using System.Diagnostics;
 using static QFRMS.Data.Constants;
+using Microsoft.IdentityModel.Tokens;
+using QFRMS.Data.DTOs;
 
 namespace QFRMS.WebApp.Controllers
 {
@@ -38,7 +40,8 @@ namespace QFRMS.WebApp.Controllers
                     else
                         ViewData["HasSeenMemo"] = false;
                 }
-                return View();
+                var result = await _aboutService.GetHomePageArticlesVideosAsync();
+                return View(result);
             }
             catch (Exception ex)
             {
@@ -111,6 +114,77 @@ namespace QFRMS.WebApp.Controllers
             catch (Exception ex)
             {
                 _fileLogger.Log(LogType.ErrorType, $"Update Institute Info Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("About", "Home");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> HomeSettings()
+        {
+            try
+            {
+                var result = await _aboutService.GetHomePageArticlesVideosAsync();
+                return View(result);
+            }
+            catch (Exception ex)
+            {
+                _fileLogger.Log(LogType.ErrorType, $"Home Settings Page Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("About", "Home");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        // Get : GetStudentGrades
+        public IActionResult GetArticleVideoForm(string Id)
+        {
+            try
+            {
+                var result = _aboutService.GetUpdateArticleVideo(Id).Result;
+                return PartialView("_UpdateModal", result);
+            }
+            catch (Exception ex)
+            {
+                _fileLogger.Log(LogType.ErrorType, $"GetArticleVideoForm Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("About", "Home");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateArticleVideo(UpdateArticleVideo model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var work = await _aboutService.UpdateHomePageArticlesVideoAsync(model);
+                    _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
+                    return RedirectToAction("HomeSettings", "Home");
+                }
+                return RedirectToAction("HomeSettings", "Home");
+            }
+            catch (Exception ex)
+            {
+                _fileLogger.Log(LogType.ErrorType, $"UpdateArticleVideo Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("About", "Home");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteArticleVideo(string Id)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var work = await _aboutService.DeleteHomePageArticlesVideoAsync(Id);
+                    _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
+                    return RedirectToAction("HomeSettings", "Home");
+                }
+                return RedirectToAction("HomeSettings", "Home");
+            }
+            catch (Exception ex)
+            {
+                _fileLogger.Log(LogType.ErrorType, $"UpdateArticleVideo Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("About", "Home");
             }
         }

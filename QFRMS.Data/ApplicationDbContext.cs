@@ -31,6 +31,8 @@ namespace QFRMS.Data
 
         public DbSet<PDF> PDFs { get; set; }
 
+        public DbSet<HomePageArticlesVideo> HomePageArticlesVideos { get; set; }
+
         //Seed Database
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -175,6 +177,17 @@ namespace QFRMS.Data
                 {
                     Id = 1
                 }
+                );
+
+            // Set Home Page Articles and Videos Table and IDs
+            builder.Entity<HomePageArticlesVideo>().HasData(
+                new HomePageArticlesVideo{ Id = "1" },
+                new HomePageArticlesVideo { Id = "2" },
+                new HomePageArticlesVideo { Id = "3" },
+                new HomePageArticlesVideo { Id = "4" },
+                new HomePageArticlesVideo { Id = "5" },
+                new HomePageArticlesVideo { Id = "6" },
+                new HomePageArticlesVideo { Id = "7" }
                 );
             #endregion
         }

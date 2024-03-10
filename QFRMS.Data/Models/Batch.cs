@@ -13,11 +13,9 @@ namespace QFRMS.Data.Models
     public class Batch
     {
         public required string Id { get; set; }
-
         public required string CourseId { get; set; }
         public required Course Course { get; set; }
 
-        
         public required string TrainorId { get; set; }
         public required UserAccount Trainor { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using QFRMS.Data.Interfaces;
 using QFRMS.Data.Models;
@@ -33,6 +34,30 @@ namespace QFRMS.Data.Repositories
             }
         }
 
+        public async Task<HomePageArticlesVideo?> GetHomePageArticlesVideo(string Id)
+        {
+            try
+            {
+                return await _context.HomePageArticlesVideos.FindAsync(Id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<IQueryable<HomePageArticlesVideo>> GetHomePageArticlesVideosAsync()
+        {
+            try
+            {
+                return await Task.FromResult(_context.Set<HomePageArticlesVideo>());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<bool> UpdateInstituteInfoAsync(InstituteInfo model)
         {
             try
@@ -54,6 +79,37 @@ namespace QFRMS.Data.Repositories
                 await Task.FromResult(_context.InstituteInfo.Update(info));
                 await _context.SaveChangesAsync();
 
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateHomePageArticlesVideoAsync(HomePageArticlesVideo model)
+        {
+            try
+            {
+                _context.HomePageArticlesVideos.Update(model);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<bool> DeleteHomePageArticlesVideoAsync(string Id)
+        {
+            try
+            {
+                var model = await _context.HomePageArticlesVideos.FindAsync(Id) ?? throw new NullReferenceException("Article or Video not found");
+                model.Title = null;
+                model.Description = null;
+                model.FilePath = null;
+                _context.HomePageArticlesVideos.Update(model);
+                await _context.SaveChangesAsync();
                 return true;
             }
             catch (Exception)

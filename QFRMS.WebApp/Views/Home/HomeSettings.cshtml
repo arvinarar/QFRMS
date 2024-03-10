@@ -1,0 +1,109 @@
+﻿@using QFRMS.Data.Models
+@using QFRMS.Data.DTOs
+@model List<HomePageArticlesVideo>
+
+@{
+    ViewData["Title"] = "Home Settings";
+}
+
+<div class="page-header small mx-auto">
+    <div class="header">
+        <img src="~/icons/settings.svg" class="header-icon" />
+        <h2 class="header-title">HOME SETTINGS</h2>
+        <div class="col d-flex justify-content-end align-items-center">
+            <a class="nav-link btn btn-back no-glow" asp-area="" asp-controller="Home" asp-action="About">
+                <img src="~/icons/back.svg" class="icons" />
+                Back
+            </a>
+        </div>
+    </div>
+    <div class="header-hr"></div>
+</div>
+<div class="page-body small mx-auto">
+    <div class="row body-header title">
+        <div class="col d-flex justify-content-start align-items-center">
+            <h4 class="body-title">Articles</h4>
+        </div>
+    </div>
+    <div class="article-settings-container">
+        @{
+            for (int i = 2; i < 8; i++)
+            {
+                if(Model[i-1].Title == null)
+                {
+                    <a class="article-empty" onclick="SetArticleVideoForm('@Model[i - 1].Id')">
+                        <img src="~/icons/add_primary.svg" class="home-settings-add-icon" />
+                        Set Article @(i - 1)
+                    </a>
+                }
+                else
+                {
+                    <div class="card">
+                        <img src="~/homepage/@(Model[i-1].FilePath)" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h6>@Model[i-1].Title</h6>
+                            </div>
+                            <div class="card-options">
+                                <a class="btn btn-primary me-2" onclick="SetArticleVideoForm('@Model[i - 1].Id')">Edit</a>
+                                <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@("#delete-"+Model[i-1].Id)">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                    <partial name="_DeleteModal" model="Model[i-1]" />
+                }
+            }
+        }
+    </div>
+    <div class="row body-header title">
+        <div class="col d-flex justify-content-start align-items-center">
+            <h4 class="body-title">Video</h4>
+        </div>
+    </div>
+    <div class="video-settings-container">
+        @{
+            if (Model[0].Title == null)
+            {
+                <a class="video-empty" onclick="SetArticleVideoForm('@Model[0].Id')">
+                    <img src="~/icons/add_primary.svg" class="home-settings-add-icon" />
+                    Set Video
+                </a>
+            }
+            else
+            {
+                <div class="card">
+                    <video class="card-video-side" controls loop>
+                        <source src="~/homepage/@(Model[0].FilePath)" type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="card-body">
+                        <h6 class="card-title">@Model[0].Title</h6>
+                        <div class="card-options">
+                            <a class="btn btn-primary me-2" onclick="SetArticleVideoForm('@Model[0].Id')">Edit</a>
+                            <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@("#delete-" + Model[0].Id)">Delete</a>
+                        </div>
+                    </div>
+                </div>
+                <partial name="_DeleteModal" model="Model[0]" />
+            }
+        }
+    </div>
+</div>
+<div id="modalDiv"></div>
+
+@section Scripts {
+    <script>
+        function SetArticleVideoForm(Id) {
+            $.ajax({
+                type: "Get",
+                url: "/Home/GetArticleVideoForm",
+                data: { "Id": Id },
+                async: true,
+                success: function (result) {
+                    $("#modalDiv").html(result);
+                    $("#updateModal").modal('show');
+                }
+            });
+        }
+    </script>
+}

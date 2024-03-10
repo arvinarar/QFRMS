@@ -340,6 +340,55 @@ namespace QFRMS.Data.Migrations
                     b.ToTable("Grades");
                 });
 
+            modelBuilder.Entity("QFRMS.Data.Models.HomePageArticlesVideo", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HomePageArticlesVideos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1"
+                        },
+                        new
+                        {
+                            Id = "2"
+                        },
+                        new
+                        {
+                            Id = "3"
+                        },
+                        new
+                        {
+                            Id = "4"
+                        },
+                        new
+                        {
+                            Id = "5"
+                        },
+                        new
+                        {
+                            Id = "6"
+                        },
+                        new
+                        {
+                            Id = "7"
+                        });
+                });
+
             modelBuilder.Entity("QFRMS.Data.Models.InstituteInfo", b =>
                 {
                     b.Property<string>("Id")
