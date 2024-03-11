@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QFRMS.Data;
@@ -58,6 +59,17 @@ builder.Services.AddIdentity<UserAccount, IdentityRole>(
 builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 {
     options.ValidationInterval = TimeSpan.FromMinutes(5);
+});
+
+//Set File Size limit to 512MB, for IIS set it on config 536870912(size in bytes)
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 512 * 1024 * 1024;
+});
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 512 * 1024 * 1024;
 });
 
 var app = builder.Build();

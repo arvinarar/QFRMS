@@ -149,6 +149,7 @@ namespace QFRMS.WebApp.Controllers
             }
         }
 
+        [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateArticleVideo(UpdateArticleVideo model)
         {

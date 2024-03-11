@@ -37,6 +37,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="File" class="control-label @(Model.Title == null ? "required": "")">@(Model.Id == "1" ? "Video" : "Image") File</label>
+                                <span class="file-limit-upload">(File size limit is 512MB)</span>
                                 <input asp-for="File" type="file" class="form-control" accept=@(Model.Id == "1"? ".mp4": "image/*") />
                                 <span asp-validation-for="File" class="text-danger"></span>
                             </div>
