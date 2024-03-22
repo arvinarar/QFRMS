@@ -20,26 +20,37 @@ namespace QFRMS.Data.Models
 
         public required Batch Batch { get; set; }
 
+        [MaxLength(50)]
         public required string FirstName { get; set; }
 
+        [MaxLength(50)]
         public required string MiddleName { get; set; }
 
+        [MaxLength(50)]
         public required string LastName { get; set; }
 
+        [MaxLength(50)]
         public string? ExtensionName { get; set; }
 
+        [MaxLength(20)]
         public string? ContactNo { get; set; }
 
+        [MaxLength(100)]
         public string? Email { get; set; }
 
+        [MaxLength(256)]
         public string? StreetNo { get; set; }
 
+        [MaxLength(50)]
         public required string Barangay { get; set; }
 
+        [MaxLength(50)]
         public required string MunicipalityCity { get; set; }
 
+        [MaxLength(50)]
         public string? District { get; set; }
 
+        [MaxLength(50)]
         public required string Province { get; set; }
 
         [Column(TypeName = "nvarchar(24)")]
@@ -56,6 +67,7 @@ namespace QFRMS.Data.Models
         [Column(TypeName = "nvarchar(24)")]
         public required HighestGrade HighestGrade { get; set; }
 
+        [MaxLength(50)]
         public required string Nationality { get; set; }
 
 

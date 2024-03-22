@@ -12,8 +12,8 @@ using QFRMS.Data;
 namespace QFRMS.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240217051709_ModifyBatchTable2")]
-    partial class ModifyBatchTable2
+    [Migration("20240322055541_InitialDatabase")]
+    partial class InitialDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -215,11 +215,13 @@ namespace QFRMS.Data.Migrations
 
                     b.Property<string>("LearningDelivery")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("LearningMode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NTPId")
                         .IsRequired()
@@ -227,7 +229,8 @@ namespace QFRMS.Data.Migrations
 
                     b.Property<string>("RQMNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("TimeEnd")
                         .HasColumnType("datetime2");
@@ -259,34 +262,41 @@ namespace QFRMS.Data.Migrations
 
                     b.Property<string>("COPRNo")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ClientClassification")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("DeliveryMode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("Duration")
                         .HasColumnType("int");
 
                     b.Property<string>("ProgramTitle")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("ScholarshipType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Sector")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -303,19 +313,24 @@ namespace QFRMS.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Classification")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("EmployerAddress")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("EmployerName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Occupation")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Salary")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -325,6 +340,75 @@ namespace QFRMS.Data.Migrations
                     b.ToTable("DeploymentDetails");
                 });
 
+            modelBuilder.Entity("QFRMS.Data.Models.Grade", b =>
+                {
+                    b.Property<string>("ULI")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal?>("PostTest")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal?>("PreTest")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.HasKey("ULI");
+
+                    b.ToTable("Grades");
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.HomePageArticlesVideo", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HomePageArticlesVideos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1"
+                        },
+                        new
+                        {
+                            Id = "2"
+                        },
+                        new
+                        {
+                            Id = "3"
+                        },
+                        new
+                        {
+                            Id = "4"
+                        },
+                        new
+                        {
+                            Id = "5"
+                        },
+                        new
+                        {
+                            Id = "6"
+                        },
+                        new
+                        {
+                            Id = "7"
+                        });
+                });
+
             modelBuilder.Entity("QFRMS.Data.Models.InstituteInfo", b =>
                 {
                     b.Property<string>("Id")
@@ -332,47 +416,58 @@ namespace QFRMS.Data.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("City")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("District")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("FocalPerson")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ProviderClassification")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ProviderType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Province")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Region")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("TelephoneNo")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -430,11 +525,13 @@ namespace QFRMS.Data.Migrations
 
                     b.Property<string>("FilePath")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -449,6 +546,103 @@ namespace QFRMS.Data.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("SeenUsers");
+                });
+
+            modelBuilder.Entity("QFRMS.Data.Models.Student", b =>
+                {
+                    b.Property<string>("ULI")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Barangay")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("BatchId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CivilStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(24)");
+
+                    b.Property<string>("ContactNo")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("District")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ESBT")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(24)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ExtensionName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("HighestGrade")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(24)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("MiddleName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("MunicipalityCity")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Nationality")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Sex")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(24)");
+
+                    b.Property<string>("StreetNo")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("TrainingStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(24)");
+
+                    b.HasKey("ULI");
+
+                    b.HasIndex("BatchId");
+
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("QFRMS.Data.Models.UserAccount", b =>
@@ -471,13 +665,16 @@ namespace QFRMS.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("ExtensionName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -486,7 +683,8 @@ namespace QFRMS.Data.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("MiddleName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -648,7 +846,7 @@ namespace QFRMS.Data.Migrations
                     b.HasOne("QFRMS.Data.Models.PDF", "NTP")
                         .WithMany()
                         .HasForeignKey("NTPId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("QFRMS.Data.Models.UserAccount", "Trainor")
@@ -677,6 +875,17 @@ namespace QFRMS.Data.Migrations
                     b.Navigation("Batch");
                 });
 
+            modelBuilder.Entity("QFRMS.Data.Models.Grade", b =>
+                {
+                    b.HasOne("QFRMS.Data.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("ULI")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("QFRMS.Data.Models.Memo", b =>
                 {
                     b.HasOne("QFRMS.Data.Models.PDF", "File")
@@ -687,9 +896,22 @@ namespace QFRMS.Data.Migrations
                     b.Navigation("File");
                 });
 
+            modelBuilder.Entity("QFRMS.Data.Models.Student", b =>
+                {
+                    b.HasOne("QFRMS.Data.Models.Batch", "Batch")
+                        .WithMany("Students")
+                        .HasForeignKey("BatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Batch");
+                });
+
             modelBuilder.Entity("QFRMS.Data.Models.Batch", b =>
                 {
                     b.Navigation("DeploymentDetails");
+
+                    b.Navigation("Students");
                 });
 
             modelBuilder.Entity("QFRMS.Data.Models.Course", b =>
