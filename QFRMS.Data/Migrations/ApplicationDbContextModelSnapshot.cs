@@ -343,12 +343,12 @@ namespace QFRMS.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal?>("PostTest")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasPrecision(4, 1)
+                        .HasColumnType("decimal(4,1)");
 
                     b.Property<decimal?>("PreTest")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasPrecision(4, 1)
+                        .HasColumnType("decimal(4,1)");
 
                     b.HasKey("ULI");
 

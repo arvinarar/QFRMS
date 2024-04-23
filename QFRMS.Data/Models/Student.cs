@@ -85,9 +85,9 @@ namespace QFRMS.Data.Models
         [ForeignKey("ULI")]
         public required Student Student { get; set; }
 
-        [Precision(5, 2)]
+        [Precision(4, 1)]
         public decimal? PreTest { get; set; }
-        [Precision(5, 2)]
+        [Precision(4, 1)]
         public decimal? PostTest { get; set; }
     }
 

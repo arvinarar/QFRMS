@@ -31,7 +31,7 @@ namespace QFRMS.Data.DTOs
 
         [DisplayName("RQM Code : ")]
         [Required(ErrorMessage = "RQM Code is required")]
-        [RegularExpression(@"(^([A-Z0-9]{4}[-]?[A-Z0-9]{4}[-]?[A-Z0-9]{4}[-]?[A-Z0-9]{4}[-]?[A-Z0-9]{4})$)", ErrorMessage = "Please enter a valid RQM Code.")]
+        [RegularExpression(@"(^([a-zA-Z0-9]{4}[-]?[a-zA-Z0-9]{4}[-]?[a-zA-Z0-9]{4}[-]?[a-zA-Z0-9]{4}[-]?[a-zA-Z0-9]{4})$)", ErrorMessage = "Please enter a valid RQM Code.")]
         public string? RQMNumber { get; set; }
 
         [DisplayName("Date Start : ")]

@@ -40,13 +40,13 @@
                                             </td>
                                             <td>
                                                 <div class="d-inline-flex justify-content-center align-items-center">
-                                                    <input asp-for="Students[i].Pretest" type="number" step=".01" class="form-control text-center w-50" /> <h6>&nbsp;/ 100</h6>
+                                                    <input asp-for="Students[i].Pretest" type="number" step=".1" class="form-control text-center w-50" min="0" max="100" /> <h6>&nbsp;/ 100</h6>
                                                 </div>
                                                 <span asp-validation-for="Students[i].Pretest" class="row text-center text-danger"></span>
                                             </td>
                                             <td>
                                                 <div class="d-inline-flex justify-content-center align-items-center">
-                                                    <input asp-for="Students[i].Posttest" type="number" step=".01" class="form-control text-center w-50" /> <h6>&nbsp;/ 100</h6>
+                                                    <input asp-for="Students[i].Posttest" type="number" step=".1" class="form-control text-center w-50" min="0" max="100" /> <h6>&nbsp;/ 100</h6>
                                                 </div>
                                                 <span asp-validation-for="Students[i].Posttest" class="row text-center text-danger"></span>
                                             </td>

@@ -369,8 +369,8 @@ namespace QFRMS.Data.Migrations
                 columns: table => new
                 {
                     ULI = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PreTest = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: true),
-                    PostTest = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: true)
+                    PreTest = table.Column<decimal>(type: "decimal(4,1)", precision: 4, scale: 1, nullable: true),
+                    PostTest = table.Column<decimal>(type: "decimal(4,1)", precision: 4, scale: 1, nullable: true)
                 },
                 constraints: table =>
                 {

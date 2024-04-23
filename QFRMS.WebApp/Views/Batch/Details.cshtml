@@ -180,7 +180,10 @@
         <div class="col-3half d-flex justify-content-end align-items-end">
             <a class="nav-link btn btn-primary no-glow" onclick="GetGrades('@Model.Id', '@User.IsInRole("Trainor")')">
                 <img src="~/icons/document.svg" class="icons" />
-                See Grades
+                @{
+                    var gradesText = User.IsInRole("Trainor") ? "Update Grades": "See Grades";
+                }
+                @gradesText
             </a>
             @if (User.IsInRole("Admin") || User.IsInRole("Registrar"))
             {

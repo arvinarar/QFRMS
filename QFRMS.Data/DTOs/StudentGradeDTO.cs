@@ -14,11 +14,11 @@ namespace QFRMS.Data.DTOs
         public required string Name { get; set; }
 
         [Range(0, 100, ErrorMessage = "Enter grade between 0-100")]
-        [RegularExpression(@"^\d+(\.\d{1,2})?$")]
+        [RegularExpression(@"^\d+(\.\d{1,1})?$")]
         public decimal? Pretest { get; set; }
 
         [Range(0, 100, ErrorMessage = "Enter grade between 0-100")]
-        [RegularExpression(@"^\d+(\.\d{1,2})?$")]
+        [RegularExpression(@"^\d+(\.\d{1,1})?$")]
         public decimal? Posttest { get; set; }
 
         public string? FinalGrade { get; set; }
