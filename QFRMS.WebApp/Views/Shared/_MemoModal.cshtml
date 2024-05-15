@@ -1,4 +1,8 @@
-﻿<div class="modal fade" id="currentMemo" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="currentMemoLabel" aria-hidden="true">
+﻿@using QFRMS.Data.Models
+@using QFRMS.Data.DTOs
+@model Memo
+
+<div class="modal fade" id="currentMemo" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="currentMemoLabel" aria-hidden="true">
     <div class="modal-dialog memoModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -6,7 +10,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body memoModal">
-                <iframe src="@($"{Url.Action("DownloadMemo","Memo")}#toolbar=0&navpanes=0&scrollbar=1&view=fitH")" class="memo-modal-montainer" frameborder="0" id="memoFrame" />
+                <iframe src="@($"{Url.Action("DownloadMemo","Memo", new {Id = Model.Id})}#toolbar=0&navpanes=0&scrollbar=1&view=fitH")" class="memo-modal-montainer" frameborder="0" id="memoFrame" />
             </div>
         </div>
     </div>

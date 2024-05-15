@@ -21,12 +21,12 @@ namespace QFRMS.Data.DTOs
         public string? TrainorId { get; set; }
         public List<TrainorList>? TrainorList { get; set; }
 
-        [DisplayName("Learning Delivery : ")]
-        [Required(ErrorMessage = "Learning Delivery is required")]
+        [DisplayName("Program Title : ")]
+        [Required(ErrorMessage = "Program Title is required")]
         public LearningDelivery? LearningDelivery { get; set; }
 
-        [DisplayName("Learning Mode : ")]
-        [Required(ErrorMessage = "Learning Mode is required")]
+        [DisplayName("Learning Method : ")]
+        [Required(ErrorMessage = "Learning Method is required")]
         public LearningMode? LearningMode { get; set; }
 
         [DisplayName("RQM Code : ")]

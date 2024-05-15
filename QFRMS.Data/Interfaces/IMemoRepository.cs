@@ -10,9 +10,11 @@ namespace QFRMS.Data.Interfaces
     public interface IMemoRepository
     {
         public Task<int> SaveChangesAsync();
-        public Task<Memo> RetrieveMemoAsync();
+        public Task<IQueryable<Memo>> RetrieveAllAsync();
+        public Task<Memo> RetrieveMemoAsync(int? id);
         public Task<bool> UploadMemo(PDF file);
-        public Task<PDF> GetMemo();
+        public Task<bool> DeleteMemo(int id);
+        public Task<PDF> GetMemo(int id);
         public Task<bool> HasSeenMemo(string Id);
     }
 }

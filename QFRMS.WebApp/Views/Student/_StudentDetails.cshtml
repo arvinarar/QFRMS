@@ -8,7 +8,8 @@
         <div class="modal-content page-body bg-white">
             <div class="modal-header body-header p-2">
                 <h4 class="body-title me-3" id="studentDetailsModalLabel">Personal Details</h4>
-                @if(User.IsInRole("Admin") || User.IsInRole("Registrar")){
+                @if (User.IsInRole("Admin") || User.IsInRole("Registrar"))
+                {
                     <a class="nav-link d-flex btn btn-primary no-glow me-2" asp-area="" asp-controller="Student" asp-action="Edit" asp-route-ULI="@Model.ULI" asp-route-batchId="@Model.BatchId" asp-route-FromCoursePage="@Model.FromCoursePage">
                         <img src="~/icons/edit.svg" class="icons" />
                         Edit
@@ -63,7 +64,7 @@
                     </tr>
                     <tr>
                         <td class="col-12 course-detail">
-                            <h6>Highest Grade Completed :</h6> @Model.HighestGrade
+                            <h6>Education Level :</h6> @Model.HighestGrade
                         </td>
                     </tr>
                     <tr>

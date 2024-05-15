@@ -480,8 +480,8 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                //Update Grades only
-                if(model.IsTrainor)
+                //Only Trainor and Admin can update grades
+                if(model.UserRole == "Admin" || model.UserRole == "Trainor")
                 {
                     var grades = await _repository.RetrieveAllGradesAsync();
                     foreach (var student in model.Students)
@@ -492,12 +492,9 @@ namespace QFRMS.Services.Services
 
                     var work = await _repository.UpdateGrades(grades);
                     if (!work) throw new Exception("Work failed");
-                    _work.Time = DateTime.Now;
-                    _work.Message = $"Successfully Updated Grades of Batch \'{model.BatchId}\'";
-                    _work.Result = true;
-                    return _work;
                 }
-                else //Update Training Status
+                //Only Registrar and Admin can update statuses
+                if (model.UserRole == "Admin" || model.UserRole == "Registrar")
                 {
                     var students = await _repository.RetrieveStudentsFromBatchAsync(model.BatchId);
                     foreach (var student in model.Students)
@@ -507,11 +504,12 @@ namespace QFRMS.Services.Services
 
                     var work = await _repository.UpdateTrainingStatus(students);
                     if (!work) throw new Exception("Work failed");
-                    _work.Time = DateTime.Now;
-                    _work.Message = $"Successfully Updated Training Statuses of Batch \'{model.BatchId}\'";
-                    _work.Result = true;
-                    return _work;
                 }
+                var workMessage = model.UserRole == "Admin" ? "Grades and Statuses": model.UserRole == "Registrar" ? "Statuses" : "Grades";
+                _work.Time = DateTime.Now;
+                _work.Message = $"Successfully Updated {workMessage} of Batch \'{model.BatchId}\'";
+                _work.Result = true;
+                return _work;
             }
             catch (Exception)
             {
@@ -596,13 +594,13 @@ namespace QFRMS.Services.Services
             }
         }
 
-        public async Task<StudentGradesList> GetStudentGrades(string batchId, bool isTrainor, bool fromCoursePage)
+        public async Task<StudentGradesList> GetStudentGrades(string batchId, string userRole, bool fromCoursePage)
         {
             try
             {
                 return new StudentGradesList
                 {
-                    IsTrainor = isTrainor,
+                    UserRole = userRole,
                     FromCoursePage = fromCoursePage,
                     BatchId = batchId,
                     Students = (from student in await _repository.RetrieveAllAsync()

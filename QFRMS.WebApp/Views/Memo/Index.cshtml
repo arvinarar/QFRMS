@@ -1,4 +1,5 @@
 ﻿@using QFRMS.Data.Models
+@using QFRMS.Data.DTOs
 @model Memo
 @{
     ViewData["Title"] = "Memo";
@@ -13,8 +14,18 @@
 </div>
 <div class="page-body small mx-auto">
     <div class="row body-header title">
-        <div class="col d-flex justify-content-center align-items-center">
-            <h4 class="body-title">Memo Notification</h4>
+        <div class="col d-flex justify-content-start align-items-center">
+            <h4 class="body-title">Memo notification</h4>
+        </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            @if (User.IsInRole("Admin"))
+            {
+                <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadMemo">
+                    <img src="~/icons/settings_white.svg" class="icons" />
+                    Set New Memo
+                </a>
+                <partial name="_UploadMemo" model="new UploadMemo()" />
+            }
         </div>
     </div>
     <table class="table">
@@ -24,7 +35,7 @@
                     <h6>Current Memo :</h6>
                     @if (Model.File != null)
                     {
-                        <a class="memo-name" onclick="ShowMemo()">@Model.File.Name</a>
+                        <a class="memo-name" onclick="ShowMemo(@Model.Id)">@Model.File.Name</a>
                     } else
                     {
                         <h6>None</h6>
@@ -35,28 +46,57 @@
             {
                 <tr>
                     <td class="col-12 user-detail memo justify-content-center pt-0">
-                        Date Uploaded : @Model.DateUploaded.Value.ToShortDateString()
+                        Date Uploaded : @Model.DateUploaded.Value.ToString("MM/dd/yyyy - hh:mm tt")
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-    <div class="row form-footer mt-3 mb-2">
-        <div class="col d-flex justify-content-center">
-            <a class="btn btn-primary" asp-area="" asp-controller="Memo" asp-action="UploadNewMemo">
-                Set New Memo
-            </a>
+    <div id="modalDiv"></div>
+</div>
+<div class="page-body small mx-auto mt-3">
+    <div class="row body-header">
+        <div class="col-3half d-flex justify-content-start align-items-end">
+            <h4 class="header-title">Past Memos</h4>
         </div>
     </div>
-    <div id="modalDiv"></div>
+    <table class="table">
+        <thead>
+            <tr>
+                @if (User.IsInRole("Admin"))
+                {
+                    <th class="table-header col-7" scope="col">Name</th>
+                    <th class="table-header col-3" scope="col">Date & Time Uploaded</th>
+                    <th class="table-header col-auto" scope="col">Action</th>
+                }
+                else
+                {
+                    <th class="table-header col-8" scope="col">Name</th>
+                    <th class="table-header col-4" scope="col">Date & Time Uploaded</th>
+                }
+            </tr>
+        </thead>
+        <tbody id="TableList">
+        </tbody>
+    </table>
+    <div class="row body-footer">
+        <div class="col">
+            <input class="item-index no-glow" type="text" id="MemoItemIndex" readonly />
+        </div>
+        <div class="col pagination-btn">
+            <a class="btn left-btn disabled" id="MemoPreviousBtn">&#10094;&#10094;</a>
+            <a class="btn right-btn disabled" id="MemoNextBtn">&#10095;&#10095;</a>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     <script>
-        function ShowMemo() {
+        function ShowMemo(Id) {
             $.ajax({
                 type: "Get",
                 url: "/Memo/DisplayMemoModal",
+                data: {"Id": Id},
                 async: true,
                 success: function (result) {
                     $("#modalDiv").html(result);
@@ -64,5 +104,96 @@
                 }
             })
         }
+
+        $(document).on("change", "#UploadField", function () {
+            if ($("#UploadField").get(0).files.length == 0) {
+                $("#submitBtn").addClass("disabled");
+            }
+            else {
+                $("#submitBtn").removeClass("disabled");
+            }
+
+            $('#submitBtn').click(function () {
+                if (!$("#submitBtn").hasClass("disabled")) {
+                    $('#form').submit();
+                }
+            });
+        });
+
+        //Get Memo List
+        $(document).ready(function () {
+            // On Page Load
+            var memopathname = "/Memo/GetMemoList";
+            $.ajax({
+                url: memopathname,
+                type: "post",
+                async: true,
+                success: function (data) {
+                    $("#TableList").html(data);
+                    MemoRefreshPaginationElements();
+                }
+            });
+
+
+            //AJAX Search and Pagination Script
+            function MemoRefreshPaginationElements() {
+                if ($('#PrevFlag').val() == "False") {
+                    $('#MemoPreviousBtn').removeClass("btn-success");
+                    $('#MemoPreviousBtn').addClass("disabled");
+                }
+                else {
+                    $('#MemoPreviousBtn').addClass("btn-success");
+                    $('#MemoPreviousBtn').removeClass("disabled");
+                }
+                if ($('#NextFlag').val() == "False") {
+                    $('#MemoNextBtn').removeClass("btn-success");
+                    $('#MemoNextBtn').addClass("disabled");
+                }
+                else {
+                    $('#MemoNextBtn').addClass("btn-success");
+                    $('#MemoNextBtn').removeClass("disabled");
+                }
+
+                var StartIndex = $('#StartIndex').val();
+                var LastIndex = $('#LastIndex').val();
+                var TotalItems = $('#TotalItems').val();
+                var string = (TotalItems == 0) ? 'No entries found' : 'Showing ' + StartIndex + ' to ' + LastIndex + ' of ' + TotalItems + ' entries';
+
+                $('#MemoItemIndex').val(string);
+            }
+
+            MemoRefreshPaginationElements();
+
+            $("#MemoPreviousBtn").click(function () {
+                var pageNumber = parseInt($('#PageIndex').val(), 10) - 1;
+
+                $.ajax({
+                    url: memopathname,
+                    type: "post",
+                    data: { "pageNumber": pageNumber },
+                    async: true,
+                    success: function (data) {
+                        $("#TableList").html(data);
+                        BatchRefreshPaginationElements();
+                    }
+                });
+            });
+
+            $("#MemoNextBtn").click(function () {
+                var pageNumber = parseInt($('#PageIndex').val(), 10) + 1;
+
+                $.ajax({
+                    url: studentpathname,
+                    type: "post",
+                    data: { "pageNumber": pageNumber },
+                    async: true,
+                    success: function (data) {
+                        $("#TableList").html(data);
+                        BatchRefreshPaginationElements();
+                    }
+                });
+            });
+        });
     </script>
+    <partial name="_ValidationScriptsPartial" />
 }

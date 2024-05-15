@@ -1,6 +1,6 @@
 ﻿@using QFRMS.Services.Utils
 @using QFRMS.Data.ViewModels
-@model PaginatedList<CourseListViewModel>
+@model PaginatedList<MemoListViewModel>
 @{
     int StartIndex = ((Model.PageIndex - 1) * Model.PageSize) + 1;
     int LastIndex = Model.PageIndex * Model.PageSize;
@@ -19,13 +19,19 @@
     foreach (var item in Model)
     {
         <tr>
-            <td class="COPRNo">@item.COPRNo</td>
-            <td>@item.ProgramTitle</td>
-            <td>@item.Sector</td>
-            <td>@item.Status</td>
-            <td class="action">
-                <a class="nav-link btn btn-primary no-glow" asp-controller="Course" asp-action="Details" asp-route-id="@item.Id">Details</a>
+            <td>
+                <a class="memo-name" onclick="ShowMemo(@item.Id)">@item.Name</a>
             </td>
+            <td>@item.DateUploaded</td>
+            @if (User.IsInRole("Admin"))
+            {
+                <td class="action">
+                    <a class="nav-link btn btn-danger no-glow mx-auto" data-bs-toggle="modal" data-bs-target="@("#deleteModal-" + item.Id)">
+                        Delete
+                    </a>
+                    <partial name="_DeleteModal" model="item" />
+                </td>
+            }
         </tr>
     }
 }

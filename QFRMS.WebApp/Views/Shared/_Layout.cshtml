@@ -69,27 +69,22 @@
                             </li>
                             </a>
                         }
-                        @if (signInUser == "Admin")
+                        @if (signInUser != "Guest")
                         {
                             <li class="nav-item dropdown">
                                 <button class="btn nav-link dropdown-toggle @(urlSegments[0] == "Memo" || activeUrl == "About" || urlSegments[0] == "Account" && activeUrl != "Details" && activeUrl != "EditDetails" ? "nav-dropdown-selected" : "")" id="SystemDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">System</button>
                                 <div class="dropdown-menu" aria-labelledby="SystemDropdown">
-                                    <div class="dropdown-divider mt-0"></div>
-                                    <a class="dropdown-item nav-link" asp-area="" asp-controller="Account" asp-action="Index">Users</a>
+                                    @if(signInUser == "Admin")
+                                    {
+                                        <div class="dropdown-divider mt-0"></div>
+                                        <a class="dropdown-item nav-link" asp-area="" asp-controller="Account" asp-action="Index">Users</a>
+                                    }
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item nav-link" asp-area="" asp-controller="Memo" asp-action="Index">Memo</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a>
                                 </div>
                             </li>
-                        }
-                        else if (signInUser != "Guest")
-                        {
-                            <a class="nav-item @(activeUrl == "About" ? "nav-selected" : "")" asp-area="" asp-controller="Home" asp-action="About">
-                            <li class="nav-link">
-                                About
-                            </li>
-                            </a>
                         }
                         @if(signInUser != "Guest")
                         {

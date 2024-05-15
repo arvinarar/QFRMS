@@ -16,6 +16,7 @@ namespace QFRMS.WebApp.Controllers
         private readonly ILogger<MemoController> _logger;
         private readonly IFileLogger _fileLogger;
         private readonly IMemoService _memoService;
+        private readonly int _pageSize = 8;
 
         public MemoController(ILogger<MemoController> logger, IFileLogger fileLogger, IMemoService memoService)
         {
@@ -24,12 +25,11 @@ namespace QFRMS.WebApp.Controllers
             _memoService = memoService;
         }
 
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             try
             {
-                var data = await _memoService.GetMemoAsync();
+                var data = await _memoService.GetMemoAsync(null);
                 if(data.File == null) data.Id = 0;
                 return View(data);
             }
@@ -38,6 +38,22 @@ namespace QFRMS.WebApp.Controllers
                 _fileLogger.Log(LogType.ErrorType, $"Memo Index Failed: {ex.Message}, {ex.InnerException}", true);
                 Memo dummyData = new() { Id = 0};
                 return View(dummyData);
+            }
+        }
+
+        // Get : GetMemoList
+        public PartialViewResult GetMemoList(int? pageNumber)
+        {
+            try
+            {
+                var result = _memoService.GetMemoList().Result;
+                return PartialView("_MemoList", PaginatedList<MemoListViewModel>.CreateAsync(result, pageNumber ?? 1, _pageSize).Result);
+            }
+            catch (Exception ex)
+            {
+                _fileLogger.Log(LogType.ErrorType, $"MemoList show Failed: {ex.Message}, {ex.InnerException}", true);
+                var dummyList = new List<MemoListViewModel>();
+                return PartialView("_MemoList", PaginatedList<MemoListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, _pageSize).Result);
             }
         }
 
@@ -74,6 +90,23 @@ namespace QFRMS.WebApp.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteMemo(MemoListViewModel model)
+        {
+            try
+            {
+                var work = await _memoService.DeleteMemoAsync(model.Id);
+                _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
+                return RedirectToAction("Index", "Memo");
+            }
+            catch (Exception ex)
+            {
+                _fileLogger.Log(LogType.ErrorType, $"Delete Memo Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("Index", "Memo");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
         public IActionResult UploadNewMemo() 
         {
             try
@@ -88,11 +121,11 @@ namespace QFRMS.WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> DownloadMemo()
+        public async Task<IActionResult> DownloadMemo(int id)
         {
             try
             {
-                return await _memoService.DownloadMemo();
+                return await _memoService.DownloadMemo(id);
             }
             catch (Exception ex)
             {
@@ -102,11 +135,12 @@ namespace QFRMS.WebApp.Controllers
         }
 
         // GET : DisplayMemoModal
-        public IActionResult DisplayMemoModal()
+        public IActionResult DisplayMemoModal(int? id)
         {
             try
             {
-                return PartialView("_MemoModal");
+                var data = _memoService.GetMemoAsync(id).Result;
+                return PartialView("_MemoModal", new Memo { Id = id ?? data.Id });
             }
             catch (Exception ex)
             {

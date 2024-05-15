@@ -25,6 +25,18 @@ namespace QFRMS.Data.Repositories
             _logger = logger;
         }
 
+        public async Task<IQueryable<PDF>> RetrieveAllAsync()
+        {
+            try
+            {
+                return await Task.FromResult(_context.Set<PDF>());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<PDF> GetPDF(string id)
         {
             try

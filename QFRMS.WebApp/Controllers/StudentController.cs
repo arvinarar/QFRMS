@@ -237,7 +237,7 @@ namespace QFRMS.WebApp.Controllers
         }
 
         // Get : GetStudentGrades
-        public IActionResult GetStudentGrades(string batchId, bool isTrainor, string? fromCoursePage)
+        public IActionResult GetStudentGrades(string batchId, string userRole, string? fromCoursePage)
         {
             try
             {
@@ -245,7 +245,7 @@ namespace QFRMS.WebApp.Controllers
                 if (!fromCoursePage.IsNullOrEmpty())
                     if (fromCoursePage == "True")
                         flag = true;
-                var result = _service.GetStudentGrades(batchId, isTrainor, flag).Result;
+                var result = _service.GetStudentGrades(batchId, userRole, flag).Result;
                 return PartialView("_StudentGradesList", result);
             }
             catch (Exception ex)

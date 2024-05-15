@@ -28,7 +28,7 @@ namespace QFRMS.Data.DTOs
 
     public class StudentGradesList
     {
-        public required bool IsTrainor { get; set; }
+        public required string UserRole { get; set; }
         public required bool FromCoursePage { get; set; }
         public required string BatchId { get; set; }
         public required List<StudentGrade> Students { get; set; }

@@ -21,12 +21,23 @@
         <div class="col-auto d-flex justify-content-start align-items-center">
             @if (!User.IsInRole("Trainor"))
             {
-                <a class="nav-link d-flex btn btn-terminal no-glow me-2" target="_blank"
-                   asp-area="" asp-controller="Batch" asp-action="GenerateTerminalReport" asp-route-Id="@Model.Id">
-                    <img src="~/icons/document.svg" class="icons" />
-                    Generate Terminal Report
-                </a>
-                @if(Model.HasDeploymentDetail)
+                @if (!Model.CanBeDeleted)
+                {
+                    <a class="nav-link d-flex btn btn-terminal no-glow me-2" target="_blank"
+                       asp-area="" asp-controller="Batch" asp-action="GenerateTerminalReport" asp-route-Id="@Model.Id">
+                        <img src="~/icons/document.svg" class="icons" />
+                        Generate Terminal Report
+                    </a>
+                }
+                else
+                {
+                    <span class="d-inline-block me-2" data-toggle="tooltip" data-placement="top" title="Batch does not have students enrolled.">
+                        <button type="button" class="nav-link btn btn-danger disabled no-glow">
+                            Generate Terminal Report
+                        </button>
+                    </span>
+                }
+                @if (Model.HasDeploymentDetail)
                 {
                     <a class="nav-link d-flex btn btn-primary no-glow me-2" data-bs-toggle="modal" data-bs-target="#deploymentDetails">
                         <img src="~/icons/document.svg" class="icons" />
@@ -43,15 +54,15 @@
                         </button>
                     </span>
                 }
-                
+
             }
-            @if(User.IsInRole("Admin"))
+            @if (User.IsInRole("Admin"))
             {
                 <a class="nav-link btn btn-primary no-glow" asp-area="" asp-controller="Batch" asp-action="Edit" asp-route-Id="@Model.Id" asp-route-FromCoursePage="@(Model.CourseId != null)">
                     <img src="~/icons/edit.svg" class="icons" />
                     Edit
                 </a>
-                @if(Model.CanBeDeleted)
+                @if (Model.CanBeDeleted)
                 {
                     <a class="nav-link btn btn-danger no-glow ms-2" asp-controller="Batch" asp-action="DeleteModal" asp-route-Id="@Model.Id"
                        data-bs-toggle="modal" data-bs-target="#deleteBatch">
@@ -92,7 +103,7 @@
         <tbody>
             <tr>
                 <td class="col-8half course-detail">
-                    <h6>Program Title :</h6> @Model.ProgramTitle
+                    <h6>Course Title :</h6> @Model.ProgramTitle
                 </td>
                 <td class="col-3half course-detail">
                     <h6>RQM Code : </h6> <span class="RQMNo">@Model.RQMCode</span>
@@ -106,15 +117,15 @@
                     <h6>Session :</h6> @Model.Session
                 </td>
                 <td class="col-3half course-detail">
-                    <h6>Learning Mode :</h6> @Model.LearningMode
+                    <h6>Learning Method :</h6> @Model.LearningMode
                 </td>
             </tr>
             <tr>
                 <td class="col-8half course-detail">
-                    <h6>Learning Delivery : </h6> @Model.LearningDelivery
+                    <h6>Program Title : </h6> @Model.LearningDelivery
                 </td>
                 <td class="col-3half course-detail">
-                    <h6>Schedule :</h6> @Model.Schedule
+                    <h6>Training Period :</h6> @Model.Schedule
                 </td>
             </tr>
         </tbody>
@@ -150,7 +161,7 @@
 <div class="page-body mx-auto mt-3">
     <div class="row body-header">
         <div class="col-3half d-flex justify-content-start align-items-end">
-            <h4 class="header-title">List of Students</h4>
+            <h4 class="header-title">List of Trainees</h4>
         </div>
         <div class="col-5 search-container">
             <div class="row">
@@ -178,13 +189,28 @@
             </div>
         </div>
         <div class="col-3half d-flex justify-content-end align-items-end">
-            <a class="nav-link btn btn-primary no-glow" onclick="GetGrades('@Model.Id', '@User.IsInRole("Trainor")')">
-                <img src="~/icons/document.svg" class="icons" />
-                @{
-                    var gradesText = User.IsInRole("Trainor") ? "Update Grades": "See Grades";
-                }
-                @gradesText
-            </a>
+            @if (!Model.CanBeDeleted)
+            {
+                var userRole = User.IsInRole("Admin") ? "Admin" : User.IsInRole("Registrar") ? "Registrar" : "Trainor";
+                <a class="nav-link btn btn-primary no-glow" onclick="GetGrades('@Model.Id', '@userRole')">
+                    <img src="~/icons/document.svg" class="icons" />
+                    @{
+                        var gradesText = User.IsInRole("Trainor") ? "Update Grades" : "See Grades";
+                    }
+                    @gradesText
+                </a>
+            }
+            else
+            {
+                <span class="d-inline-block ms-2" data-toggle="tooltip" data-placement="top" title="Batch does not have students enrolled.">
+                    <button type="button" class="nav-link btn btn-danger disabled no-glow">
+                        @{
+                            var gradesText = User.IsInRole("Trainor") ? "Update Grades" : "See Grades";
+                        }
+                        @gradesText
+                    </button>
+                </span>
+            }
             @if (User.IsInRole("Admin") || User.IsInRole("Registrar"))
             {
                 <div class="dropdown">
@@ -214,7 +240,7 @@
                 <th class="table-header col-half" scope="col">Age</th>
                 <th class="table-header col-1half" scope="col">Contact No.</th>
                 <th class="table-header col-2half" scope="col">Email</th>
-                <th class="table-header col-1half" scope="col">Highest Grade</th>
+                <th class="table-header col-1half" scope="col">Education Level</th>
                 <th class="table-header col-1" scope="col">Status</th>
                 <th class="table-header col-1" scope="col">Action</th>
             </tr>
@@ -251,12 +277,12 @@
             });
         }
 
-        function GetGrades(batchId, isTrainor) {
+        function GetGrades(batchId, userRole) {
             var fromCoursePage = $("#FromCoursePage").val();
             $.ajax({
                 type: "Get",
                 url: "/Student/GetStudentGrades",
-                data: { "batchId": batchId, "isTrainor": isTrainor, "fromCoursePage": fromCoursePage },
+                data: { "batchId": batchId, "userRole": userRole, "fromCoursePage": fromCoursePage },
                 async: true,
                 success: function (result) {
                     $("#modalDiv").html(result);

@@ -32,7 +32,7 @@ namespace QFRMS.WebApp.Controllers
             try
             {
                 //Check if a memo exist
-                var memo = await _memoService.GetMemoAsync();
+                var memo = await _memoService.GetMemoAsync(null);
                 if (memo.File == null)
                 {
                     ViewData["HasSeenMemo"] = true; // Memo modal won't show
