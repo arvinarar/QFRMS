@@ -35,6 +35,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "An error has occured when trying to show memos. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Memo Index Failed: {ex.Message}, {ex.InnerException}", true);
                 Memo dummyData = new() { Id = 0};
                 return View(dummyData);
@@ -66,6 +67,7 @@ namespace QFRMS.WebApp.Controllers
                 if(ModelState.IsValid)
                 {
                     var work = await _memoService.UploadMemoAsync(model);
+                    TempData["Success"] = work.Message;
                     _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.File.FileName}\', {User.Identity?.Name}", true);
 
                     //Add Admin to SeenUserTable
@@ -75,15 +77,18 @@ namespace QFRMS.WebApp.Controllers
 
                     return RedirectToAction("Index", "Memo");
                 }
+                TempData["Failed"] = "Upload memo failed, see logs for details.";
                 return RedirectToAction("Index", "Memo");
             }
             catch(ArgumentException ex)
             {
-                _fileLogger.Log(LogType.ErrorType, $"Upload Memo Failed: {ex.GetType} {ex.Message}", true);
+                TempData["Failed"] = $"Resetting seen users failed, Error: {ex.Message}";
+                _fileLogger.Log(LogType.ErrorType, $"Seen user reset failed: {ex.GetType} {ex.Message}", true);
                 return RedirectToAction("Index", "Memo");
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Upload memo failed, see logs for details.";
                 _fileLogger.Log(LogType.ErrorType, $"Upload Memo Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Memo");
             }
@@ -96,11 +101,13 @@ namespace QFRMS.WebApp.Controllers
             try
             {
                 var work = await _memoService.DeleteMemoAsync(model.Id);
+                TempData["Success"] = work.Message;
                 _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
                 return RedirectToAction("Index", "Memo");
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Delete memo failed, see logs for details.";
                 _fileLogger.Log(LogType.ErrorType, $"Delete Memo Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Memo");
             }

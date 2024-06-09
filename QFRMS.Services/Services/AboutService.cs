@@ -77,10 +77,10 @@ namespace QFRMS.Services.Services
             try
             {
                 var update = await _repository.UpdateInstituteInfoAsync(model);
-                if (!update) throw new Exception("Repository Problem");
+                if (!update) throw new Exception("Repository Problem.");
 
                 _work.Time = DateTime.Now;
-                _work.Message = "Successfully Updated Institute Info";
+                _work.Message = "Successfully updated institute info.";
                 _work.Result = true;
                 return _work;
             }
@@ -98,7 +98,7 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                var data = await _repository.GetHomePageArticlesVideo(model.Id) ?? throw new NullReferenceException("UpdateArticleVideo not found");
+                var data = await _repository.GetHomePageArticlesVideo(model.Id) ?? throw new NullReferenceException("UpdateArticleVideo not found.");
                 data.Title = model.Title;
                 data.Description = model.Description;
                 if(model.File != null)
@@ -123,7 +123,7 @@ namespace QFRMS.Services.Services
                 }
                 var work = await _repository.UpdateHomePageArticlesVideoAsync(data);
 
-                var name = model.Id.Equals("1") ? "Home Video" : $"Home Article {int.Parse(model.Id) + 1}";
+                var name = model.Id.Equals("1") ? "Home Video" : $"Home Article {int.Parse(model.Id) - 1}";
                 _work.Time = DateTime.Now;
                 _work.Message = $"Successfully Updated {name}";
                 _work.Result = true;
@@ -138,17 +138,17 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                var data = await _repository.GetHomePageArticlesVideo(Id) ?? throw new NullReferenceException("UpdateArticleVideo not found");
+                var data = await _repository.GetHomePageArticlesVideo(Id) ?? throw new NullReferenceException("UpdateArticleVideo not found.");
 
                 //Delete File First
                 string Folder = Path.Combine(_webHostEnvironment.WebRootPath, "homepage");
-                string FilePath = Path.Combine(Folder, data.FilePath ?? throw new NullReferenceException("ArticleVideo File Path not found"));
+                string FilePath = Path.Combine(Folder, data.FilePath ?? throw new NullReferenceException("ArticleVideo File Path not found."));
                 File.Delete(FilePath);
 
                 await _repository.DeleteHomePageArticlesVideoAsync(Id);
-                var name = Id.Equals("1") ? "Home Video" : $"Home Article {int.Parse(Id) + 1}";
+                var name = Id.Equals("1") ? "Home Video" : $"Home Article {int.Parse(Id) - 1}";
                 _work.Time = DateTime.Now;
-                _work.Message = $"Successfully Deleted {name}";
+                _work.Message = $"Successfully Deleted {name}.";
                 _work.Result = true;
                 return _work;
             }

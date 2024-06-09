@@ -99,6 +99,7 @@ namespace QFRMS.Data.DTOs
         [Required(ErrorMessage = "Employment Status before Training is required")]
         public ESBT? ESBT { get; set; }
 
+        public required bool FromStudentsPage { get; set; }
         public required bool FromCoursePage { get; set; }
     }
 

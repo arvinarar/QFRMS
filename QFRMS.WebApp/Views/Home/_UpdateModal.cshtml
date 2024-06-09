@@ -42,8 +42,11 @@
                             <div class="form-group">
                                 <label for="File" class="control-label @(Model.Title == null ? "required": "")">@(Model.Id == "1" ? "Video" : "Image") File</label>
                                 <span class="file-limit-upload">(File size limit is 512MB)</span>
-                                <input asp-for="File" type="file" class="form-control" accept=@(Model.Id == "1"? ".mp4": "image/*") />
+                                <input asp-for="File" type="file" class="form-control" accept=@(Model.Id == "1"? ".mp4": "image/*") id="UploadField" />
                                 <span asp-validation-for="File" class="text-danger"></span>
+                                <span class="row text-center text-danger">
+                                    <span id="FileUploadValidator"></span>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -72,10 +75,17 @@
 
         $('#submitBtn').click(function () {
             $('#DescriptionValidator').text('');
+            $('#FileUploadValidator').text('');
+            var success = true;
             if ($('#Description').summernote('isEmpty')) {
                 $('#DescriptionValidator').text('The Description field is required.');
+                success = false;
             }
-            else {
+            if (@(Model.Title == null ? "true" : "false" ?? "true") && $("#UploadField").get(0).files.length == 0) {
+                $('#FileUploadValidator').text('The File is required.');
+                success = false;
+            }
+            if(success) {
                 $('#form').submit();
             }
 

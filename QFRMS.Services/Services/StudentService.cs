@@ -294,6 +294,7 @@ namespace QFRMS.Services.Services
                 {
                     BatchId = batchId ?? null,
                     BatchList = [.. batchlist],
+                    FromStudentsPage = batchId.IsNullOrEmpty(),
                     FromCoursePage = FromCoursePage
                 };
             }
@@ -354,12 +355,12 @@ namespace QFRMS.Services.Services
             try
             {
                 //Check if ULI already exist
-                if (await _repository.GetStudentAsync(model.ULI!) != null) throw new ArgumentException("Student with Learner's ID already exist");
+                if (await _repository.GetStudentAsync(model.ULI!) != null) throw new ArgumentException("Student with Learner's ID already exist.");
                 var work = await _repository.CreateStudentAsync(new Student
                 {
                     ULI = model.ULI!,
                     BatchId = model.BatchId!,
-                    Batch = await _batchRepository.GetBatchAsync(model.BatchId!) ?? throw new NullReferenceException("Batch with RQM Code doesn't Exist"),
+                    Batch = await _batchRepository.GetBatchAsync(model.BatchId!) ?? throw new NullReferenceException("Batch with RQM Code doesn't exist."),
                     FirstName = model.FirstName!,
                     MiddleName = model.MiddleName!,
                     LastName = model.LastName!,
@@ -380,9 +381,9 @@ namespace QFRMS.Services.Services
                     TrainingStatus = model.TrainingStatus!.Value,
                     ESBT = model.ESBT!.Value
                 });
-                if (!work) throw new Exception("Work failed");
+                if (!work) throw new Exception("Work failed.");
                 _work.Time = DateTime.Now;
-                _work.Message = $"Successfully Enrolled Student \'{model.ULI}\'";
+                _work.Message = $"Successfully enrolled student \'{model.ULI}\'.";
                 _work.Result = true;
                 return _work;
             }
@@ -396,9 +397,9 @@ namespace QFRMS.Services.Services
             }
             catch (NullReferenceException ex)
             {
-                _work.ErrorCode = ex.Message;
+                _work.ErrorCode = ErrorType.Generic;
                 _work.Time = DateTime.Now;
-                _work.Message = "Couldn't Enroll Student";
+                _work.Message = ex.Message;
                 _work.Result = false;
                 return _work;
             }
@@ -412,7 +413,7 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                var student = await _repository.GetStudentAsync(model.ULI!) ?? throw new ArgumentException("Student with Learner's ID already exist");
+                var student = await _repository.GetStudentAsync(model.ULI!) ?? throw new ArgumentException("Student with Learner's ID already exist.");
 
                 student.BatchId = model.BatchId!;
                 student.FirstName = model.FirstName!;
@@ -438,15 +439,15 @@ namespace QFRMS.Services.Services
                 var work = await _repository.UpdateStudentAsync(student);
                 if (!work) throw new Exception("Work failed");
                 _work.Time = DateTime.Now;
-                _work.Message = $"Successfully Updated Student \'{model.ULI}\'";
+                _work.Message = $"Successfully updated student \'{model.ULI}\'.";
                 _work.Result = true;
                 return _work;
             }
             catch (ArgumentException ex)
             {
-                _work.ErrorCode = ex.Message;
+                _work.ErrorCode = ErrorType.Argument;
                 _work.Time = DateTime.Now;
-                _work.Message = "Couldn't Update Student";
+                _work.Message = ex.Message;
                 _work.Result = false;
                 return _work;
             }
@@ -464,7 +465,7 @@ namespace QFRMS.Services.Services
                 if (!work) throw new Exception("Work failed");
 
                 _work.Time = DateTime.Now;
-                _work.Message = $"Successfully Deleted Student \'{ULI}\'";
+                _work.Message = $"Successfully deleted student \'{ULI}\'.";
                 _work.Result = true;
                 return _work;
 
@@ -507,7 +508,7 @@ namespace QFRMS.Services.Services
                 }
                 var workMessage = model.UserRole == "Admin" ? "Grades and Statuses": model.UserRole == "Registrar" ? "Statuses" : "Grades";
                 _work.Time = DateTime.Now;
-                _work.Message = $"Successfully Updated {workMessage} of Batch \'{model.BatchId}\'";
+                _work.Message = $"Successfully updated {workMessage} of Batch \'{model.BatchId}\'.";
                 _work.Result = true;
                 return _work;
             }
@@ -554,6 +555,7 @@ namespace QFRMS.Services.Services
                                           EnrolledProgram = course.ProgramTitle,
                                           TrainingStatus = GetEnumDescription(student.TrainingStatus),
                                           BatchId = BatchId,
+                                          FromStudentsPage = BatchId.IsNullOrEmpty(),
                                           FromCoursePage = fromCoursePage
                                       }).First();
                 if(StudentDetails.TrainingStatus != GetEnumDescription(TrainingStatus.Dropout))

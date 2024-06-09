@@ -49,6 +49,7 @@ namespace QFRMS.WebApp.Controllers
                 return View(await PaginatedList<UsersViewModel>.CreateAsync(data, pageNumber ?? 1, _pageSize));
             } catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to show accounts, see logs for details.";
                 _fileLogger.Log(LogType.ErrorType, $"Account Index Failed: {ex.Message}, {ex.InnerException}", true);
                 var dummyList = new List<UsersViewModel>();
                 return View(await PaginatedList<UsersViewModel>.CreateAsync(dummyList, pageNumber ?? 1, _pageSize));
@@ -106,6 +107,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to edit account, see logs for details.";
                 _fileLogger.Log(LogType.ErrorType, $"Edit Account Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Account");
             }
@@ -131,10 +133,11 @@ namespace QFRMS.WebApp.Controllers
                         {
                             ModelState.AddModelError(string.Empty, work.Message);
                         }
+                        TempData["Failed"] = $"Edit account failed, Error: {work.Message}";
                         _fileLogger.Log(LogType.ErrorType, $"Edit Account Failed: {work.ErrorCode} {work.Message}", true);
                         return View();
                     }
-
+                    TempData["Success"] = work.Message;
                     _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.Username}\', {User.Identity?.Name}", true);
                     return RedirectToAction("Index", "Account");
                 }
@@ -186,16 +189,18 @@ namespace QFRMS.WebApp.Controllers
                 {
                     var work = await _userAccountService.DeleteUser(model.Id!);
                     if (!work.Result)
+                    {
+                        TempData["Failed"] = $"Failed to delete account, Error: {work.Message}";
                         _fileLogger.Log(LogType.ErrorType, $"Delete Account Failed: {work.ErrorCode} {work.Message}", true);
-
+                    }
+                    TempData["Success"] = work.Message;
                     _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.UserName}\', {User.Identity?.Name}", true);
 
-                    //If user delete his own account, for some stupid reasons
+                    //If user delete their own account, for some stupid reasons
                     if (User.Identity?.Name == model?.UserName)
                         await _signInManager.SignOutAsync();
 
                     return RedirectToAction("Index", "Account");
-
                 }
                 return RedirectToAction("Index", "Account");
             }
@@ -252,6 +257,7 @@ namespace QFRMS.WebApp.Controllers
         /// The Create a new Account Page
         /// </summary>
         /// <returns>The Create a Account Page</returns>
+        [Authorize(Roles = "Admin")]
         public IActionResult Register()
         {
             return View();
@@ -262,6 +268,7 @@ namespace QFRMS.WebApp.Controllers
         /// </summary>
         /// <param name="model">model containing the account info</param>
         /// <returns>To Account Index page if successful</returns>
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Register(Register model)
         {
@@ -276,10 +283,11 @@ namespace QFRMS.WebApp.Controllers
                         {
                             ModelState.AddModelError(string.Empty, work.Message);
                         }
-                        _fileLogger.Log(LogType.ErrorType, $"Register Failed: {work.ErrorCode} {work.Message}", true);
+                        TempData["Failed"] = $"Failed to create user, Error: {work.Message}";
+                        _fileLogger.Log(LogType.ErrorType, $"Create User Failed: {work.ErrorCode} {work.Message}", true);
                         return View();
                     }
-
+                    TempData["Success"] = work.Message;
                     _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.Username}\', {User.Identity?.Name}", true);
                     return RedirectToAction("Index", "Account");
                 }
@@ -287,7 +295,8 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _fileLogger.Log(LogType.ErrorType, $"Register Failed: {ex.Message}, {ex.InnerException}", true);
+                TempData["Failed"] = "Create user failed, see logs for details.";
+                _fileLogger.Log(LogType.ErrorType, $"Create User Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Account");
             }
         }
@@ -329,6 +338,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "An error has occured when trying to show account details. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Details Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Home");
             }
@@ -343,13 +353,17 @@ namespace QFRMS.WebApp.Controllers
             try
             {
                 var getUser = await _userManager.GetUserAsync(User);
-                if (getUser == null) return RedirectToAction("Index", "Home");
+                if (getUser == null) {
+                    TempData["Failed"] = "An error has occured when trying to edit account. Please contact administrator if this problem persists.";
+                    return RedirectToAction("Index", "Home");
+                }
                 var Id = getUser.Id;
                 var user = await _userAccountService.GetUserDetails(Id);
                 return View(user);
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "An error has occured when trying to edit account. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Edit Details Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Details", "Account");
             }
@@ -372,10 +386,11 @@ namespace QFRMS.WebApp.Controllers
                     {
                         if (work.ErrorCode == ErrorType.Argument)
                             ModelState.AddModelError(string.Empty, work.Message);
+                        TempData["Failed"] = $"Failed to edit account, Error: {work.Message}";
                         _fileLogger.Log(LogType.ErrorType, $"Edit Account Details Failed: {work.ErrorCode} {work.Message}", true);
                         return View("EditDetails", model);
                     }
-
+                    TempData["Success"] = work.Message;
                     _fileLogger.Log(LogType.UserType, $"{LogType.UserType}, Changed Account Details, {User.Identity?.Name}", true);
                     return RedirectToAction("Details", "Account");
                 }
@@ -384,6 +399,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "An error has occured when trying to edit account. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Edit Account Details Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Details", "Account");
             }
@@ -397,6 +413,7 @@ namespace QFRMS.WebApp.Controllers
         {
             try
             {
+                TempData["Failed"] = "You cannot access that page.";
                 _logger.LogWarning("Blocked Unauthorized Access to part of a system. User: {user}", User.Identity?.Name);
                 return RedirectToAction("Index", "Home");
             }

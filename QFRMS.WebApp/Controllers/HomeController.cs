@@ -51,6 +51,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to show memo. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Failed to get neccesary data for Memo notification: {ex.Message}, {ex.InnerException}", true);
                 ViewData["HasSeenMemo"] = true;
                 return View();
@@ -70,6 +71,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to show about page. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"About Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Home");
             }
@@ -88,6 +90,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to edit institute. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Edit About Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("About", "Home");
             }
@@ -108,17 +111,21 @@ namespace QFRMS.WebApp.Controllers
                     var work = await _aboutService.UpdateInstituteInfoAsync(model);
                     if(!work.Result)
                     {
+                        TempData["Failed"] = "Failed to edit institute. Please contact administrator if this problem persists.";
                         _fileLogger.Log(LogType.ErrorType, $"Update Institute Info Failed: {work.ErrorCode} {work.Message}", true);
                         return View("EditAbout", model);
                     }
+                    TempData["Success"] = work.Message;
                     _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
                     return RedirectToAction("About", "Home");
                 }
+                TempData["Failed"] = "Failed to edit institute. Please contact administrator if this problem persists.";
                 ModelState.AddModelError(string.Empty, "Please fill-up all the fields");
                 return View("EditAbout", model);
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to edit institute. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Update Institute Info Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("About", "Home");
             }
@@ -134,13 +141,14 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to show home settings page. Check log for details.";
                 _fileLogger.Log(LogType.ErrorType, $"Home Settings Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("About", "Home");
             }
         }
 
         [Authorize(Roles = "Admin")]
-        // Get : GetStudentGrades
+        // Get : GetArticleVideoForm
         public IActionResult GetArticleVideoForm(string Id)
         {
             try
@@ -164,6 +172,7 @@ namespace QFRMS.WebApp.Controllers
                 if (ModelState.IsValid)
                 {
                     var work = await _aboutService.UpdateHomePageArticlesVideoAsync(model);
+                    TempData["Success"] = work.Message;
                     _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
                     return RedirectToAction("HomeSettings", "Home");
                 }
@@ -171,8 +180,9 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to upload article/video. Check logs for details.";
                 _fileLogger.Log(LogType.ErrorType, $"UpdateArticleVideo Failed: {ex.Message}, {ex.InnerException}", true);
-                return RedirectToAction("About", "Home");
+                return RedirectToAction("HomeSettings", "Home");
             }
         }
 
@@ -184,6 +194,7 @@ namespace QFRMS.WebApp.Controllers
                 if (ModelState.IsValid)
                 {
                     var work = await _aboutService.DeleteHomePageArticlesVideoAsync(Id);
+                    TempData["Success"] = work.Message;
                     _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
                     return RedirectToAction("HomeSettings", "Home");
                 }
@@ -191,6 +202,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to delete article/video. Check logs for details.";
                 _fileLogger.Log(LogType.ErrorType, $"UpdateArticleVideo Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("About", "Home");
             }

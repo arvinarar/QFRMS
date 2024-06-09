@@ -36,6 +36,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "An error has occured when trying to show students. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Student Index Failed: {ex.Message}, {ex.InnerException}", true);
                 var dummyList = new List<StudentListViewModel>();
                 return View(await PaginatedList<StudentListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, 12));
@@ -100,6 +101,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to show create student page. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Create Student Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Student");
             }
@@ -115,6 +117,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to show edit student page. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Edit Student Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Student");
             }
@@ -135,19 +138,23 @@ namespace QFRMS.WebApp.Controllers
                         {
                             ModelState.AddModelError(string.Empty, work.Message);
                         }
+                        TempData["Failed"] = $"Failed to enroll student, Error: {work.Message}";
                         _fileLogger.Log(LogType.ErrorType, $"Enroll Student Failed: {work.ErrorCode} {work.Message}", true);
                         return RedirectToAction("Create", "Student", new { Id = model.BatchId, FromCoursePage = model.FromCoursePage });
                     }
+                    TempData["Success"] = work.Message;
                     _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
-                    if (model!.FromCoursePage)
+                    if (!model!.FromStudentsPage)
                         return RedirectToAction("Details", "Batch", new { Id = model.BatchId, FromCoursePage = model.FromCoursePage });
                     else
                         return RedirectToAction("Index", "Student");
                 }
+                TempData["Failed"] = "Failed to enroll student. Please contact administrator if this problem persists.";
                 return RedirectToAction("Create", "Student", new { Id = model.BatchId, FromCoursePage = model.FromCoursePage });
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to enroll student. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Enroll Student Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Student");
             }
@@ -164,19 +171,23 @@ namespace QFRMS.WebApp.Controllers
                     var work = await _service.EditStudentAsync(model);
                     if (!work.Result)
                     {
+                        TempData["Failed"] = $"Failed to edit student, Error: {work.Message}";
                         _fileLogger.Log(LogType.ErrorType, $"Edit Student Failed: {work.ErrorCode} {work.Message}", true);
                         return RedirectToAction("Index", "Student");
                     }
+                    TempData["Success"] = work.Message;
                     _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
-                    if (model!.FromCoursePage)
+                    if (!model!.FromStudentsPage)
                         return RedirectToAction("Details", "Batch", new { Id = model.BatchId, FromCoursePage = model.FromCoursePage });
                     else
                         return RedirectToAction("Index", "Student");
                 }
+                TempData["Failed"] = "Failed to edit student. Please contact administrator if this problem persists.";
                 return RedirectToAction("Index", "Student");
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to edit student. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Edit Student Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Student");
             }
@@ -189,14 +200,16 @@ namespace QFRMS.WebApp.Controllers
             try
             {
                 var work = await _service.DeleteStudentAsync(model.ULI);
+                TempData["Success"] = work.Message;
                 _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
-                if (model.BatchId != null)
+                if (!model!.FromStudentsPage)
                     return RedirectToAction("Details", "Batch", new { Id = model.BatchId, FromCoursePage = model.FromCoursePage });
                 else
                     return RedirectToAction("Index", "Student");
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to delete student. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Delete Student Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Student");
             }
@@ -263,12 +276,14 @@ namespace QFRMS.WebApp.Controllers
                 if (ModelState.IsValid)
                 {
                     var work = await _service.UpdateGrades(model);
+                    TempData["Success"] = work.Message;
                     _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
                 }
                 return RedirectToAction("Details", "Batch", new { Id = model.BatchId, FromCoursePage = model.FromCoursePage });
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to update grades or statuses. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"UpdateGrades Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Student");
             }

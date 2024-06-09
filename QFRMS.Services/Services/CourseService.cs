@@ -83,7 +83,7 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                return await _repository.GetCourseAsync(Id) ?? throw new Exception("Course not Found");
+                return await _repository.GetCourseAsync(Id) ?? throw new Exception("Course not found");
             }
             catch (Exception)
             {
@@ -171,7 +171,7 @@ namespace QFRMS.Services.Services
                 var work = await _repository.CreateCourseAsync(model);
 
                 _work.Time = DateTime.Now;
-                _work.Message = "Successfully Created Course";
+                _work.Message = "Successfully created course.";
                 _work.Result = true;
                 return _work;
             }
@@ -188,7 +188,7 @@ namespace QFRMS.Services.Services
                 var work = await _repository.UpdateCourseAsync(model);
 
                 _work.Time = DateTime.Now;
-                _work.Message = "Successfully Updated Course";
+                _work.Message = "Successfully updated course.";
                 _work.Result = true;
                 return _work;
             }
@@ -205,12 +205,12 @@ namespace QFRMS.Services.Services
                 //Check if it still has batches
                 var hasBatches = await _batchRepository.GetBatchesFromCourse(Id);
                 var count = await hasBatches.CountAsync();
-                if (count > 0) throw new ArgumentException("Course still has batches");
+                if (count > 0) throw new ArgumentException("Course still has batches.");
 
                 var work = await _repository.DeleteCourseAsync(Id);
 
                 _work.Time = DateTime.Now;
-                _work.Message = "Successfully Deleted Course";
+                _work.Message = "Successfully deleted course.";
                 _work.Result = true;
                 return _work;
             }
@@ -218,7 +218,7 @@ namespace QFRMS.Services.Services
             {
                 _work.ErrorCode = ex.Message;
                 _work.Time = DateTime.Now;
-                _work.Message = "Couldn't Delete course";
+                _work.Message = "Couldn't delete course.";
                 _work.Result = false;
                 return _work;
             }

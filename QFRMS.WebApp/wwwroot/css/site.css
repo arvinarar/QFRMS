@@ -155,6 +155,41 @@ body {
     font-family: "Monsterrat";
 }
 
+/* Notification box CSS */
+.success-toast,
+.failed-toast {
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    border: .1rem solid white;
+    border-radius: 4px;
+    animation: show 0.3s ease-in forwards;
+}
+@keyframes show {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -10%);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, 10%);
+    }
+}
+
+.success-toast {
+    background: #156736;
+}
+
+.failed-toast {
+    background: #DB5757;
+}
+
+.toast-body {
+    font-weight: 500;
+    color: white;
+    font-size: .95rem;
+}
+
 /*Home Video and Infographic CSS*/
 .home-image-container {
     margin-right: 0.5rem;
@@ -1079,7 +1114,7 @@ td {
 
 /*Course CSS */
 .COPRNo, .RQMNo {
-    color: #DF2B55;
+    /*color: #DF2B55;*/
 }
 
 /* Memo CSS */

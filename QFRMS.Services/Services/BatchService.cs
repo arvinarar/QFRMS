@@ -336,8 +336,8 @@ namespace QFRMS.Services.Services
                                      Name = course.ProgramTitle,
                                      Duration = course.Duration
                                  };
-                var batch = await _repository.GetBatchAsync(Id) ?? throw new NullReferenceException("Batch not Found");
-                if (batch.DeploymentDetails == null) throw new NullReferenceException("Batch Deployment Detail not Found");
+                var batch = await _repository.GetBatchAsync(Id) ?? throw new NullReferenceException("Batch not Found.");
+                if (batch.DeploymentDetails == null) throw new NullReferenceException("Batch Deployment Detail not Found.");
                 return new UpdateBatch
                 {
                     Id = Id,
@@ -375,9 +375,9 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                var batch = await _repository.GetBatchAsync(Id) ?? throw new NullReferenceException("Batch not found");
-                batch.Trainor = await _userRepository.GetUserByIdAsync(batch.TrainorId) ?? throw new NullReferenceException("Trainor not found");
-                batch.Course = await _courseRepository.GetCourseAsync(batch.CourseId) ?? throw new NullReferenceException("Course not found");
+                var batch = await _repository.GetBatchAsync(Id) ?? throw new NullReferenceException("Batch not found.");
+                batch.Trainor = await _userRepository.GetUserByIdAsync(batch.TrainorId) ?? throw new NullReferenceException("Trainor not found.");
+                batch.Course = await _courseRepository.GetCourseAsync(batch.CourseId) ?? throw new NullReferenceException("Course not found.");
 
                 var trainor = $"{batch.Trainor.FirstName} {batch.Trainor.MiddleName![0]} {batch.Trainor.LastName} {batch.Trainor.ExtensionName}";
                 var TimeStart = batch.TimeStart.HasValue ? batch.TimeStart.Value.ToString("hh:mm tt") : "TBA";
@@ -433,10 +433,10 @@ namespace QFRMS.Services.Services
             try
             {
                 //Check for unique RQM
-                if(model.RQMNumber == null) throw new ArgumentException("RQM Code is required");
+                if(model.RQMNumber == null) throw new ArgumentException("RQM Code is required.");
                 string RQMCode = model.RQMNumber.ToUpperInvariant();
                 var checkifExist = await _repository.GetBatchAsync(RQMCode);
-                if (checkifExist != null) throw new ArgumentException($"Batch with RQM Code \'{RQMCode}\' already Exist");
+                if (checkifExist != null) throw new ArgumentException($"Batch with RQM Code \'{RQMCode}\' already Exist.");
 
                 //Batch and its DeploymentDetails and attached PDFs ID should be the RQM
                 string Id = RQMCode;
@@ -448,11 +448,11 @@ namespace QFRMS.Services.Services
                 {
                     Id = Id,
                     CourseId = model.CourseId!,
-                    Course = await _courseRepository.GetCourseAsync(model.CourseId!) ?? throw new NullReferenceException("Course not Found"),
+                    Course = await _courseRepository.GetCourseAsync(model.CourseId!) ?? throw new NullReferenceException("Course not Found."),
                     TrainorId = model.TrainorId!,
-                    Trainor = await _userRepository.GetUserByIdAsync(model.TrainorId!) ?? throw new NullReferenceException("Trainor not Found"),
-                    LearningDelivery = model.LearningDelivery.ToString() ?? throw new NullReferenceException("LearningDelivery not Found"),
-                    LearningMode = model.LearningMode.ToString() ?? throw new NullReferenceException("LearningMode not Found"),
+                    Trainor = await _userRepository.GetUserByIdAsync(model.TrainorId!) ?? throw new NullReferenceException("Trainor not Found."),
+                    LearningDelivery = model.LearningDelivery.ToString() ?? throw new NullReferenceException("LearningDelivery not Found."),
+                    LearningMode = model.LearningMode.ToString() ?? throw new NullReferenceException("LearningMode not Found."),
                     RQMNumber = RQMCode,
                     DateStart = model.DateStart!.Value,
                     DateEnd = model.DateEnd.HasValue ? model.DateEnd.Value : null,
@@ -486,7 +486,7 @@ namespace QFRMS.Services.Services
                 if (!work) throw new Exception("Work failed");
 
                 _work.Time = DateTime.Now;
-                _work.Message = "Successfully Created Batch";
+                _work.Message = $"Successfully created batch \'{Id}\'.";
                 _work.Result = true;
                 return _work;
             }
@@ -500,9 +500,9 @@ namespace QFRMS.Services.Services
             }
             catch (NullReferenceException ex)
             {
-                _work.ErrorCode = ex.Message;
+                _work.ErrorCode = ErrorType.Generic;
                 _work.Time = DateTime.Now;
-                _work.Message = "Couldn't Create Batch";
+                _work.Message = ex.Message;
                 _work.Result = false;
                 return _work;
             }
@@ -517,18 +517,18 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                var batch = await _repository.GetBatchAsync(model.Id) ?? throw new NullReferenceException("Batch not Found");
+                var batch = await _repository.GetBatchAsync(model.Id) ?? throw new NullReferenceException("Batch not Found.");
                 batch.CourseId = model.CourseId!;
                 batch.TrainorId = model.TrainorId!;
-                batch.LearningDelivery = model.LearningDelivery.ToString() ?? throw new NullReferenceException("LearningDelivery not Found");
-                batch.LearningMode = model.LearningMode.ToString() ?? throw new NullReferenceException("LearningMode not Found");
+                batch.LearningDelivery = model.LearningDelivery.ToString() ?? throw new NullReferenceException("LearningDelivery not Found.");
+                batch.LearningMode = model.LearningMode.ToString() ?? throw new NullReferenceException("LearningMode not Found.");
                 batch.RQMNumber = model.RQMNumber!;
                 batch.DateStart = model.DateStart!.Value;
                 batch.DateEnd = model.DateEnd;
                 batch.TimeStart = model.TimeStart;
                 batch.TimeEnd = model.TimeEnd;
 
-                if (batch.DeploymentDetails == null) throw new NullReferenceException("Batch Deployment Details not Found");
+                if (batch.DeploymentDetails == null) throw new NullReferenceException("Batch Deployment Details not Found.");
                 batch.DeploymentDetails.EmployerName = model.EmployerName;
                 batch.DeploymentDetails.EmployerAddress = model.EmployerAddress;
                 batch.DeploymentDetails.Occupation = model.Occupation;
@@ -540,7 +540,7 @@ namespace QFRMS.Services.Services
                     if (model.NTP != null)
                         _ = await _pdfRepository.UpdatePDFFile(batch.NTPId, model.NTP);
                     else
-                        throw new NullReferenceException("NTP PDF not found");
+                        throw new NullReferenceException("NTP PDF not found.");
                 }
 
                 // Upload Certificate if batch does not have one yet
@@ -572,15 +572,15 @@ namespace QFRMS.Services.Services
                 var work = await _repository.UpdateBatchAsync(batch, batch.DeploymentDetails);
 
                 _work.Time = DateTime.Now;
-                _work.Message = "Successfully Updated Batch";
+                _work.Message = $"Successfully updated batch \'{batch.Id}\'.";
                 _work.Result = true;
                 return _work;
             }
             catch (NullReferenceException ex)
             {
-                _work.ErrorCode = ex.Message;
+                _work.ErrorCode = ErrorType.Generic;
                 _work.Time = DateTime.Now;
-                _work.Message = "Couldn't Update Batch";
+                _work.Message = ex.Message;
                 _work.Result = false;
                 return _work;
             }
@@ -594,26 +594,27 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                var batch = await _repository.GetBatchAsync(Id) ?? throw new NullReferenceException("Batch not found");
+                var batch = await _repository.GetBatchAsync(Id) ?? throw new NullReferenceException("Batch not found.");
                 //Check if it still has students
-
+                if (_studentRepository.RetrieveStudentsFromBatchAsync(Id).Result.Any())
+                    throw new NullReferenceException("Batch still have students.");
 
                 var work = await _repository.DeleteBatchAsync(batch.Id);
-
+                
                 //Delete attached document
                 _ = await _pdfRepository.DeletePDF(batch.NTPId);
                 if (batch.CertificatesId != null) _ = await _pdfRepository.DeletePDF(batch.CertificatesId);
 
                 _work.Time = DateTime.Now;
-                _work.Message = "Successfully Deleted Batch";
+                _work.Message = $"Successfully deleted batch \'{Id}\'.";
                 _work.Result = true;
                 return _work;
             }
             catch (NullReferenceException ex)
             {
-                _work.ErrorCode = ex.Message;
+                _work.ErrorCode = ErrorType.Generic;
                 _work.Time = DateTime.Now;
-                _work.Message = "Couldn't Delete Batch";
+                _work.Message = ex.Message;
                 _work.Result = false;
                 return _work;
             }
@@ -627,7 +628,7 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                if (model.File == null) throw new NullReferenceException("NO CSV file found");
+                if (model.File == null) throw new NullReferenceException("NO CSV file found.");
                 using (var filestream = model.File.OpenReadStream())
                 {
                     var parser = new Microsoft.VisualBasic.FileIO.TextFieldParser(filestream);
@@ -636,14 +637,14 @@ namespace QFRMS.Services.Services
 
                     //Get CSV Header if CSV is valid and comes from the T2MIS website.
                     //by checking the the first and last field of header line
-                    string[] headers = parser.ReadFields() ?? throw new ArgumentException("Invalid CSV File");
-                    if (!headers[0].Contains("Region") && !headers[47].Contains("Salary")) throw new ArgumentException("Invalid CSV File");
+                    string[] headers = parser.ReadFields() ?? throw new ArgumentException("Invalid CSV File.");
+                    if (!headers[0].Contains("Region") && !headers[47].Contains("Salary")) throw new ArgumentException("Invalid CSV File.");
 
                     List<Student> NewStudents = new List<Student>(); //For Adding New Students
                     List<Student> ExistingStudents = new List<Student>(); //For Updating Existing Students
 
                     //Get Batch
-                    var batch = await _repository.GetBatchAsync(model.BatchId) ?? throw new NullReferenceException("No Batch with RQM Code Found");
+                    var batch = await _repository.GetBatchAsync(model.BatchId) ?? throw new NullReferenceException("No Batch with RQM Code Found.");
 
                     //Set indexes as constants
                     const int LastName = 15;
@@ -747,7 +748,7 @@ namespace QFRMS.Services.Services
                     }
                 }
                 _work.Time = DateTime.Now;
-                _work.Message = $"Successfully Added/Updated Students of Batch {model.BatchId}";
+                _work.Message = $"Successfully enrolled/updated students of batch {model.BatchId}.";
                 _work.Result = true;
                 return _work;
             }
@@ -761,9 +762,9 @@ namespace QFRMS.Services.Services
             }
             catch (NullReferenceException ex)
             {
-                _work.ErrorCode = ex.Message;
+                _work.ErrorCode = ErrorType.Generic;
                 _work.Time = DateTime.Now;
-                _work.Message = "Couldn't Add Student from CSV";
+                _work.Message = ex.Message;
                 _work.Result = false;
                 return _work;
             }

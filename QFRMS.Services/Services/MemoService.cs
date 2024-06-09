@@ -78,7 +78,7 @@ namespace QFRMS.Services.Services
                 var work = await _repository.UploadMemo(memo);
 
                 _work.Time = DateTime.Now;
-                _work.Message = "Successfully Uploaded Memo";
+                _work.Message = "Successfully uploaded Memo.";
                 _work.Result = true;
                 return _work;
             }
@@ -122,13 +122,13 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                var memo = await _repository.RetrieveMemoAsync(id) ?? throw new NullReferenceException("Database: memo not found");
+                var memo = await _repository.RetrieveMemoAsync(id) ?? throw new NullReferenceException("Database: memo not found.");
                 var pdf = await _pdfRepository.GetPDF(memo.FileId!);
                 await _pdfRepository.DeletePDF(memo.FileId!);
                 var work = await _repository.DeleteMemo(id);
 
                 _work.Time = DateTime.Now;
-                _work.Message = $"Successfully Deleted Memo \'{pdf.Name}\'";
+                _work.Message = $"Successfully deleted memo \'{pdf.Name}\'.";
                 _work.Result = true;
                 return _work;
             }

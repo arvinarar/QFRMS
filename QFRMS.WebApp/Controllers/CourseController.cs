@@ -32,6 +32,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "An error has occured when trying to show courses. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Course Index Failed: {ex.Message}, {ex.InnerException}", true);
                 var dummyList = new List<CourseListViewModel>();
                 return View(await PaginatedList<CourseListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, _pageSize));
@@ -98,10 +99,11 @@ namespace QFRMS.WebApp.Controllers
                         {
                             ModelState.AddModelError(string.Empty, work.Message);
                         }
+                        TempData["Failed"] = "Create course failed, see logs for details.";
                         _fileLogger.Log(LogType.ErrorType, $"Create Course Failed: {work.ErrorCode} {work.Message}", true);
                         return View();
                     }
-
+                    TempData["Success"] = work.Message;
                     _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.ProgramTitle}\', {User.Identity?.Name}", true);
                     return RedirectToAction("Index", "Course");
                 }
@@ -109,6 +111,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Create course failed, see logs for details.";
                 _fileLogger.Log(LogType.ErrorType, $"Create Course Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Course");
             }
@@ -129,17 +132,19 @@ namespace QFRMS.WebApp.Controllers
                         {
                             ModelState.AddModelError(string.Empty, work.Message);
                         }
+                        TempData["Failed"] = "Edit course failed, see logs for details.";
                         _fileLogger.Log(LogType.ErrorType, $"Edit Course Failed: {work.ErrorCode} {work.Message}", true);
                         return View();
                     }
-
+                    TempData["Success"] = work.Message;
                     _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.ProgramTitle}\', {User.Identity?.Name}", true);
-                    return RedirectToAction("Index", "Course");
+                    return RedirectToAction("Details", "Course", new { model!.Id });
                 }
                 return View();
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Edit course failed, see logs for details.";
                 _fileLogger.Log(LogType.ErrorType, $"Edit Course Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Course");
             }
@@ -154,6 +159,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch(Exception ex)
             {
+                TempData["Failed"] = "An error has occured when trying to show course details. Please contact administrator if this problem persists.";
                 _fileLogger.Log(LogType.ErrorType, $"Course Details Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Course");
             }
@@ -169,6 +175,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Cannot edit course, see logs for details.";
                 _fileLogger.Log(LogType.ErrorType, $"Edit Course Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Course");
             }
@@ -198,12 +205,19 @@ namespace QFRMS.WebApp.Controllers
             try
             {
                 var work = await _courseService.DeleteCourseAsync(model.Id);
-
+                if (!work.Result)
+                {
+                    TempData["Failed"] = "Delete course failed, See logs for details.";
+                    _fileLogger.Log(LogType.ErrorType, $"Delete Course Failed: {work.ErrorCode} {work.Message}", true);
+                    return View();
+                }
+                TempData["Success"] = work.Message;
                 _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.ProgramTitle}\', {User.Identity?.Name}", true);
                 return RedirectToAction("Index", "Course");
             }
             catch (Exception ex)
             {
+                TempData["Failed"] = "Delete course failed, See logs for details.";
                 _fileLogger.Log(LogType.ErrorType, $"Delete Course Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Course");
             }
