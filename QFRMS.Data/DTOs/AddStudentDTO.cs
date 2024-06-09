@@ -79,7 +79,7 @@ namespace QFRMS.Data.DTOs
         //Learner Information
         [DisplayName("Learner's ID : ")]
         [Required(ErrorMessage = "Learner's ID  is required")]
-        [RegularExpression(@"(^([A-Z]{3}-\d{2}-\d{3}-\d{5}-\d{3})$)", ErrorMessage = "Please enter a valid Learner's Id")]
+        [RegularExpression(@"(^([A-Z.]{3}-\d{2}-\d{3}-\d{5}-\d{3})$)", ErrorMessage = "Please enter a valid Learner's Id")]
         public string? ULI { get; set; }
 
         [DisplayName("Grade Completed : ")]
@@ -99,6 +99,7 @@ namespace QFRMS.Data.DTOs
         [Required(ErrorMessage = "Employment Status before Training is required")]
         public ESBT? ESBT { get; set; }
 
+        public required bool FromStudentsPage { get; set; }
         public required bool FromCoursePage { get; set; }
     }
 

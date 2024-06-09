@@ -13,18 +13,17 @@ namespace QFRMS.Data.Models
     public class Batch
     {
         public required string Id { get; set; }
-
         public required string CourseId { get; set; }
         public required Course Course { get; set; }
 
-        
         public required string TrainorId { get; set; }
         public required UserAccount Trainor { get; set; }
 
+        [MaxLength(100)]
         public required string LearningDelivery {  get; set; }
-
+        [MaxLength(100)]
         public required string LearningMode { get; set; }
-
+        [MaxLength(100)]
         public required string RQMNumber { get; set; }
 
         [DataType(DataType.DateTime)]
@@ -57,13 +56,19 @@ namespace QFRMS.Data.Models
         public required string BatchId { get; set; }
         public required Batch Batch { get; set; }
 
+        [MaxLength(100)]
         public string? EmployerName { get; set; }
+
+        [MaxLength(256)]
         public string? EmployerAddress { get; set; }
 
+        [MaxLength(100)]
         public string? Occupation { get; set; }
 
+        [MaxLength(100)]
         public string? Classification { get; set; }
 
+        [MaxLength(100)]
         public string? Salary { get; set; }
     }
 }

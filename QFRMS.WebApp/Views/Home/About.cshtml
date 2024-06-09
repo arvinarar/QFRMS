@@ -8,6 +8,15 @@
     <div class="header">
         <img src="~/icons/settings.svg" class="header-icon" />
         <h2 class="header-title">ABOUT</h2>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="col d-flex justify-content-end align-items-center">
+                <a class="nav-link btn btn-primary no-glow" asp-area="" asp-controller="Home" asp-action="HomeSettings">
+                    <img src="~/icons/settings_white.svg" class="icons" />
+                    See Home Settings
+                </a>
+            </div>
+        }
     </div>
     <div class="header-hr"></div>
 </div>

@@ -7,4 +7,6 @@ $(document).ready(function () {
     //Enable Tooltip everywhere
     $('[data-toggle="tooltip"]').tooltip()
 
+    //Show toast if any
+    $('.toast').toast('show');
 });

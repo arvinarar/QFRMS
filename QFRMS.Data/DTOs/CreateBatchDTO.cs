@@ -21,17 +21,17 @@ namespace QFRMS.Data.DTOs
         public string? TrainorId { get; set; }
         public List<TrainorList>? TrainorList { get; set; }
 
-        [DisplayName("Learning Delivery : ")]
-        [Required(ErrorMessage = "Learning Delivery is required")]
+        [DisplayName("Program Title : ")]
+        [Required(ErrorMessage = "Program Title is required")]
         public LearningDelivery? LearningDelivery { get; set; }
 
-        [DisplayName("Learning Mode : ")]
-        [Required(ErrorMessage = "Learning Mode is required")]
+        [DisplayName("Learning Method : ")]
+        [Required(ErrorMessage = "Learning Method is required")]
         public LearningMode? LearningMode { get; set; }
 
         [DisplayName("RQM Code : ")]
         [Required(ErrorMessage = "RQM Code is required")]
-        [RegularExpression(@"(^([A-Z0-9]{4}[-]?[A-Z0-9]{4}[-]?[A-Z0-9]{4}[-]?[A-Z0-9]{4}[-]?[A-Z0-9]{4})$)", ErrorMessage = "Please enter a valid RQM Code.")]
+        [RegularExpression(@"(^([a-zA-Z0-9]{4}[-]?[a-zA-Z0-9]{4}[-]?[a-zA-Z0-9]{4}[-]?[a-zA-Z0-9]{4}[-]?[a-zA-Z0-9]{4})$)", ErrorMessage = "Please enter a valid RQM Code.")]
         public string? RQMNumber { get; set; }
 
         [DisplayName("Date Start : ")]

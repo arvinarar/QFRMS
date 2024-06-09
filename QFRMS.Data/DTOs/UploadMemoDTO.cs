@@ -9,6 +9,6 @@ namespace QFRMS.Data.DTOs
 {
     public class UploadMemo
     {
-        public required IFormFile File { get; set; }
+        public IFormFile? File { get; set; }
     }
 }

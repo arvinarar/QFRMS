@@ -32,13 +32,34 @@ namespace QFRMS.Data.Repositories
             }
         }
 
-        public async Task<Memo> RetrieveMemoAsync()
+        public async Task<IQueryable<Memo>> RetrieveAllAsync()
         {
             try
             {
-                var data = await _context.Memo.FindAsync(1) ?? throw new Exception("Database: Memo not found");
-                data.File = await _context.PDFs.FindAsync(data.FileId);
-                return data;
+                return await Task.FromResult(_context.Set<Memo>());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<Memo> RetrieveMemoAsync(int? id)
+        {
+            try
+            {
+                if(id == null)
+                {
+                    var data = _context.Memo.OrderByDescending(m => m.DateUploaded).FirstOrDefault() ?? throw new Exception("Database: Memo not found");
+                    data.File = await _context.PDFs.FindAsync(data.FileId);
+                    return data;
+                }
+                else
+                {
+                    var data = _context.Memo.Find(id) ?? throw new Exception("Database: Memo not found");
+                    data.File = await _context.PDFs.FindAsync(data.FileId);
+                    return data;
+                }
             }
             catch (Exception)
             {
@@ -50,15 +71,15 @@ namespace QFRMS.Data.Repositories
         {
             try
             {
-                var memo = await _context.Memo.FindAsync(1) ?? throw new Exception("Database: Memo not found");
-                var oldMemoPDF = await _context.PDFs.FindAsync(memo.FileId);
-                if(oldMemoPDF != null) await Task.FromResult(_context.PDFs.Remove(oldMemoPDF));
-                memo.DateUploaded = DateTime.Now;
-                memo.FileId = file.Id;
-                memo.File = file;
+                var memo = new Memo 
+                { 
+                    DateUploaded = DateTime.Now, 
+                    FileId = file.Id, 
+                    File = file 
+                };
 
                 await _context.PDFs.AddAsync(file);
-                await Task.FromResult(_context.Memo.Update(memo));
+                _context.Memo.Add(memo);
 
                 //Clear SeenUsers Table
                 var toDelete = _context.SeenUsers.Select(a => new SeenUsers { UserId = a.UserId }).ToList();
@@ -72,11 +93,25 @@ namespace QFRMS.Data.Repositories
             }
         }
 
-        public async Task<PDF> GetMemo()
+        public async Task<bool> DeleteMemo(int id)
         {
             try
             {
-                var memo = await _context.Memo.FindAsync(1) ?? throw new Exception("Database: Memo not found");
+                var memo = _context.Memo.Find(id) ?? throw new Exception("Database: Memo not found");
+                _context.Memo.Remove(memo);
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<PDF> GetMemo(int id)
+        {
+            try
+            {
+                var memo = await _context.Memo.FindAsync(id) ?? throw new Exception("Database: Memo not found");
                 return await _context.PDFs.FindAsync(memo.FileId) ?? throw new Exception("No Memo File Found");
             }
             catch (Exception)

@@ -1,0 +1,31 @@
+﻿@using QFRMS.Data.DTOs
+@using Microsoft.AspNetCore.Http;
+@model UploadMemo
+
+<!-- Modal -->
+<div class="modal fade" id="uploadMemo" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="uploadMemoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content page-body bg-white">
+            <div class="modal-header body-header p-2">
+                <h4 class="body-title" id="uploadMemoModalLabel">Upload New Memo</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="UploadMemo" enctype="multipart/form-data" method="post" id="form">
+                <div asp-validation-summary="ModelOnly" class="row text-danger" role="alert"></div>
+                <div class="row d-flex justify-content-center">
+                    <div class="col-6 mt-4">
+                        <div class="form-group">
+                            <input asp-for="File" type="file" class="form-control" for="floatingInput" accept=".pdf" id="UploadField" />
+                            <span asp-validation-for="File" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-footer">
+                    <div class="col d-flex justify-content-center">
+                        <button id="submitBtn" type="submit" class="btn btn-primary disabled">Upload</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

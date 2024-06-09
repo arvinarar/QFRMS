@@ -23,6 +23,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - QFRMS</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/summernote/summernote-lite.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/QFRMS.WebApp.styles.css" asp-append-version="true" />
 </head>
@@ -68,27 +69,22 @@
                             </li>
                             </a>
                         }
-                        @if (signInUser == "Admin")
+                        @if (signInUser != "Guest")
                         {
                             <li class="nav-item dropdown">
                                 <button class="btn nav-link dropdown-toggle @(urlSegments[0] == "Memo" || activeUrl == "About" || urlSegments[0] == "Account" && activeUrl != "Details" && activeUrl != "EditDetails" ? "nav-dropdown-selected" : "")" id="SystemDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">System</button>
                                 <div class="dropdown-menu" aria-labelledby="SystemDropdown">
-                                    <div class="dropdown-divider mt-0"></div>
-                                    <a class="dropdown-item nav-link" asp-area="" asp-controller="Account" asp-action="Index">Users</a>
+                                    @if(signInUser == "Admin")
+                                    {
+                                        <div class="dropdown-divider mt-0"></div>
+                                        <a class="dropdown-item nav-link" asp-area="" asp-controller="Account" asp-action="Index">Users</a>
+                                    }
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item nav-link" asp-area="" asp-controller="Memo" asp-action="Index">Memo</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a>
                                 </div>
                             </li>
-                        }
-                        else if (signInUser != "Guest")
-                        {
-                            <a class="nav-item @(activeUrl == "About" ? "nav-selected" : "")" asp-area="" asp-controller="Home" asp-action="About">
-                            <li class="nav-link">
-                                About
-                            </li>
-                            </a>
                         }
                         @if(signInUser != "Guest")
                         {
@@ -122,6 +118,30 @@
         </main>
     </div>
 
+    @* Notification alert *@
+    @if (TempData["Success"] != null)
+    {
+        <div class="toast success-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+            <div class="d-flex">
+                <div class="toast-body">
+                    @TempData["Success"]
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    }
+    @if (TempData["Failed"] != null)
+    {
+        <div class="toast failed-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+            <div class="d-flex">
+                <div class="toast-body">
+                    @TempData["Failed"]
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    }
+
     <footer class="border-top footer text-muted">
         <div class="container text-center">
             &copy; 2024 - Quilantang Farms Insitute Records Management System
@@ -129,6 +149,7 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/summernote/summernote-lite.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/setDateTime.js" asp-append-version="true"></script>
     <script src="~/js/MessageBox.js" asp-append-version="true"></script>

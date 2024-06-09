@@ -36,7 +36,8 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to retrieve courses. Error: {Message}", DateTime.Now.ToString(), ex.Message);
+                TempData["Failed"] = "An error has occured when trying to show batches. Please contact administrator if this problem persists.";
+                _fileLogger.Log(LogType.ErrorType, $"Batch Index Failed: {ex.Message}, {ex.InnerException}", true);
                 var dummyList = new List<BatchListViewModel>();
                 return View(await PaginatedList<BatchListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, 10));
             }
@@ -60,7 +61,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Search Failed. Error: {Message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Batch Search Failed: {ex.Message}, {ex.InnerException}", true);
                 var dummyList = new List<BatchListViewModel>();
                 return PartialView("_BatchList", PaginatedList<BatchListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, 10).Result);
             }
@@ -75,8 +76,9 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to get Course Detail, Error: {message}", DateTime.Now.ToString(), ex.Message);
-                return RedirectToAction("Index", "Course");
+                TempData["Failed"] = "An error has occured when trying to show batch details. Please contact administrator if this problem persists.";
+                _fileLogger.Log(LogType.ErrorType, $"Batch Details Page Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("Index", "Batch");
             }
         }
 
@@ -90,8 +92,9 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to get Course Edit View, Error: {message}", DateTime.Now.ToString(), ex.Message);
-                return RedirectToAction("Index", "Course");
+                TempData["Failed"] = "An error has occured when trying to edit batch. Please contact administrator if this problem persists.";
+                _fileLogger.Log(LogType.ErrorType, $"Batch Edit Page Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("Index", "Batch");
             }
         }
 
@@ -113,7 +116,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Search Failed. Error: {Message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"GetBatchList Failed: {ex.Message}, {ex.InnerException}", true);
                 var dummyList = new List<BatchCourseListViewModel>();
                 return PartialView("_BatchCourseList", PaginatedList<BatchCourseListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, _pageSize).Result);
             }
@@ -129,7 +132,8 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to load Create Batch Page, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                TempData["Failed"] = "An error has occured when trying to create a course. Check logs for details.";
+                _fileLogger.Log(LogType.ErrorType, $"Batch Create Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Batch");
             }
         }
@@ -145,20 +149,24 @@ namespace QFRMS.WebApp.Controllers
                     var work = await _batchService.AddBatchAsync(model);
                     if (!work.Result)
                     {
-                        _logger.LogError("{datetime} Method Create Failed: {errorcode}, {message}", DateTime.Now.ToString(), work.ErrorCode, work.Message);
+                        TempData["Failed"] = $"Failed to create batch, Error: {work.Message}";
+                        _fileLogger.Log(LogType.ErrorType, $"Create Batch Failed: {work.ErrorCode} {work.Message}", true);
                         return RedirectToAction("Create", "Batch", new { Id = model.CourseId });
                     }
-                    _fileLogger.Log($"{LogType.DatabaseType}, {work.Message} \'{model?.RQMNumber?.ToUpperInvariant()}\', {User.Identity?.Name}", true);
+                    TempData["Success"] = work.Message;
+                    _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.RQMNumber?.ToUpperInvariant()}\', {User.Identity?.Name}", true);
                     if (model!.FromCoursePage)
                         return RedirectToAction("Details", "Course", new { Id = model.CourseId });
                     else
                         return RedirectToAction("Index", "Batch");
                 }
+                TempData["Failed"] = "Failed to create batch. Check logs for details";
                 return RedirectToAction("Create", "Batch", new { Id = model.CourseId });
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to Create Batch, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                TempData["Failed"] = "Failed to create batch. Check logs for details";
+                _fileLogger.Log(LogType.ErrorType, $"Create Batch Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Batch");
             }
         }
@@ -174,17 +182,21 @@ namespace QFRMS.WebApp.Controllers
                     var work = await _batchService.UpdateBatchAsync(model);
                     if(!work.Result)
                     {
-                        _logger.LogError("{datetime} Method Update Failed: {errorcode}, {message}", DateTime.Now.ToString(), work.ErrorCode, work.Message);
+                        TempData["Failed"] = $"Failed to update batch, Error: {work.Message}";
+                        _fileLogger.Log(LogType.ErrorType, $"Update Batch Failed: {work.ErrorCode} {work.Message}", true);
                         return RedirectToAction("Details", "Batch", new { model.Id, model.FromCoursePage });
                     }
-                    _fileLogger.Log($"{LogType.DatabaseType}, {work.Message} \'{model?.RQMNumber?.ToUpperInvariant()}\', {User.Identity?.Name}", true);
+                    TempData["Success"] = work.Message;
+                    _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.RQMNumber?.ToUpperInvariant()}\', {User.Identity?.Name}", true);
                     return RedirectToAction("Details", "Batch", new { model!.Id, model.FromCoursePage });
                 }
+                TempData["Failed"] = "Failed to update batch. Check logs for details";
                 return RedirectToAction("Details", "Batch", new { model.Id, model.FromCoursePage });
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to Update Batch, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                TempData["Failed"] = "Failed to update batch. Check logs for details";
+                _fileLogger.Log(LogType.ErrorType, $"Update Batch Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Batch");
             }
         }
@@ -195,10 +207,17 @@ namespace QFRMS.WebApp.Controllers
             try
             {
                 var work = await _batchService.DeleteBatchAsync(model.Id);
-                if (!work.Result) throw new Exception("Work Failed");
+                if (!work.Result)
+                {
+                    TempData["Failed"] = $"Failed to update batch, Error: {work.Message}";
+                    _fileLogger.Log(LogType.ErrorType, $"Delete Batch Failed: {work.ErrorCode} {work.Message}", true);
+                } 
+                else
+                {
+                    TempData["Success"] = work.Message;
+                    _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.RQMCode?.ToUpperInvariant()}\', {User.Identity?.Name}", true);
+                }
 
-                _fileLogger.Log($"{LogType.DatabaseType}, {work.Message} \'{model?.RQMCode?.ToUpperInvariant()}\', {User.Identity?.Name}", true);
-                
                 if (model!.CourseId != null)
                     return RedirectToAction("Details", "Course", new { Id = model.CourseId });
                 else
@@ -206,7 +225,8 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to delete. Error: {message}", DateTime.Now.ToString(), ex.Message);
+                TempData["Failed"] = "Failed to delete batch. Check logs for details";
+                _fileLogger.Log(LogType.ErrorType, $"Delete Batch Failed: {ex.Message}, {ex.InnerException}", true);
                 if (model.CourseId != null)
                     return RedirectToAction("Details", "Course", new { Id = model.CourseId });
                 else
@@ -221,20 +241,24 @@ namespace QFRMS.WebApp.Controllers
                 if (ModelState.IsValid)
                 {
                     var work = await _batchService.AddStudentsFromCSV(model);
-                        if (!work.Result)
+                    if (!work.Result)
                     {
-                        _logger.LogError("{datetime} Method Update Failed: {errorcode}, {message}", DateTime.Now.ToString(), work.ErrorCode, work.Message);
+                        TempData["Failed"] = $"Failed to enroll/update students, Error: {work.Message}";
+                        _fileLogger.Log(LogType.ErrorType, $"Import Sheet Failed: {work.ErrorCode} {work.Message}", true);
                         return RedirectToAction("Details", "Batch", new { Id = model!.BatchId, model.FromCoursePage });
                     }
-                    _fileLogger.Log($"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
+                    TempData["Success"] = work.Message;
+                    _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
                     return RedirectToAction("Details", "Batch", new { Id = model!.BatchId, model.FromCoursePage });
                 }
+                TempData["Failed"] = "Failed to enroll/update students. Please contact administrator if this problem persists.";
                 return RedirectToAction("Details", "Batch", new { Id = model.BatchId, model.FromCoursePage });
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to Update Batch, Error: {message}", DateTime.Now.ToString(), ex.Message);
-                return RedirectToAction("Index", "Batch");
+                TempData["Failed"] = "Failed to enroll/update students. Error: Invalid CSV file.";
+                _fileLogger.Log(LogType.ErrorType, $"Import Sheet Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("Details", "Batch", new { Id = model.BatchId, model.FromCoursePage });
             }
         }
 
@@ -242,11 +266,11 @@ namespace QFRMS.WebApp.Controllers
         {
             try
             {
-                return await _batchService.GetDocument(Id) ?? throw new Exception("No Document Found");
+                return await _batchService.GetDocument(Id);
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to get document, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Get Document Failed: {ex.Message}, {ex.InnerException}", true);
                 return NotFound();
             }
         }
@@ -261,7 +285,7 @@ namespace QFRMS.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to check RQM, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"CheckIfAlreadyExist Failed: {ex.Message}, {ex.InnerException}", true);
                 return false;
             }
         }
@@ -272,13 +296,13 @@ namespace QFRMS.WebApp.Controllers
             try
             {
                 var TerminalReport = await _batchService.GenerateTerminalReport(Id, User.Identity?.Name);
-                _fileLogger.Log($"{LogType.UserType}, Generated Terminal Report for Batch \'{Id}\', {User.Identity?.Name}", true);
+                _fileLogger.Log(LogType.UserType, $"{LogType.UserType}, Generated Terminal Report for Batch \'{Id}\', {User.Identity?.Name}", true);
 
                 return TerminalReport;
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to Generate Terminal Report, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Generate Terminal Report Failed: {ex.Message}, {ex.InnerException}", true);
                 return NotFound();
             }
         }

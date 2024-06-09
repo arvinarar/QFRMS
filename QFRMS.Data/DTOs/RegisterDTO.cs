@@ -9,7 +9,6 @@ namespace QFRMS.Data.DTOs
         [Display(Name = "First Name : ")]
         public string? FirstName { get; set; }
 
-        [Required(ErrorMessage = "Middle Name is required")]
         [Display(Name = "Middle Name : ")]
         public string? MiddleName { get; set; }
 

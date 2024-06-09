@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QFRMS.Data;
@@ -10,7 +11,7 @@ using QFRMS.Services.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("default");
+var connectionString = builder.Configuration.GetConnectionString("Deployed"); //Change to 'Deployed' if set system to production, 'Development' otherwise
 
 //Add Logger
 builder.Services.AddSingleton<IFileLogger, FileLogger>();
@@ -37,7 +38,8 @@ builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(
-        options => options.UseSqlServer(connectionString)
+        options => options.UseSqlServer(connectionString,
+        providerOptions => providerOptions.EnableRetryOnFailure())
     );
 
 builder.Services.AddIdentity<UserAccount, IdentityRole>(
@@ -57,6 +59,17 @@ builder.Services.AddIdentity<UserAccount, IdentityRole>(
 builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 {
     options.ValidationInterval = TimeSpan.FromMinutes(5);
+});
+
+//Set File Size limit to 512MB, for IIS set it on config 536870912(size in bytes)
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 512 * 1024 * 1024;
+});
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 512 * 1024 * 1024;
 });
 
 var app = builder.Build();

@@ -16,6 +16,7 @@ namespace QFRMS.WebApp.Controllers
         private readonly ILogger<MemoController> _logger;
         private readonly IFileLogger _fileLogger;
         private readonly IMemoService _memoService;
+        private readonly int _pageSize = 8;
 
         public MemoController(ILogger<MemoController> logger, IFileLogger fileLogger, IMemoService memoService)
         {
@@ -24,20 +25,36 @@ namespace QFRMS.WebApp.Controllers
             _memoService = memoService;
         }
 
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             try
             {
-                var data = await _memoService.GetMemoAsync();
+                var data = await _memoService.GetMemoAsync(null);
                 if(data.File == null) data.Id = 0;
                 return View(data);
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to get Memo. Error: {Message}", DateTime.Now.ToString(), ex.Message);
+                TempData["Failed"] = "An error has occured when trying to show memos. Please contact administrator if this problem persists.";
+                _fileLogger.Log(LogType.ErrorType, $"Memo Index Failed: {ex.Message}, {ex.InnerException}", true);
                 Memo dummyData = new() { Id = 0};
                 return View(dummyData);
+            }
+        }
+
+        // Get : GetMemoList
+        public PartialViewResult GetMemoList(int? pageNumber)
+        {
+            try
+            {
+                var result = _memoService.GetMemoList().Result;
+                return PartialView("_MemoList", PaginatedList<MemoListViewModel>.CreateAsync(result, pageNumber ?? 1, _pageSize).Result);
+            }
+            catch (Exception ex)
+            {
+                _fileLogger.Log(LogType.ErrorType, $"MemoList show Failed: {ex.Message}, {ex.InnerException}", true);
+                var dummyList = new List<MemoListViewModel>();
+                return PartialView("_MemoList", PaginatedList<MemoListViewModel>.CreateAsync(dummyList, pageNumber ?? 1, _pageSize).Result);
             }
         }
 
@@ -50,13 +67,8 @@ namespace QFRMS.WebApp.Controllers
                 if(ModelState.IsValid)
                 {
                     var work = await _memoService.UploadMemoAsync(model);
-                    if (!work.Result)
-                    {
-                        _logger.LogError("{datetime} Method UploadMemo Failed: {errorcode}, {message}", DateTime.Now.ToString(), work.ErrorCode, work.Message);
-                        return RedirectToAction("Index", "Memo");
-                    }
-                    
-                    _fileLogger.Log($"{LogType.DatabaseType}, {work.Message} \'{model?.File.FileName}\', {User.Identity?.Name}", true);
+                    TempData["Success"] = work.Message;
+                    _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message} \'{model?.File.FileName}\', {User.Identity?.Name}", true);
 
                     //Add Admin to SeenUserTable
                     if (User.Identity == null) throw new ArgumentException("No User Logged in at the moment.");
@@ -65,50 +77,81 @@ namespace QFRMS.WebApp.Controllers
 
                     return RedirectToAction("Index", "Memo");
                 }
+                TempData["Failed"] = "Upload memo failed, see logs for details.";
                 return RedirectToAction("Index", "Memo");
             }
             catch(ArgumentException ex)
             {
-                _logger.LogError("{datetime}: Failed to Add Admin to SeenUsers, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                TempData["Failed"] = $"Resetting seen users failed, Error: {ex.Message}";
+                _fileLogger.Log(LogType.ErrorType, $"Seen user reset failed: {ex.GetType} {ex.Message}", true);
                 return RedirectToAction("Index", "Memo");
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to upload Memo, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                TempData["Failed"] = "Upload memo failed, see logs for details.";
+                _fileLogger.Log(LogType.ErrorType, $"Upload Memo Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("Index", "Memo");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteMemo(MemoListViewModel model)
+        {
+            try
+            {
+                var work = await _memoService.DeleteMemoAsync(model.Id);
+                TempData["Success"] = work.Message;
+                _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
+                return RedirectToAction("Index", "Memo");
+            }
+            catch (Exception ex)
+            {
+                TempData["Failed"] = "Delete memo failed, see logs for details.";
+                _fileLogger.Log(LogType.ErrorType, $"Delete Memo Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Memo");
             }
         }
 
         [Authorize(Roles = "Admin")]
         public IActionResult UploadNewMemo() 
-        { 
-            return View();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult?> DownloadMemo()
         {
             try
             {
-                return await _memoService.DownloadMemo() ?? throw new Exception("No Memo File");
+                return View();
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to download Memo, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Upload New Memo Page Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("Index", "Memo");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadMemo(int id)
+        {
+            try
+            {
+                return await _memoService.DownloadMemo(id);
+            }
+            catch (Exception ex)
+            {
+                _fileLogger.Log(LogType.ErrorType, $"Download Memo Failed: {ex.Message}, {ex.InnerException}", true);
                 return NotFound();
             }
         }
 
         // GET : DisplayMemoModal
-        public IActionResult DisplayMemoModal()
+        public IActionResult DisplayMemoModal(int? id)
         {
             try
             {
-                return PartialView("_MemoModal");
+                var data = _memoService.GetMemoAsync(id).Result;
+                return PartialView("_MemoModal", new Memo { Id = id ?? data.Id });
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to display Memo modal, Error: {message}", DateTime.Now.ToString(), ex.Message);
+                _fileLogger.Log(LogType.ErrorType, $"Display Memo Modal Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Home");
             }
         }

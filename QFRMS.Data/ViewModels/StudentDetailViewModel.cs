@@ -32,6 +32,7 @@ namespace QFRMS.Data.ViewModels
         public string? EmployerName { get; set; }
         public string? EmployerAddress { get; set; }
         public string? BatchId { get; set; }
+        public required bool FromStudentsPage { get; set; }
         public required bool FromCoursePage { get; set; }
     }
 }

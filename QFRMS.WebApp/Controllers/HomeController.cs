@@ -7,6 +7,8 @@ using QFRMS.Services.Utils;
 using QFRMS.WebApp.Models;
 using System.Diagnostics;
 using static QFRMS.Data.Constants;
+using Microsoft.IdentityModel.Tokens;
+using QFRMS.Data.DTOs;
 
 namespace QFRMS.WebApp.Controllers
 {
@@ -29,7 +31,13 @@ namespace QFRMS.WebApp.Controllers
         {
             try
             {
-                if (User.Identity != null && User.Identity.Name != null)
+                //Check if a memo exist
+                var memo = await _memoService.GetMemoAsync(null);
+                if (memo.File == null)
+                {
+                    ViewData["HasSeenMemo"] = true; // Memo modal won't show
+                }
+                else if (User.Identity != null && User.Identity.Name != null)
                 {
                     var Name = User.Identity.Name;
                     var HasSeenMemo = await _memoService.HasSeenMemo(Name);
@@ -38,11 +46,13 @@ namespace QFRMS.WebApp.Controllers
                     else
                         ViewData["HasSeenMemo"] = false;
                 }
-                return View();
+                var result = await _aboutService.GetHomePageArticlesVideosAsync();
+                return View(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to get neccesary data for Memo notification: {message}", DateTime.Now.ToString(), ex.Message);
+                TempData["Failed"] = "Failed to show memo. Please contact administrator if this problem persists.";
+                _fileLogger.Log(LogType.ErrorType, $"Failed to get neccesary data for Memo notification: {ex.Message}, {ex.InnerException}", true);
                 ViewData["HasSeenMemo"] = true;
                 return View();
             }
@@ -59,8 +69,10 @@ namespace QFRMS.WebApp.Controllers
             {
                 return View(await _aboutService.GetInstituteInfoAsync());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to show about page. Please contact administrator if this problem persists.";
+                _fileLogger.Log(LogType.ErrorType, $"About Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("Index", "Home");
             }
         }
@@ -76,8 +88,10 @@ namespace QFRMS.WebApp.Controllers
             { 
                 return View(await _aboutService.GetInstituteInfoAsync());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                TempData["Failed"] = "Failed to edit institute. Please contact administrator if this problem persists.";
+                _fileLogger.Log(LogType.ErrorType, $"Edit About Page Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("About", "Home");
             }
         }
@@ -97,18 +111,99 @@ namespace QFRMS.WebApp.Controllers
                     var work = await _aboutService.UpdateInstituteInfoAsync(model);
                     if(!work.Result)
                     {
-                        _logger.LogError("Work Failed, {ErrorCode} {Message}", work.ErrorCode, work.Message);
+                        TempData["Failed"] = "Failed to edit institute. Please contact administrator if this problem persists.";
+                        _fileLogger.Log(LogType.ErrorType, $"Update Institute Info Failed: {work.ErrorCode} {work.Message}", true);
                         return View("EditAbout", model);
                     }
-                    _fileLogger.Log($"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
+                    TempData["Success"] = work.Message;
+                    _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
                     return RedirectToAction("About", "Home");
                 }
+                TempData["Failed"] = "Failed to edit institute. Please contact administrator if this problem persists.";
                 ModelState.AddModelError(string.Empty, "Please fill-up all the fields");
                 return View("EditAbout", model);
             }
             catch (Exception ex)
             {
-                _logger.LogError("{datetime}: Failed to Update Insitute Info: {message}", DateTime.Now.ToString(), ex.Message);
+                TempData["Failed"] = "Failed to edit institute. Please contact administrator if this problem persists.";
+                _fileLogger.Log(LogType.ErrorType, $"Update Institute Info Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("About", "Home");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> HomeSettings()
+        {
+            try
+            {
+                var result = await _aboutService.GetHomePageArticlesVideosAsync();
+                return View(result);
+            }
+            catch (Exception ex)
+            {
+                TempData["Failed"] = "Failed to show home settings page. Check log for details.";
+                _fileLogger.Log(LogType.ErrorType, $"Home Settings Page Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("About", "Home");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        // Get : GetArticleVideoForm
+        public IActionResult GetArticleVideoForm(string Id)
+        {
+            try
+            {
+                var result = _aboutService.GetUpdateArticleVideo(Id).Result;
+                return PartialView("_UpdateModal", result);
+            }
+            catch (Exception ex)
+            {
+                _fileLogger.Log(LogType.ErrorType, $"GetArticleVideoForm Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("About", "Home");
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateArticleVideo(UpdateArticleVideo model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var work = await _aboutService.UpdateHomePageArticlesVideoAsync(model);
+                    TempData["Success"] = work.Message;
+                    _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
+                    return RedirectToAction("HomeSettings", "Home");
+                }
+                return RedirectToAction("HomeSettings", "Home");
+            }
+            catch (Exception ex)
+            {
+                TempData["Failed"] = "Failed to upload article/video. Check logs for details.";
+                _fileLogger.Log(LogType.ErrorType, $"UpdateArticleVideo Failed: {ex.Message}, {ex.InnerException}", true);
+                return RedirectToAction("HomeSettings", "Home");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteArticleVideo(string Id)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var work = await _aboutService.DeleteHomePageArticlesVideoAsync(Id);
+                    TempData["Success"] = work.Message;
+                    _fileLogger.Log(LogType.DatabaseType, $"{LogType.DatabaseType}, {work.Message}, {User.Identity?.Name}", true);
+                    return RedirectToAction("HomeSettings", "Home");
+                }
+                return RedirectToAction("HomeSettings", "Home");
+            }
+            catch (Exception ex)
+            {
+                TempData["Failed"] = "Failed to delete article/video. Check logs for details.";
+                _fileLogger.Log(LogType.ErrorType, $"UpdateArticleVideo Failed: {ex.Message}, {ex.InnerException}", true);
                 return RedirectToAction("About", "Home");
             }
         }

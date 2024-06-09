@@ -42,9 +42,8 @@ namespace QFRMS.Services.Services
                                                  COPRNo = course.COPRNo
                                              });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} GetCourseListAsync Failed: {message}", DateTime.Now.ToString(), ex.Message);
                 throw;
             }
         }
@@ -73,10 +72,9 @@ namespace QFRMS.Services.Services
                 detail.CanBeDeleted = !(count > 0);
 
                 return detail;
-            } 
-            catch (Exception ex)
+            }
+            catch (Exception)
             {
-                _logger.LogError("{datetime} GetCourseListAsync Failed: {message}", DateTime.Now.ToString(), ex.Message);
                 throw;
             }
         }
@@ -85,11 +83,10 @@ namespace QFRMS.Services.Services
         {
             try
             {
-                return await _repository.GetCourseAsync(Id) ?? throw new Exception("Course not Found");
+                return await _repository.GetCourseAsync(Id) ?? throw new Exception("Course not found");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("{datetime} GetCourseEditViewAsync Failed: {message}", DateTime.Now.ToString(), ex.Message);
                 throw;
             }
         }
@@ -172,20 +169,15 @@ namespace QFRMS.Services.Services
             {
                 model.Id = Guid.NewGuid().ToString();
                 var work = await _repository.CreateCourseAsync(model);
-                if (!work) throw new Exception("Work failed");
 
                 _work.Time = DateTime.Now;
-                _work.Message = "Successfully Created Course";
+                _work.Message = "Successfully created course.";
                 _work.Result = true;
                 return _work;
             }
-            catch(Exception ex)
+            catch (Exception)
             {
-                _work.ErrorCode = ex.Message;
-                _work.Time = DateTime.Now;
-                _work.Message = "Couldn't Create Course";
-                _work.Result = false;
-                return _work;
+                throw;
             }
         }
 
@@ -194,20 +186,15 @@ namespace QFRMS.Services.Services
             try
             {
                 var work = await _repository.UpdateCourseAsync(model);
-                if (!work) throw new Exception("Work failed");
 
                 _work.Time = DateTime.Now;
-                _work.Message = "Successfully Updated Course";
+                _work.Message = "Successfully updated course.";
                 _work.Result = true;
                 return _work;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _work.ErrorCode = ex.Message;
-                _work.Time = DateTime.Now;
-                _work.Message = "Couldn't Update course";
-                _work.Result = false;
-                return _work;
+                throw;
             }
         }
 
@@ -218,23 +205,26 @@ namespace QFRMS.Services.Services
                 //Check if it still has batches
                 var hasBatches = await _batchRepository.GetBatchesFromCourse(Id);
                 var count = await hasBatches.CountAsync();
-                if (count > 0) throw new Exception("Course still has batches");
+                if (count > 0) throw new ArgumentException("Course still has batches.");
 
                 var work = await _repository.DeleteCourseAsync(Id);
-                if (!work) throw new Exception("Work failed");
 
                 _work.Time = DateTime.Now;
-                _work.Message = "Successfully Deleted Course";
+                _work.Message = "Successfully deleted course.";
                 _work.Result = true;
                 return _work;
             }
-            catch (Exception ex) 
+            catch (ArgumentException ex) 
             {
                 _work.ErrorCode = ex.Message;
                 _work.Time = DateTime.Now;
-                _work.Message = "Couldn't Delete course";
+                _work.Message = "Couldn't delete course.";
                 _work.Result = false;
                 return _work;
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 

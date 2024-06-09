@@ -11,6 +11,7 @@ namespace QFRMS.Data.Interfaces
 {
     public interface IPDFRepository
     {
+        public Task<IQueryable<PDF>> RetrieveAllAsync();
         public Task<PDF> GetPDF(string id);
         public Task<FileContentResult> GetPDFFile(string id);
         public Task<PDF> CreatePDF(string Id, string pdfName, IFormFile pdfFile);

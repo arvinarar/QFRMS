@@ -19,10 +19,10 @@
     foreach (var item in Model)
     {
         <tr>
-            <td>@item.Sector</td>
-            <td>@item.ProgramTitle</td>
-            <td>@item.Status</td>
             <td class="COPRNo">@item.COPRNo</td>
+            <td>@item.ProgramTitle</td>
+            <td>@item.Sector</td>
+            <td>@item.Status</td>
             <td class="action">
                 <a class="nav-link btn btn-primary no-glow" asp-controller="Course" asp-action="Details" asp-route-id="@item.Id">Details</a>
             </td>

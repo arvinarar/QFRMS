@@ -22,6 +22,6 @@ namespace QFRMS.Services.Interfaces
         public Task<Work> UpdateGrades(StudentGradesList model);
         public Task<bool> CheckIfAlreadyExist(string ULI);
         public Task<StudentDetailViewModel> GetStudentDetail(string ULI, string? BatchId, bool fromCoursePage);
-        public Task<StudentGradesList> GetStudentGrades(string BatchId, bool isTrainor, bool fromCoursePage);
+        public Task<StudentGradesList> GetStudentGrades(string BatchId, string userRole, bool fromCoursePage);
     }
 }

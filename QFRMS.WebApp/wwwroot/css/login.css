@@ -31,7 +31,10 @@ body {
     padding: 0;
     width: 16rem;
     height: 16rem;
-    margin: 3rem auto 3rem auto;
+}
+
+.logo-container {
+    margin: 3rem 0;
 }
 
 .login-container {

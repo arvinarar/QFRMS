@@ -11,7 +11,9 @@ namespace QFRMS.Data.Models
 {
     public class Memo
     {
-        public required int Id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTime? DateUploaded { get; set; }

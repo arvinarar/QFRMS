@@ -8,7 +8,7 @@
 {
     var user = await userManager.GetUserAsync(User);
     var role = (user != null) ? userManager.GetRolesAsync(user).Result.FirstOrDefault() : "Anonymous User";
-    var fullName = (user != null) ? $"{user!.FirstName} {user.MiddleName![0]}. {user.LastName} {user.ExtensionName}" : "Guest";
+    var fullName = (user != null) ? $"{user!.FirstName} {(user.MiddleName != null ? user.MiddleName[0] + "." : "")} {user.LastName} {user.ExtensionName}" : "Guest";
     <span>@fullName - @role</span>
 }
 else

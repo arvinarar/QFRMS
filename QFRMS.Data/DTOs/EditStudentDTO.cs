@@ -8,7 +8,6 @@ namespace QFRMS.Data.DTOs
 {
     public class EditStudent : EnrollStudent
     {
-        public required bool FromStudentsPage { get; set; }
         public required string CurrentBatchId { get; set; }
     }
 }
