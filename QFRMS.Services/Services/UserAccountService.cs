@@ -110,7 +110,7 @@ namespace QFRMS.Services.Services
                               orderby users.FirstName
                               where
                                   users.FirstName!.Contains(searchInput) ||
-                                  users.MiddleName!.Contains(searchInput) ||
+                                  users.MiddleName.Contains(searchInput) ||
                                   users.LastName!.Contains(searchInput) ||
                                   users.ExtensionName!.Contains(searchInput)
                               select new UsersViewModel

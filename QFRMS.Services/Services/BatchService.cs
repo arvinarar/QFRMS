@@ -62,7 +62,7 @@ namespace QFRMS.Services.Services
                                                      Id = batch.Id,
                                                      RQMCode = batch.RQMNumber,
                                                      ProgramTitle = course.ProgramTitle,
-                                                     TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                                     TrainorName = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}",
                                                      Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
                                                  });
                 }
@@ -78,7 +78,7 @@ namespace QFRMS.Services.Services
                                                      Id = batch.Id,
                                                      RQMCode = batch.RQMNumber,
                                                      ProgramTitle = course.ProgramTitle,
-                                                     TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                                     TrainorName = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}",
                                                      Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
                                                  });
                 }
@@ -109,7 +109,7 @@ namespace QFRMS.Services.Services
                                      Id = batch.Id,
                                      RQMCode = batch.RQMNumber,
                                      ProgramTitle = course.ProgramTitle,
-                                     TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                     TrainorName = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}",
                                      Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
                                  },
 
@@ -123,7 +123,7 @@ namespace QFRMS.Services.Services
                                        Id = batch.Id,
                                        RQMCode = batch.RQMNumber,
                                        ProgramTitle = course.ProgramTitle,
-                                       TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                       TrainorName = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}",
                                        Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
                                    },
 
@@ -133,7 +133,7 @@ namespace QFRMS.Services.Services
                                      orderby course.ProgramTitle, batch.RQMNumber, trainor.FirstName
                                      where
                                         trainor.FirstName!.Contains(searchInput) ||
-                                        trainor.MiddleName!.Contains(searchInput) ||
+                                        trainor.MiddleName.Contains(searchInput) ||
                                         trainor.LastName!.Contains(searchInput) ||
                                         trainor.ExtensionName == searchInput
                                      select new BatchListViewModel
@@ -141,7 +141,7 @@ namespace QFRMS.Services.Services
                                          Id = batch.Id,
                                          RQMCode = batch.RQMNumber,
                                          ProgramTitle = course.ProgramTitle,
-                                         TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                         TrainorName = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}",
                                          Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
                                      },
 
@@ -154,7 +154,7 @@ namespace QFRMS.Services.Services
                                  Id = batch.Id,
                                  RQMCode = batch.RQMNumber,
                                  ProgramTitle = course.ProgramTitle,
-                                 TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                 TrainorName = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}",
                                  Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
                              }
                     };
@@ -175,7 +175,7 @@ namespace QFRMS.Services.Services
                                      Id = batch.Id,
                                      RQMCode = batch.RQMNumber,
                                      ProgramTitle = course.ProgramTitle,
-                                     TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                     TrainorName = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}",
                                      Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
                                  },
 
@@ -191,7 +191,7 @@ namespace QFRMS.Services.Services
                                        Id = batch.Id,
                                        RQMCode = batch.RQMNumber,
                                        ProgramTitle = course.ProgramTitle,
-                                       TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                       TrainorName = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}",
                                        Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
                                    },
 
@@ -205,7 +205,7 @@ namespace QFRMS.Services.Services
                                  Id = batch.Id,
                                  RQMCode = batch.RQMNumber,
                                  ProgramTitle = course.ProgramTitle,
-                                 TrainorName = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                 TrainorName = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}",
                                  Period = $"{batch.DateStart:MM/dd/yyyy} - {(batch.DateEnd.HasValue ? batch.DateEnd.Value.ToString("MM/dd/yyyy") : "TBA")}"
                              }
                     };
@@ -231,7 +231,7 @@ namespace QFRMS.Services.Services
                              {
                                  Id = batch.Id,
                                  RQMCode = batch.RQMNumber,
-                                 Trainor = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                 Trainor = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}",
                                  DateStarted = batch.DateStart.ToShortDateString(),
                                  DateFinished = batch.DateEnd.HasValue ? batch.DateEnd.Value.ToShortDateString() : "TBA",
                                  LearningMode = GetEnumDescription(Enum.Parse<LearningMode>(batch.LearningMode))
@@ -242,14 +242,14 @@ namespace QFRMS.Services.Services
                                  orderby batch.RQMNumber, trainor.FirstName
                                  where
                                     trainor.FirstName!.Contains(searchInput) ||
-                                    trainor.MiddleName!.Contains(searchInput) ||
+                                    trainor.MiddleName.Contains(searchInput) ||
                                     trainor.LastName!.Contains(searchInput) ||
                                     trainor.ExtensionName == searchInput
                                  select new BatchCourseListViewModel
                                  {
                                      Id = batch.Id,
                                      RQMCode = batch.RQMNumber,
-                                     Trainor = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                                     Trainor = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}",
                                      DateStarted = batch.DateStart.ToShortDateString(),
                                      DateFinished = batch.DateEnd.HasValue ? batch.DateEnd.Value.ToShortDateString() : "TBA",
                                      LearningMode = GetEnumDescription(Enum.Parse<LearningMode>(batch.LearningMode))
@@ -262,7 +262,7 @@ namespace QFRMS.Services.Services
                          {
                              Id = batch.Id,
                              RQMCode = batch.RQMNumber,
-                             Trainor = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}",
+                             Trainor = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}",
                              DateStarted = batch.DateStart.ToShortDateString(),
                              DateFinished = batch.DateEnd.HasValue ? batch.DateEnd.Value.ToShortDateString() : "TBA",
                              LearningMode = GetEnumDescription(Enum.Parse<LearningMode>(batch.LearningMode))
@@ -288,7 +288,7 @@ namespace QFRMS.Services.Services
                                 select new TrainorList
                                 {
                                     TrainorId = trainor.Id,
-                                    Name = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}"
+                                    Name = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}"
                                 });
                 var CourseList = from course in await _courseRepository.RetrieveAllAsync()
                                  orderby course.ProgramTitle
@@ -326,7 +326,7 @@ namespace QFRMS.Services.Services
                                    select new TrainorList
                                    {
                                        TrainorId = trainor.Id,
-                                       Name = $"{trainor.FirstName} {trainor.MiddleName![0]} {trainor.LastName} {trainor.ExtensionName}"
+                                       Name = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}"
                                    });
                 var CourseList = from course in await _courseRepository.RetrieveAllAsync()
                                  orderby course.ProgramTitle
@@ -379,7 +379,7 @@ namespace QFRMS.Services.Services
                 batch.Trainor = await _userRepository.GetUserByIdAsync(batch.TrainorId) ?? throw new NullReferenceException("Trainor not found.");
                 batch.Course = await _courseRepository.GetCourseAsync(batch.CourseId) ?? throw new NullReferenceException("Course not found.");
 
-                var trainor = $"{batch.Trainor.FirstName} {batch.Trainor.MiddleName![0]} {batch.Trainor.LastName} {batch.Trainor.ExtensionName}";
+                var trainor = $"{batch.Trainor.FirstName} {(batch.Trainor.MiddleName != null ? batch.Trainor.MiddleName[0] + "." : "")} {batch.Trainor.LastName} {batch.Trainor.ExtensionName}";
                 var TimeStart = batch.TimeStart.HasValue ? batch.TimeStart.Value.ToString("hh:mm tt") : "TBA";
                 var TimeEnd = batch.TimeEnd.HasValue ? batch.TimeEnd.Value.ToString("hh:mm tt") : "TBA";
                 var DateStart = batch.DateStart.ToString("MM/dd/yyyy");
@@ -813,8 +813,8 @@ namespace QFRMS.Services.Services
                     var students = _studentRepository.RetrieveStudentsFromBatchAsync(Id).Result.ToList() ?? throw new NullReferenceException("Students not found");
                     var registrar = await _userRepository.GetUserByName(registrarUsername ?? throw new NullReferenceException("Registrar not found")) ?? throw new NullReferenceException("Registrar not found");
                     var trainor = await _userRepository.GetUserByIdAsync(batch.TrainorId) ?? throw new NullReferenceException("Trainor not found"); ;
-                    var registrarName = $"{registrar.FirstName} {registrar.MiddleName![0]}. {registrar.LastName} {registrar.ExtensionName}";
-                    var trainorName = $"{trainor.FirstName} {trainor.MiddleName![0]}. {trainor.LastName} {trainor.ExtensionName}";
+                    var registrarName = $"{registrar.FirstName} {(registrar.MiddleName != null ? registrar.MiddleName[0] + "." : "")}. {registrar.LastName} {registrar.ExtensionName}";
+                    var trainorName = $"{trainor.FirstName} {(trainor.MiddleName != null ? trainor.MiddleName[0] + "." : "")} {trainor.LastName} {trainor.ExtensionName}";
 
                     //Create WorkSheet
                     var worksheet = package.Workbook.Worksheets.Add("Terminal Report");

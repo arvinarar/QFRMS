@@ -48,6 +48,7 @@
     <form asp-action="EditStudent" method="post" id="form" class="form">
         <input asp-for="FromCoursePage" type="hidden" value="@Model.FromCoursePage" />
         <input asp-for="CurrentBatchId" type="hidden" value="@Model.CurrentBatchId" />
+        <input asp-for="FromStudentsPage" type="hidden" value="@Model.FromStudentsPage" />
         <div asp-validation-summary="ModelOnly" class="row text-danger" role="alert"></div>
         <div class="row mt-2">
             <div class="col-3">
