@@ -1,5 +1,6 @@
 # QFRMS
  Records Management System for the Quilantang Farms Training Institute
+ ![QFRMS Screenshot](https://github.com/user-attachments/assets/9ddd5ead-64aa-47f6-9498-291fb7346c9c)
 
 ## Summary
 **This repository contains the source code of the Records Management System, developed for my thesis research.**
